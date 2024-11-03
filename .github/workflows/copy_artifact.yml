@@ -1,0 +1,33 @@
+name: Upload Artifact from Branch Folder
+
+on:
+  pull_request:
+    branches:
+      - dev  # Триггер срабатывает при пуше в ветку main, поменяйте на нужную вам ветку
+
+jobs:
+  upload-artifact:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: MyArtifact
+        path: testApk/app-debug.apk  # Укажите путь к файлу или папке в репозитории
+
+    - name: Post artifact link to PR
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const artifactUrl = `${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}`;
+            github.rest.issues.createComment({
+              issue_number: ${{ github.event.pull_request.number }},
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `Артефакт для этого PR можно найти [здесь](${artifactUrl}).`
+            });
