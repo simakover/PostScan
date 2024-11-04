@@ -12,7 +12,7 @@ local.properties
 captures/
 .externalNativeBuild/
 .cxx/
-app/*.apk
+*.apk
 output.json
 
 # IntelliJ
@@ -33,7 +33,7 @@ google-services.json
 *.hprof
 ### Android ###
 # built application files
-app/*.ap_
+*.ap_
 
 # files for the dex VM
 *.dex
