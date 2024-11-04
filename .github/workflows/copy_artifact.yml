@@ -3,7 +3,7 @@ name: Upload Artifact from Branch Folder
 on:
   pull_request:
     branches:
-      - dev
+      - master
 
 permissions:
   pull-requests: write
