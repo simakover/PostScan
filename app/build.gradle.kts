@@ -36,6 +36,12 @@ android {
     }
 }
 
+tasks.register("buildDebugApk") {
+    group = "build"
+    description = "Builds the debug APK"
+    dependsOn("assembleDebug")
+}
+
 dependencies {
 
     implementation(libs.androidx.core.ktx)
