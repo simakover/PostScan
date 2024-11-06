@@ -1,4 +1,4 @@
-package ru.nyxsed.postscan.ui.theme
+package ru.nyxsed.postscan.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
