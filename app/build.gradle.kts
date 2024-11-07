@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("com.google.devtools.ksp") version "2.0.21-1.0.25"
 }
 
 android {
@@ -36,12 +37,6 @@ android {
     }
 }
 
-tasks.register("buildDebugApk") {
-    group = "build"
-    description = "Builds the debug APK"
-    dependsOn("assembleDebug")
-}
-
 dependencies {
 
     implementation(libs.androidx.core.ktx)
@@ -63,4 +58,27 @@ dependencies {
     // coil
     implementation("io.coil-kt.coil3:coil-compose:3.0.0")
     implementation("io.coil-kt.coil3:coil-network-okhttp:3.0.0")
+
+    // Retrofit
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+
+    // Gson Converter (или другой, если нужно)
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    // OkHttp
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+
+    // OkHttp Logging Interceptor
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+
+    // Koin
+    implementation("io.insert-koin:koin-core:3.1.2")
+    implementation("io.insert-koin:koin-android:3.1.2")
+
+    // Room
+    val room_version = "2.6.1"
+    implementation("androidx.room:room-runtime:$room_version")
+    annotationProcessor("androidx.room:room-compiler:$room_version")
+    ksp("androidx.room:room-compiler:$room_version")
+    implementation("androidx.room:room-ktx:$room_version")
 }

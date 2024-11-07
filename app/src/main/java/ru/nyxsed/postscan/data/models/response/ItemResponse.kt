@@ -1,0 +1,23 @@
+package ru.nyxsed.postscan.data.models.response
+
+
+import com.google.gson.annotations.SerializedName
+
+data class ItemResponse(
+    @SerializedName("attachments")
+    val attachments: List<AttachmentResponse>,
+    @SerializedName("date")
+    val date: Long,
+    @SerializedName("id")
+    val id: Long,
+    @SerializedName("is_favorite")
+    val isFavorite: Boolean,
+    @SerializedName("likes")
+    val likes: LikesResponse,
+    @SerializedName("owner_id")
+    val ownerId: Long,
+    @SerializedName("post_id")
+    val postId: Long,
+    @SerializedName("text")
+    val text: String,
+)
