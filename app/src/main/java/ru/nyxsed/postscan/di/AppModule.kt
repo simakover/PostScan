@@ -1,12 +1,14 @@
 package ru.nyxsed.postscan.di
 
 import androidx.room.Room
+import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import ru.nyxsed.postscan.data.database.AppDatabase
 import ru.nyxsed.postscan.data.repository.DbRepositoryImpl
 import ru.nyxsed.postscan.data.repository.VkRepositoryImpl
 import ru.nyxsed.postscan.domain.repository.DbRepository
 import ru.nyxsed.postscan.domain.repository.VkRepository
+import ru.nyxsed.postscan.presentation.MainViewModel
 
 val appModule = module {
     single {
@@ -25,5 +27,9 @@ val appModule = module {
 
     single<DbRepository> {
         DbRepositoryImpl(get())
+    }
+
+    viewModel {
+        MainViewModel(get())
     }
 }
