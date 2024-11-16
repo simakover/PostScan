@@ -8,7 +8,6 @@ import ru.nyxsed.postscan.domain.models.PostEntity
 
 @Dao
 interface DbDao {
-
     @Insert
     suspend fun insert(postEntity: PostEntity)
 

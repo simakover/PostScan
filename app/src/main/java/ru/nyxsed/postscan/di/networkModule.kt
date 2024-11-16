@@ -20,13 +20,13 @@ val networkModule = module {
 
     single {
         Retrofit.Builder()
-            .baseUrl(VK_BASE_URL)  // Указываем свой базовый URL
-            .addConverterFactory(GsonConverterFactory.create())  // Выбираем конвертер (например, Gson)
+            .baseUrl(VK_BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
             .client(get())
             .build()
     }
 
     single<ApiService> {
-        get<Retrofit>().create(ApiService::class.java)  // Создаем экземпляр ApiService с помощью Retrofit
+        get<Retrofit>().create(ApiService::class.java)
     }
 }

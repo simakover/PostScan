@@ -12,7 +12,6 @@ import com.composegears.tiamat.navDestination
 import org.koin.androidx.compose.koinViewModel
 import ru.nyxsed.postscan.presentation.PostScreenViewModel
 
-
 val PostScreen by navDestination<Unit> {
     val vm = koinViewModel<PostScreenViewModel>()
     val postListState = vm.posts.collectAsState()
