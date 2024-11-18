@@ -61,31 +61,25 @@ dependencies {
 
     // Retrofit
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
-
-    // Gson Converter
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-
-    // OkHttp
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
-
-    // OkHttp Logging Interceptor
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 
     // Koin
-//    implementation("io.insert-koin:koin-core:3.5.0")
     implementation("io.insert-koin:koin-android:4.0.0")
-//    implementation("io.insert-koin:koin-androidx-viewmodel:3.5.0")
     implementation("io.insert-koin:koin-androidx-compose:4.0.0")
 
     // Room
-    val room_version = "2.6.1"
-    implementation("androidx.room:room-runtime:$room_version")
-    annotationProcessor("androidx.room:room-compiler:$room_version")
-    ksp("androidx.room:room-compiler:$room_version")
-    implementation("androidx.room:room-ktx:$room_version")
+    implementation("androidx.room:room-runtime:2.6.1")
+    annotationProcessor("androidx.room:room-compiler:2.6.1")
+    ksp("androidx.room:room-compiler:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
 
     // core library
     implementation("io.github.composegears:tiamat:1.2.0")
-    // Koin integration (https://github.com/InsertKoinIO/koin)
     implementation("io.github.composegears:tiamat-koin:1.2.0")
+
+    // vk api
+    implementation("com.vk:android-sdk-core:4.1.0")
+    implementation("com.vk:android-sdk-api:4.1.0")
 }
