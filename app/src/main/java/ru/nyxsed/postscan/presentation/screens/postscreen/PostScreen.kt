@@ -33,7 +33,12 @@ val PostScreen by navDestination<Unit> {
         ) {
             postListState.value.forEach {
                 item {
-                    PostCard(it)
+                    PostCard(
+                        post = it,
+                        onPostDeleteClicked = {
+                            vm.deletePost(it)
+                        }
+                    )
                 }
             }
         }
