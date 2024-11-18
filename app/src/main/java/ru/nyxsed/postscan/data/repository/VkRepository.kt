@@ -1,5 +1,7 @@
 package ru.nyxsed.postscan.data.repository
 
+import com.vk.api.sdk.VKKeyValueStorage
+import com.vk.api.sdk.auth.VKAccessToken
 import kotlinx.coroutines.delay
 import ru.nyxsed.postscan.data.mapper.VkMapper
 import ru.nyxsed.postscan.data.network.ApiService
@@ -9,13 +11,14 @@ import ru.nyxsed.postscan.domain.models.PostEntity
 class VkRepository(
     private val apiService: ApiService,
     private val mapper: VkMapper,
+    private val storage: VKKeyValueStorage,
 ) {
 
-    private val token =
-        "vk1.a.K7RrrcobHBv7Q0BT6npti4qgocTStsXH-nl9OpeOk-Cab09IIC0Jw6BHcrT--YCu4uugG4Q-r05giHrjWWwgGoL-mcDRnZJ3yMERN24wVuSR2ZToUwYq4_XMljoNDzV9TXNmq-GZ7ReYXZvY9Xi2aEXi9GxiJYDTWKnCJ7tuY2ahyY9py8vg6VNgeytB464b26mYRUxBXUbgSrW0CDZw6A"
+    private val token
+        get() = VKAccessToken.restore(storage)
 
     private fun getAccessToken(): String {
-        return token
+        return token?.accessToken ?: throw IllegalStateException("Token is null")
     }
 
     suspend fun getPostsForGroup(groupEntity: GroupEntity): List<PostEntity> {

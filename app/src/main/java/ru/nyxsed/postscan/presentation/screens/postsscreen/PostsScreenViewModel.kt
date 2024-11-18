@@ -1,14 +1,14 @@
 package ru.nyxsed.postscan.presentation
 
+import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import ru.nyxsed.postscan.data.repository.DbRepository
 import ru.nyxsed.postscan.data.repository.VkRepository
-import ru.nyxsed.postscan.domain.models.GroupEntity
 import ru.nyxsed.postscan.domain.models.PostEntity
 
-class PostScreenViewModel(
+class PostsScreenViewModel(
     private val dbRepository: DbRepository,
     private val vkRepository: VkRepository,
 ) : ViewModel() {

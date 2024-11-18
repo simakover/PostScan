@@ -1,4 +1,4 @@
-package ru.nyxsed.postscan.presentation.screens.postscreen
+package ru.nyxsed.postscan.presentation.screens.postsscreen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
