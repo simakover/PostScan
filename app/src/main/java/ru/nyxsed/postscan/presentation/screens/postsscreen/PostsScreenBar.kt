@@ -1,6 +1,7 @@
-package ru.nyxsed.postscan.presentation.screens.postscreen
+package ru.nyxsed.postscan.presentation.screens.postsscreen
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -14,8 +15,9 @@ import androidx.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBar(
+fun PostsScreenBar(
     onRefreshClicked: () -> Unit,
+    onNavToGroupsClicked: () -> Unit,
 ) {
     TopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
@@ -37,14 +39,15 @@ fun TopBar(
                     contentDescription = null,
                 )
             }
+            IconButton(
+                onClick = onNavToGroupsClicked
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.AccountBox,
+                    tint = MaterialTheme.colorScheme.onPrimary,
+                    contentDescription = null,
+                )
+            }
         }
-    )
-}
-
-@Preview
-@Composable
-private fun TopBarPreview() {
-    TopBar(
-        onRefreshClicked = {}
     )
 }

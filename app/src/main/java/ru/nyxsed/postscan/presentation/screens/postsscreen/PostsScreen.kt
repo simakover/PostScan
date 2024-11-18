@@ -1,4 +1,4 @@
-package ru.nyxsed.postscan.presentation.screens.postscreen
+package ru.nyxsed.postscan.presentation.screens.postsscreen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -8,19 +8,24 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.composegears.tiamat.navController
 import com.composegears.tiamat.navDestination
 import org.koin.androidx.compose.koinViewModel
-import ru.nyxsed.postscan.presentation.PostScreenViewModel
+import ru.nyxsed.postscan.presentation.PostsScreenViewModel
+import ru.nyxsed.postscan.presentation.screens.groupsscreen.GroupsScreen
 
 val PostScreen by navDestination<Unit> {
-    val vm = koinViewModel<PostScreenViewModel>()
-    val postListState = vm.posts.collectAsState()
-
+    val postsScreenViewModel = koinViewModel<PostsScreenViewModel>()
+    val postListState = postsScreenViewModel.posts.collectAsState()
+    val navController = navController()
     Scaffold(
         topBar = {
-            TopBar(
+            PostsScreenBar(
                 onRefreshClicked = {
-                    vm.loadPosts()
+                    postsScreenViewModel.loadPosts()
+                },
+                onNavToGroupsClicked = {
+                    navController.navigate(GroupsScreen)
                 }
             )
         }
@@ -36,7 +41,7 @@ val PostScreen by navDestination<Unit> {
                     PostCard(
                         post = it,
                         onPostDeleteClicked = {
-                            vm.deletePost(it)
+                            postsScreenViewModel.deletePost(it)
                         }
                     )
                 }
