@@ -19,7 +19,7 @@ class VkMapper {
                 ownerId = post.ownerId,
                 ownerName = group.name,
                 ownerImageUrl = group.photo50,
-                publicationDate = post.date * 1000,
+                publicationDate = post.date,
                 contentText = post.text,
                 contentImageUrl = post.attachments.firstOrNull()?.photo?.sizes?.find { it.type == "p" }?.url,
                 isLiked = post.likes.userLikes > 0

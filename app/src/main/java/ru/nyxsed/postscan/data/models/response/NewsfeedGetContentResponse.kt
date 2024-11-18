@@ -9,5 +9,5 @@ data class NewsfeedGetContentResponse(
     @SerializedName("items")
     val items: List<ItemResponse>,
     @SerializedName("next_from")
-    val nextFrom: String,
+    val nextFrom: String?,
 )
