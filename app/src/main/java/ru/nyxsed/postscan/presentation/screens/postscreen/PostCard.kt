@@ -30,6 +30,7 @@ import ru.nyxsed.postscan.domain.models.PostEntity
 @Composable
 fun PostCard(
     post: PostEntity,
+    onPostDeleteClicked:(PostEntity) -> Unit,
 ) {
     Card {
         Column(
@@ -38,7 +39,10 @@ fun PostCard(
                 .background(color = MaterialTheme.colorScheme.secondary)
                 .padding(8.dp)
         ) {
-            PostHeader(post = post)
+            PostHeader(
+                post = post,
+                onPostDeleteClicked = onPostDeleteClicked
+            )
             AsyncImage(
                 modifier = Modifier
                     .padding(top = 8.dp)
@@ -86,6 +90,7 @@ fun PostCard(
 @Composable
 fun PostHeader(
     post: PostEntity,
+    onPostDeleteClicked:(PostEntity) -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -120,7 +125,9 @@ fun PostHeader(
             )
         }
         IconButton(
-            onClick = {}
+            onClick = {
+                onPostDeleteClicked(post)
+            }
         ) {
             Icon(
                 painter = painterResource(R.drawable.ic_close),
@@ -149,6 +156,7 @@ private fun PostCardPreview() {
         isLiked = false
     )
     PostCard(
-        post = postEntity
+        post = postEntity,
+        onPostDeleteClicked = {}
     )
 }

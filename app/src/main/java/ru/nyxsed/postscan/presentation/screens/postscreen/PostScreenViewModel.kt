@@ -6,24 +6,33 @@ import kotlinx.coroutines.launch
 import ru.nyxsed.postscan.data.repository.DbRepository
 import ru.nyxsed.postscan.data.repository.VkRepository
 import ru.nyxsed.postscan.domain.models.GroupEntity
+import ru.nyxsed.postscan.domain.models.PostEntity
 
 class PostScreenViewModel(
     private val dbRepository: DbRepository,
     private val vkRepository: VkRepository,
 ) : ViewModel() {
     val posts = dbRepository.getAllPosts()
+    val groups = dbRepository.getAllGroups()
 
     fun loadPosts() {
-        val groups = listOf<GroupEntity>(GroupEntity())
-
         viewModelScope.launch {
-            groups.forEach { group ->
+            groups.value.forEach { group ->
                 val posts = vkRepository.getPostsForGroup(group)
-
+                val updatedGroup = group.copy(
+                    lastFetchDate = (System.currentTimeMillis()/1000).toString()
+                )
+                dbRepository.updateGroup(updatedGroup)
                 posts.forEach { post ->
                     dbRepository.addPost(post)
                 }
             }
+        }
+    }
+
+    fun deletePost(post: PostEntity) {
+        viewModelScope.launch {
+            dbRepository.deletePost(post)
         }
     }
 }
