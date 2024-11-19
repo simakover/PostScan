@@ -8,6 +8,7 @@ import org.koin.dsl.module
 import ru.nyxsed.postscan.data.repository.DbRepository
 import ru.nyxsed.postscan.data.repository.VkRepository
 import ru.nyxsed.postscan.presentation.PostsScreenViewModel
+import ru.nyxsed.postscan.presentation.screens.addgroupscreen.AddGroupScreenViewModel
 import ru.nyxsed.postscan.presentation.screens.groupsscreen.GroupsScreenViewModel
 import ru.nyxsed.postscan.presentation.screens.mainscreen.MainViewModel
 
@@ -34,7 +35,7 @@ val appModule = module {
     }
 
     // viewmodels
-    single < MainViewModel> {
+    single<MainViewModel> {
         MainViewModel(
             storage = get()
         )
@@ -53,4 +54,10 @@ val appModule = module {
         )
     }
 
+    viewModel<AddGroupScreenViewModel> {
+        AddGroupScreenViewModel(
+            dbRepository = get(),
+            vkRepository = get()
+        )
+    }
 }

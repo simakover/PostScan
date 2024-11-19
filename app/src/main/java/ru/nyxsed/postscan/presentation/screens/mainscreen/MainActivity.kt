@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import com.composegears.tiamat.Navigation
 import com.composegears.tiamat.rememberNavController
 import org.koin.android.ext.android.inject
+import ru.nyxsed.postscan.presentation.screens.addgroupscreen.AddGroupScreen
 import ru.nyxsed.postscan.presentation.screens.groupsscreen.GroupsScreen
 import ru.nyxsed.postscan.presentation.screens.loginscreen.LoginScreen
 import ru.nyxsed.postscan.presentation.screens.postsscreen.PostScreen
@@ -25,6 +26,7 @@ class MainActivity : ComponentActivity() {
                     PostScreen,
                     LoginScreen,
                     GroupsScreen,
+                    AddGroupScreen,
                 )
             )
             val mainViewModel: MainViewModel by inject()
