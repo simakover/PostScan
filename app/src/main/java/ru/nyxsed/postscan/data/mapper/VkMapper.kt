@@ -1,11 +1,13 @@
 package ru.nyxsed.postscan.data.mapper
 
-import ru.nyxsed.postscan.data.models.response.NewsFeedGetResponse
+import ru.nyxsed.postscan.data.models.response.groupsgetbyid.GroupsGetByIdResponse
+import ru.nyxsed.postscan.data.models.response.newsfeedget.NewsFeedGetResponse
+import ru.nyxsed.postscan.domain.models.GroupEntity
 import ru.nyxsed.postscan.domain.models.PostEntity
 import kotlin.math.absoluteValue
 
 class VkMapper {
-    fun mapResponseToPosts(response: NewsFeedGetResponse): List<PostEntity> {
+    fun mapNewsFeedResponseToPosts(response: NewsFeedGetResponse): List<PostEntity> {
         val result = mutableListOf<PostEntity>()
 
         val posts = response.content.items
@@ -19,7 +21,7 @@ class VkMapper {
                 ownerId = post.ownerId,
                 ownerName = group.name,
                 ownerImageUrl = group.photo50,
-                publicationDate = post.date,
+                publicationDate = post.date * 1000,
                 contentText = post.text,
                 contentImageUrl = post.attachments.firstOrNull()?.photo?.sizes?.find { it.type == "p" }?.url,
                 isLiked = post.likes.userLikes > 0
@@ -27,5 +29,17 @@ class VkMapper {
             result.add(postEnt)
         }
         return result
+    }
+
+    fun mapGroupsGetByIdResponseToGroup(response: GroupsGetByIdResponse): GroupEntity {
+        val group = response.response.groups.first()
+
+        return GroupEntity(
+            groupId = group.id,
+            name = group.name,
+            screenName = group.screenName,
+            avatarUrl = group.photo50,
+            lastFetchDate = System.currentTimeMillis()
+        )
     }
 }

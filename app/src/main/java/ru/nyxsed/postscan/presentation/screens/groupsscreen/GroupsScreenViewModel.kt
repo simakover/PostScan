@@ -16,10 +16,4 @@ class GroupsScreenViewModel(
             dbRepository.deleteGroup(group)
         }
     }
-
-    fun addGroup() {
-        viewModelScope.launch {
-            dbRepository.addGroup(GroupEntity())
-        }
-    }
 }

@@ -8,26 +8,25 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonColors
-import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.composegears.tiamat.navController
 import com.composegears.tiamat.navDestination
 import org.koin.androidx.compose.koinViewModel
+import ru.nyxsed.postscan.presentation.screens.addgroupscreen.AddGroupScreen
 
 val GroupsScreen by navDestination<Unit> {
     val groupScreenViewModel = koinViewModel<GroupsScreenViewModel>()
     val groupsState = groupScreenViewModel.groups.collectAsState()
+    val navController = navController()
 
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    groupScreenViewModel.addGroup()
+                    navController.navigate(AddGroupScreen)
                 }
             ) {
                 Icon(
@@ -36,7 +35,7 @@ val GroupsScreen by navDestination<Unit> {
                 )
             }
         }
-    ) {paddings ->
+    ) { paddings ->
         LazyColumn(
             modifier = Modifier
                 .padding(paddings),
@@ -49,6 +48,9 @@ val GroupsScreen by navDestination<Unit> {
                         group = it,
                         onGroupDeleteClicked = {
                             groupScreenViewModel.deleteGroup(it)
+                        },
+                        onGroupClicked = {
+                            navController.navigate(AddGroupScreen, it)
                         }
                     )
                 }
