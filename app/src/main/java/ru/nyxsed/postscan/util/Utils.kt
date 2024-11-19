@@ -1,4 +1,4 @@
-package ru.nyxsed.postscan.Util
+package ru.nyxsed.postscan.util
 
 object Constants {
     const val VK_API_VERSION = "5.199"

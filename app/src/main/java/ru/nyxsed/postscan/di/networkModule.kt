@@ -5,7 +5,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import ru.nyxsed.postscan.Util.Constants.VK_BASE_URL
+import ru.nyxsed.postscan.util.Constants.VK_BASE_URL
 import ru.nyxsed.postscan.data.network.ApiService
 
 val networkModule = module {

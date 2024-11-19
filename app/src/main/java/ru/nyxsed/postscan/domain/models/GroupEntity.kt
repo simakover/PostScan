@@ -7,6 +7,9 @@ import androidx.room.PrimaryKey
 data class GroupEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
-    val groupId: String = "-2355707",
-    val lastFetchDate: String = "1730925001",
+    var groupId: Long? = null,
+    var name: String = "",
+    var screenName: String = "",
+    val avatarUrl: String = "",
+    var lastFetchDate: Long = System.currentTimeMillis(),
 )

@@ -1,6 +1,5 @@
 package ru.nyxsed.postscan.presentation
 
-import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
@@ -20,7 +19,7 @@ class PostsScreenViewModel(
             groups.value.forEach { group ->
                 val posts = vkRepository.getPostsForGroup(group)
                 val updatedGroup = group.copy(
-                    lastFetchDate = (System.currentTimeMillis()/1000).toString()
+                    lastFetchDate = (System.currentTimeMillis())
                 )
                 dbRepository.updateGroup(updatedGroup)
                 posts.forEach { post ->

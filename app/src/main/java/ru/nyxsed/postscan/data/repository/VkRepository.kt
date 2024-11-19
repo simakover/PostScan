@@ -29,12 +29,12 @@ class VkRepository(
         while (startFrom != null) {
             val response = apiService.newsfeedGet(
                 token = getAccessToken(),
-                sourceId = groupEntity.groupId,
+                sourceId = groupEntity.groupId.toString(),
                 startFrom = startFrom,
-                startTime = lastFetchDate
+                startTime = (lastFetchDate/1000).toString()
             )
 
-            val responsePosts = mapper.mapResponseToPosts(response)
+            val responsePosts = mapper.mapNewsFeedResponseToPosts(response)
             responsePosts.forEach {
                 posts.add(it)
             }
@@ -44,5 +44,14 @@ class VkRepository(
         }
 
         return posts.toList()
+    }
+
+    suspend fun groupsGetById(groupId: String): GroupEntity {
+        val response = apiService.groupsGetById(
+            token = getAccessToken(),
+            groupId = groupId
+        )
+
+        return mapper.mapGroupsGetByIdResponseToGroup(response)
     }
 }
