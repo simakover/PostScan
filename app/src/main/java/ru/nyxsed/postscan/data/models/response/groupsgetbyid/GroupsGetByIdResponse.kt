@@ -5,5 +5,5 @@ import com.google.gson.annotations.SerializedName
 
 data class GroupsGetByIdResponse(
     @SerializedName("response")
-    val response: GroupsGetByIdContentResponse
+    val response: GroupsGetByIdContentResponse?
 )
