@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -19,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.composegears.tiamat.navArgsOrNull
@@ -30,8 +32,10 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import ru.nyxsed.postscan.R
 import ru.nyxsed.postscan.domain.models.GroupEntity
+import ru.nyxsed.postscan.util.Constants.DATE_LENGTH
+import ru.nyxsed.postscan.util.Constants.DATE_MASK
 import ru.nyxsed.postscan.util.Constants.convertLongToTime
-import java.text.SimpleDateFormat
+import ru.nyxsed.postscan.util.MaskVisualTransformation
 
 val AddGroupScreen by navDestination<GroupEntity> {
     val groupArg = navArgsOrNull()
@@ -41,12 +45,12 @@ val AddGroupScreen by navDestination<GroupEntity> {
 
     var group by remember { mutableStateOf(GroupEntity()) }
     var buttonLabel by remember { mutableStateOf("Добавить группу") }
-    var lastFetchDateString by remember { mutableStateOf(convertLongToTime(System.currentTimeMillis())) }
+    var lastFetchDate by remember { mutableStateOf(convertLongToTime(System.currentTimeMillis()).replace(".","")) }
 
     LaunchedEffect(true) {
         groupArg?.let {
             buttonLabel = "Редактировать группу"
-            lastFetchDateString = convertLongToTime(it.lastFetchDate)
+            lastFetchDate = convertLongToTime(it.lastFetchDate).replace(".","")
             group = it
         }
     }
@@ -106,10 +110,14 @@ val AddGroupScreen by navDestination<GroupEntity> {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 10.dp),
-            value = lastFetchDateString,
+            value = lastFetchDate,
             onValueChange = {
-                lastFetchDateString = it
+                if (it.length <= DATE_LENGTH) {
+                    lastFetchDate = it
+                }
             },
+            visualTransformation = MaskVisualTransformation(DATE_MASK),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             label = {
                 Text("Дата последнего сканирования")
             }
@@ -119,18 +127,7 @@ val AddGroupScreen by navDestination<GroupEntity> {
                 .fillMaxWidth()
                 .padding(top = 10.dp),
             onClick = {
-
-                val lastFetchDate = if (lastFetchDateString.isEmpty()) {
-                    System.currentTimeMillis()
-                } else {
-                    val format = SimpleDateFormat("dd.MM.yyyy")
-                    format.parse(lastFetchDateString)?.time
-                } ?: System.currentTimeMillis()
-
-                group.lastFetchDate = lastFetchDate
-                group.groupId = group.groupId?.let { it }
-
-                addGroupScreenViewModel.addGroup(group)
+                addGroupScreenViewModel.addGroup(group, lastFetchDate)
                 navController.back()
             }
         ) {
@@ -138,3 +135,4 @@ val AddGroupScreen by navDestination<GroupEntity> {
         }
     }
 }
+
