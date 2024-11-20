@@ -29,7 +29,7 @@ class VkRepository(
         while (startFrom != null) {
             val response = apiService.newsfeedGet(
                 token = getAccessToken(),
-                sourceId = groupEntity.groupId.toString(),
+                sourceId = (groupEntity.groupId?.times(-1)).toString(),
                 startFrom = startFrom,
                 startTime = (lastFetchDate/1000).toString()
             )
@@ -39,7 +39,7 @@ class VkRepository(
                 posts.add(it)
             }
 
-            startFrom = response.content.nextFrom
+            startFrom = response.content?.nextFrom
             delay(500)
         }
 
@@ -53,5 +53,21 @@ class VkRepository(
         )
 
         return mapper.mapGroupsGetByIdResponseToGroup(response)
+    }
+
+    suspend fun changeLikeStatus(post: PostEntity) {
+        if (!post.isLiked) {
+            apiService.addLike(
+                token = getAccessToken(),
+                ownerId = post.ownerId,
+                postId = post.postId
+            )
+        } else {
+            apiService.deleteLike(
+                token = getAccessToken(),
+                ownerId = post.ownerId,
+                postId = post.postId
+            )
+        }
     }
 }

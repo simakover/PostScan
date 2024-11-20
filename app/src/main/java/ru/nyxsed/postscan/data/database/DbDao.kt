@@ -19,6 +19,9 @@ interface DbDao {
     @Delete
     suspend fun deletePost(post: PostEntity)
 
+    @Update
+    suspend fun updatePost(post: PostEntity)
+
     @Query("SELECT * FROM posts")
     fun getAllPosts(): Flow<List<PostEntity>>
 

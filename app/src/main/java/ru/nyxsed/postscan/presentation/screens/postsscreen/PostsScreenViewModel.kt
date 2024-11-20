@@ -34,4 +34,12 @@ class PostsScreenViewModel(
             dbRepository.deletePost(post)
         }
     }
+
+    fun changeLikeStatus(post: PostEntity) {
+        viewModelScope.launch {
+            vkRepository.changeLikeStatus(post)
+            val changedPost = post.copy( isLiked = !post.isLiked)
+            dbRepository.updatePost(changedPost)
+        }
+    }
 }
