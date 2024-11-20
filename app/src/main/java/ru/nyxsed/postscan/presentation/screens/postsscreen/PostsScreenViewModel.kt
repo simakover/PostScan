@@ -2,14 +2,21 @@ package ru.nyxsed.postscan.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.vk.api.sdk.VKKeyValueStorage
+import com.vk.api.sdk.auth.VKAccessToken
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import ru.nyxsed.postscan.data.repository.DbRepository
 import ru.nyxsed.postscan.data.repository.VkRepository
 import ru.nyxsed.postscan.domain.models.PostEntity
+import ru.nyxsed.postscan.presentation.screens.postsscreen.AuthState
 
 class PostsScreenViewModel(
     private val dbRepository: DbRepository,
     private val vkRepository: VkRepository,
+    private val storage: VKKeyValueStorage,
 ) : ViewModel() {
     val posts = dbRepository.getAllPosts()
     val groups = dbRepository.getAllGroups()
@@ -41,5 +48,15 @@ class PostsScreenViewModel(
             val changedPost = post.copy( isLiked = !post.isLiked)
             dbRepository.updatePost(changedPost)
         }
+    }
+
+    // auth
+    private val _authStateFlow = MutableStateFlow<AuthState>(AuthState.NotAuthorized)
+    val authStateFlow: StateFlow<AuthState> = _authStateFlow.asStateFlow()
+
+    fun checkState() {
+        val currentToken = VKAccessToken.restore(storage)
+        val loggedIn = currentToken != null && currentToken.isValid
+        _authStateFlow.value = if (loggedIn) AuthState.Authorized else AuthState.NotAuthorized
     }
 }
