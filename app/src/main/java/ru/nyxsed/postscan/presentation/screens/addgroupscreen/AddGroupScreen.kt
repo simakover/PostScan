@@ -129,7 +129,7 @@ val AddGroupScreen by navDestination<GroupEntity> {
                 } ?: System.currentTimeMillis()
 
                 group.lastFetchDate = lastFetchDate
-                group.groupId = group.groupId?.let { it * -1 }
+                group.groupId = group.groupId?.let { it }
 
                 addGroupScreenViewModel.addGroup(group)
                 navController.back()

@@ -5,5 +5,5 @@ import com.google.gson.annotations.SerializedName
 
 data class NewsFeedGetResponse(
     @SerializedName("response")
-    val content: NewsfeedGetContentResponse,
+    val content: NewsfeedGetContentResponse?,
 )
