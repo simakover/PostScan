@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.navController
 import com.composegears.tiamat.navDestination
 import org.koin.androidx.compose.koinViewModel
+import ru.nyxsed.postscan.SharedViewModel
 import ru.nyxsed.postscan.presentation.PostsScreenViewModel
 import ru.nyxsed.postscan.presentation.screens.groupsscreen.GroupsScreen
 import ru.nyxsed.postscan.presentation.screens.loginscreen.LoginScreen
@@ -20,20 +21,21 @@ import ru.nyxsed.postscan.presentation.screens.loginscreen.LoginScreen
 val PostScreen by navDestination<Unit> {
     val postsScreenViewModel = koinViewModel<PostsScreenViewModel>()
     val postListState = postsScreenViewModel.posts.collectAsState()
-    val authState = postsScreenViewModel.authStateFlow.collectAsState()
+
+    val sharedViewModel = koinViewModel<SharedViewModel>()
+    val authState = sharedViewModel.authStateFlow.collectAsState()
     val navController = navController()
+
     Scaffold(
         topBar = {
             PostsScreenBar(
                 onRefreshClicked = {
-                    postsScreenViewModel.checkState()
                     when (authState.value) {
                         AuthState.Authorized -> postsScreenViewModel.loadPosts()
                         AuthState.NotAuthorized -> navController.navigate(LoginScreen)
                     }
                 },
                 onNavToGroupsClicked = {
-                    postsScreenViewModel.checkState()
                     when (authState.value) {
                         AuthState.Authorized -> navController.navigate(GroupsScreen)
                         AuthState.NotAuthorized -> navController.navigate(LoginScreen)
