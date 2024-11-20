@@ -1,4 +1,4 @@
-package ru.nyxsed.postscan.presentation.screens.mainscreen
+package ru.nyxsed.postscan
 
 import android.app.Application
 import org.koin.android.ext.koin.androidContext

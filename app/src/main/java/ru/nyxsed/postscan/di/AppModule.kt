@@ -10,7 +10,6 @@ import ru.nyxsed.postscan.data.repository.VkRepository
 import ru.nyxsed.postscan.presentation.PostsScreenViewModel
 import ru.nyxsed.postscan.presentation.screens.addgroupscreen.AddGroupScreenViewModel
 import ru.nyxsed.postscan.presentation.screens.groupsscreen.GroupsScreenViewModel
-import ru.nyxsed.postscan.presentation.screens.mainscreen.MainViewModel
 
 val appModule = module {
     // repositories
@@ -35,16 +34,11 @@ val appModule = module {
     }
 
     // viewmodels
-    single<MainViewModel> {
-        MainViewModel(
-            storage = get()
-        )
-    }
-
     viewModel<PostsScreenViewModel> {
         PostsScreenViewModel(
             dbRepository = get(),
-            vkRepository = get()
+            vkRepository = get(),
+            storage = get()
         )
     }
 

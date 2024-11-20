@@ -1,6 +1,5 @@
 package ru.nyxsed.postscan.presentation.screens.postsscreen
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -16,19 +15,29 @@ import com.composegears.tiamat.navDestination
 import org.koin.androidx.compose.koinViewModel
 import ru.nyxsed.postscan.presentation.PostsScreenViewModel
 import ru.nyxsed.postscan.presentation.screens.groupsscreen.GroupsScreen
+import ru.nyxsed.postscan.presentation.screens.loginscreen.LoginScreen
 
 val PostScreen by navDestination<Unit> {
     val postsScreenViewModel = koinViewModel<PostsScreenViewModel>()
     val postListState = postsScreenViewModel.posts.collectAsState()
+    val authState = postsScreenViewModel.authStateFlow.collectAsState()
     val navController = navController()
     Scaffold(
         topBar = {
             PostsScreenBar(
                 onRefreshClicked = {
-                    postsScreenViewModel.loadPosts()
+                    postsScreenViewModel.checkState()
+                    when (authState.value) {
+                        AuthState.Authorized -> postsScreenViewModel.loadPosts()
+                        AuthState.NotAuthorized -> navController.navigate(LoginScreen)
+                    }
                 },
                 onNavToGroupsClicked = {
-                    navController.navigate(GroupsScreen)
+                    postsScreenViewModel.checkState()
+                    when (authState.value) {
+                        AuthState.Authorized -> navController.navigate(GroupsScreen)
+                        AuthState.NotAuthorized -> navController.navigate(LoginScreen)
+                    }
                 }
             )
         }

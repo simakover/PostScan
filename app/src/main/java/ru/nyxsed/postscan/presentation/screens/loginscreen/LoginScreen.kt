@@ -16,20 +16,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.composegears.tiamat.navController
 import com.composegears.tiamat.navDestination
 import com.vk.api.sdk.VK
 import com.vk.api.sdk.auth.VKScope
-import org.koin.compose.koinInject
 import ru.nyxsed.postscan.R
-import ru.nyxsed.postscan.presentation.screens.mainscreen.MainViewModel
 import ru.nyxsed.postscan.presentation.ui.theme.VkBlue
 
 val LoginScreen by navDestination<Unit> {
-    val mainViewModel: MainViewModel = koinInject()
+
+    val navController = navController()
     val launcher = rememberLauncherForActivityResult(
         contract = VK.getVKAuthActivityResultContract()
     ) {
-        mainViewModel.performAuthResult()
+        navController.back()
     }
 
     Column(
