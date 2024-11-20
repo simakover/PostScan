@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -32,6 +33,7 @@ import java.util.Date
 fun PostCard(
     post: PostEntity,
     onPostDeleteClicked: (PostEntity) -> Unit,
+    onLikeClicked: (PostEntity) -> Unit,
 ) {
     Card {
         Column(
@@ -75,11 +77,13 @@ fun PostCard(
                     )
                 }
                 IconButton(
-                    onClick = {}
+                    onClick = {
+                        onLikeClicked(post)
+                    }
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.ic_like),
-                        tint = MaterialTheme.colorScheme.onSecondary,
+                        tint = if (post.isLiked) Color.Red else MaterialTheme.colorScheme.onSecondary,
                         contentDescription = null
                     )
                 }

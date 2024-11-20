@@ -32,6 +32,10 @@ class DbRepository(
         dbDao.deletePost(post)
     }
 
+    suspend fun updatePost(post: PostEntity) {
+        dbDao.updatePost(post)
+    }
+
     // groups
     fun getAllGroups(): StateFlow<List<GroupEntity>> =
         dbDao.getAllGroups()
