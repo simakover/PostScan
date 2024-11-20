@@ -26,8 +26,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import ru.nyxsed.postscan.R
 import ru.nyxsed.postscan.domain.models.PostEntity
-import java.text.SimpleDateFormat
-import java.util.Date
+import ru.nyxsed.postscan.util.Constants.convertLongToTime
 
 @Composable
 fun PostCard(
@@ -141,10 +140,4 @@ fun PostHeader(
             )
         }
     }
-}
-
-fun convertLongToTime(time: Long): String {
-    val date = Date(time)
-    val format = SimpleDateFormat("dd.MM.yyyy")
-    return format.format(date)
 }

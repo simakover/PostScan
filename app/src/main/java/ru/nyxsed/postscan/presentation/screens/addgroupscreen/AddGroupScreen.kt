@@ -30,22 +30,21 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import ru.nyxsed.postscan.R
 import ru.nyxsed.postscan.domain.models.GroupEntity
-import ru.nyxsed.postscan.presentation.screens.postsscreen.convertLongToTime
+import ru.nyxsed.postscan.util.Constants.convertLongToTime
 import java.text.SimpleDateFormat
 
-
 val AddGroupScreen by navDestination<GroupEntity> {
-    val args = navArgsOrNull()
+    val groupArg = navArgsOrNull()
     val addGroupScreenViewModel = koinViewModel<AddGroupScreenViewModel>()
     val navController = navController()
     val scope = CoroutineScope(Dispatchers.Default)
 
     var group by remember { mutableStateOf(GroupEntity()) }
     var buttonLabel by remember { mutableStateOf("Добавить группу") }
-    var lastFetchDateString by remember { mutableStateOf("") }
+    var lastFetchDateString by remember { mutableStateOf(convertLongToTime(System.currentTimeMillis())) }
 
     LaunchedEffect(true) {
-        args?.let {
+        groupArg?.let {
             buttonLabel = "Редактировать группу"
             lastFetchDateString = convertLongToTime(it.lastFetchDate)
             group = it

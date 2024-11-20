@@ -16,7 +16,6 @@ import ru.nyxsed.postscan.presentation.screens.postsscreen.AuthState
 class PostsScreenViewModel(
     private val dbRepository: DbRepository,
     private val vkRepository: VkRepository,
-    private val storage: VKKeyValueStorage,
 ) : ViewModel() {
     val posts = dbRepository.getAllPosts()
     val groups = dbRepository.getAllGroups()
@@ -48,15 +47,5 @@ class PostsScreenViewModel(
             val changedPost = post.copy( isLiked = !post.isLiked)
             dbRepository.updatePost(changedPost)
         }
-    }
-
-    // auth
-    private val _authStateFlow = MutableStateFlow<AuthState>(AuthState.NotAuthorized)
-    val authStateFlow: StateFlow<AuthState> = _authStateFlow.asStateFlow()
-
-    fun checkState() {
-        val currentToken = VKAccessToken.restore(storage)
-        val loggedIn = currentToken != null && currentToken.isValid
-        _authStateFlow.value = if (loggedIn) AuthState.Authorized else AuthState.NotAuthorized
     }
 }

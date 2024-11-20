@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import ru.nyxsed.postscan.R
 import ru.nyxsed.postscan.domain.models.GroupEntity
-import ru.nyxsed.postscan.presentation.screens.postsscreen.convertLongToTime
+import ru.nyxsed.postscan.util.Constants.convertLongToTime
 
 @Composable
 fun GroupCard(
