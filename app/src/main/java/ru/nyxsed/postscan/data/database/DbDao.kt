@@ -13,7 +13,7 @@ import ru.nyxsed.postscan.domain.models.PostEntity
 @Dao
 interface DbDao {
     // posts
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPost(post: PostEntity)
 
     @Delete
@@ -37,4 +37,7 @@ interface DbDao {
 
     @Query("SELECT * FROM groups")
     fun getAllGroups(): Flow<List<GroupEntity>>
+
+    @Query("SELECT * FROM groups where groupId = :groupId")
+    suspend fun getGroupById(groupId : Long): GroupEntity?
 }

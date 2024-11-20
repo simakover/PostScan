@@ -56,4 +56,8 @@ class DbRepository(
     suspend fun updateGroup(group: GroupEntity) {
         dbDao.updateGroup(group)
     }
+
+    suspend fun getGroupById(groupId: Long) : GroupEntity? {
+        return dbDao.getGroupById(groupId)
+    }
 }

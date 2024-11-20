@@ -13,7 +13,10 @@ class AddGroupScreenViewModel(
 ) : ViewModel() {
     fun addGroup(group: GroupEntity) {
         viewModelScope.launch {
-            dbRepository.addGroup(group)
+            val group = dbRepository.getGroupById(group.groupId!!)
+            if (group != null) {
+                dbRepository.addGroup(group)
+            }
         }
     }
 

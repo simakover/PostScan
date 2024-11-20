@@ -35,13 +35,13 @@ class VkMapper {
     }
 
     fun mapGroupsGetByIdResponseToGroup(response: GroupsGetByIdResponse): GroupEntity {
-        val group = response.response.groups.first()
+        val group = response.response?.groups?.first()
 
         return GroupEntity(
-            groupId = group.id,
-            name = group.name,
-            screenName = group.screenName,
-            avatarUrl = group.photo50,
+            groupId = group?.id ?: 0,
+            name = group?.name ?: "",
+            screenName = group?.screenName ?: "",
+            avatarUrl = group?.photo50 ?: "",
             lastFetchDate = System.currentTimeMillis()
         )
     }
