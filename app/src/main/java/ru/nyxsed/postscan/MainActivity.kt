@@ -10,7 +10,7 @@ import com.composegears.tiamat.rememberNavController
 import ru.nyxsed.postscan.presentation.screens.addgroupscreen.AddGroupScreen
 import ru.nyxsed.postscan.presentation.screens.groupsscreen.GroupsScreen
 import ru.nyxsed.postscan.presentation.screens.loginscreen.LoginScreen
-import ru.nyxsed.postscan.presentation.screens.postsscreen.PostScreen
+import ru.nyxsed.postscan.presentation.screens.postsscreen.PostsScreen
 import ru.nyxsed.postscan.presentation.ui.theme.PostScanTheme
 
 class MainActivity : ComponentActivity() {
@@ -18,9 +18,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             val navController = rememberNavController(
-                startDestination = PostScreen,
+                startDestination = PostsScreen,
                 destinations = arrayOf(
-                    PostScreen,
+                    PostsScreen,
                     LoginScreen,
                     GroupsScreen,
                     AddGroupScreen,

@@ -1,17 +1,15 @@
-package ru.nyxsed.postscan.presentation
+package ru.nyxsed.postscan.presentation.screens.postsscreen
 
+import android.content.Intent
+import androidx.compose.ui.platform.UriHandler
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.vk.api.sdk.VKKeyValueStorage
-import com.vk.api.sdk.auth.VKAccessToken
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import ru.nyxsed.postscan.data.repository.DbRepository
 import ru.nyxsed.postscan.data.repository.VkRepository
 import ru.nyxsed.postscan.domain.models.PostEntity
-import ru.nyxsed.postscan.presentation.screens.postsscreen.AuthState
+import ru.nyxsed.postscan.util.Constants.MANGA_SEARCH_ACTION
+import ru.nyxsed.postscan.util.Constants.VK_WALL_URL
 
 class PostsScreenViewModel(
     private val dbRepository: DbRepository,
@@ -44,8 +42,19 @@ class PostsScreenViewModel(
     fun changeLikeStatus(post: PostEntity) {
         viewModelScope.launch {
             vkRepository.changeLikeStatus(post)
-            val changedPost = post.copy( isLiked = !post.isLiked)
+            val changedPost = post.copy(isLiked = !post.isLiked)
             dbRepository.updatePost(changedPost)
+        }
+    }
+
+    fun openPostUri(uriHandler: UriHandler, post: PostEntity) {
+        uriHandler.openUri("${VK_WALL_URL}${post.ownerId}_${post.postId}")
+    }
+
+    fun mihonIntent(query: String): Intent {
+        return Intent().apply {
+            action = MANGA_SEARCH_ACTION
+            putExtra("query", query)
         }
     }
 }
