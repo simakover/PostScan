@@ -8,7 +8,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
@@ -18,7 +23,9 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.startActivity
 import com.composegears.tiamat.navController
 import com.composegears.tiamat.navDestination
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
+import ru.nyxsed.postscan.R
 import ru.nyxsed.postscan.SharedViewModel
 import ru.nyxsed.postscan.presentation.screens.groupsscreen.GroupsScreen
 import ru.nyxsed.postscan.presentation.screens.loginscreen.LoginScreen
@@ -34,6 +41,8 @@ val PostsScreen by navDestination<Unit> {
     val uriHandler = LocalUriHandler.current
     val context = LocalContext.current
     val clipboardManager = LocalClipboardManager.current
+    val snackbarHostState = SnackbarHostState()
+    val scope = rememberCoroutineScope()
 
     Scaffold(
         topBar = {
@@ -51,6 +60,9 @@ val PostsScreen by navDestination<Unit> {
                     }
                 }
             )
+        },
+        snackbarHost = {
+            SnackbarHost(snackbarHostState)
         }
     ) { paddings ->
         LazyColumn(
@@ -71,6 +83,17 @@ val PostsScreen by navDestination<Unit> {
                         post = it,
                         onPostDeleteClicked = {
                             postsScreenViewModel.deletePost(it)
+                            scope.launch {
+                                snackbarHostState.currentSnackbarData?.dismiss()
+                                val snackbarResult = snackbarHostState.showSnackbar(
+                                    message = context.getString(R.string.post_deleted),
+                                    actionLabel = context.getString(R.string.undo),
+                                    duration = SnackbarDuration.Short
+                                )
+                                if (snackbarResult == SnackbarResult.ActionPerformed) {
+                                    postsScreenViewModel.addPost(it)
+                                }
+                            }
                         },
                         onLikeClicked = {
                             postsScreenViewModel.changeLikeStatus(it)

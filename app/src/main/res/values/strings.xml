@@ -8,4 +8,7 @@
     <string name="search_for_group">Search for Group</string>
     <string name="group_name">Group Name</string>
     <string name="last_fetch_date">Last Fetch Date</string>
+    <string name="undo">UNDO</string>
+    <string name="post_deleted">Post deleted</string>
+    <string name="group_deleted">Group deleted</string>
 </resources>
