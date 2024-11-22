@@ -10,8 +10,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.startActivity
 import com.composegears.tiamat.navController
@@ -31,6 +33,7 @@ val PostsScreen by navDestination<Unit> {
     val navController = navController()
     val uriHandler = LocalUriHandler.current
     val context = LocalContext.current
+    val clipboardManager = LocalClipboardManager.current
 
     Scaffold(
         topBar = {
@@ -83,6 +86,11 @@ val PostsScreen by navDestination<Unit> {
                                 query = it.contentText
                             )
                             startActivity(context, intent, Bundle())
+                        },
+                        onTextLongClick = {
+                            clipboardManager.setText(
+                                annotatedString = AnnotatedString(it.contentText)
+                            )
                         }
                     )
                 }

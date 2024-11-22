@@ -1,7 +1,9 @@
 package ru.nyxsed.postscan.presentation.screens.postsscreen
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,6 +32,7 @@ import ru.nyxsed.postscan.domain.models.PostEntity
 import ru.nyxsed.postscan.presentation.ui.theme.likedHeart
 import ru.nyxsed.postscan.util.Constants.convertLongToTime
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PostCard(
     post: PostEntity,
@@ -37,6 +40,7 @@ fun PostCard(
     onLikeClicked: (PostEntity) -> Unit,
     onToVkClicked: (PostEntity) -> Unit,
     onToMihonClicked: (PostEntity) -> Unit,
+    onTextLongClick: (PostEntity) -> Unit,
 ) {
     Card {
         Column(
@@ -60,7 +64,13 @@ fun PostCard(
             )
             Text(
                 modifier = Modifier
-                    .padding(top = 8.dp),
+                    .padding(top = 8.dp)
+                    .combinedClickable(
+                        onClick = { },
+                        onLongClick = {
+                            onTextLongClick(post)
+                        }
+                    ),
                 text = post.contentText,
                 color = MaterialTheme.colorScheme.onSecondary,
             )
@@ -190,6 +200,7 @@ private fun PostCardPreview() {
         onLikeClicked = {},
         onPostDeleteClicked = {},
         onToVkClicked = {},
-        onToMihonClicked = {}
+        onToMihonClicked = {},
+        onTextLongClick = {}
     )
 }
