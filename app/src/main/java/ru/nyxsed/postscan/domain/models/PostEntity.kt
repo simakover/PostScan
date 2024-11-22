@@ -13,6 +13,6 @@ data class PostEntity(
     val ownerImageUrl: String,
     val publicationDate: Long,
     val contentText: String,
-    val contentImageUrl: String?,
+    val contentImageUrl: List<String>,
     val isLiked: Boolean,
 )

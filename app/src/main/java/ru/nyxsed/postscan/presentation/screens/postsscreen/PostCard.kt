@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -21,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -53,14 +55,57 @@ fun PostCard(
                 post = post,
                 onPostDeleteClicked = onPostDeleteClicked
             )
-            AsyncImage(
+            Box(
                 modifier = Modifier
                     .padding(top = 8.dp)
                     .fillMaxWidth(),
-                model = post.contentImageUrl,
-                contentDescription = null,
-                placeholder = painterResource(R.drawable.ic_placeholder),
-                contentScale = ContentScale.FillWidth
+            ) {
+                AsyncImage(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    model = post.contentImageUrl?.first(),
+                    contentDescription = null,
+                    placeholder = painterResource(R.drawable.ic_placeholder),
+                    contentScale = ContentScale.FillWidth
+                )
+                if (post.contentImageUrl.isNotEmpty()) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .padding(top = 8.dp, end = 8.dp)
+                                .clip(CircleShape)
+                                .size(25.dp)
+                                .background(MaterialTheme.colorScheme.secondary)
+                            ,contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                modifier = Modifier,
+                                text = post.contentImageUrl.size.toString(),
+                                color = Color.White,
+                                style = MaterialTheme.typography.titleMedium,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                    }
+
+                }
+            }
+            Text(
+                modifier = Modifier
+                    .padding(top = 8.dp)
+                    .combinedClickable(
+                        onClick = { },
+                        onLongClick = {
+                            onTextLongClick(post)
+                        }
+                    ),
+                text = post.contentText,
+                color = MaterialTheme.colorScheme.onSecondary,
             )
             Text(
                 modifier = Modifier
@@ -194,7 +239,7 @@ private fun PostCardPreview() {
             ownerImageUrl = "https://sun9-42.userapi.com/s/v1/ig2/UAtW1ENFT2UnP5QuCrfb_edhBCw3S94ZH0wCDwUOK5yzC6GBmfV7SVHBKS1Yw91aRrOsNJ5HksdcVIPySjiSpcVH.jpg?quality=95&crop=40,40,320,320&as=32x32,48x48,72x72,108x108,160x160,240x240&ava=1&cs=50x50",
             publicationDate = 1732096802000,
             contentText = "\uD83C\uDFB2 21.11 ЧЕТВЕРГ - Играем в настолки!    Откроем новинки издательства Фабрика Игр — «Омерта», «Пикси» и «Король под Горой». К вашим услугам наша гигантская коллекция настолок и лучший в мире гейм-мастер [id8395407|Дима]    ⏰ Начало в 18:00  \uD83D\uDCB0 Участие 250₽, которые мы возвращаем в виде купона достоинством 150₽",
-            contentImageUrl = "https://sun9-63.userapi.com/s/v1/ig2/gBz3YWv-488BFbwU9ave2R9KTss5Ady9YvespIa2kTEBjcKsX0Ngd8_--gZWl0Bnz0m6A2R8Sm7NaqmVXASkX5ov.jpg?quality=95&crop=6,0,934,525&as=32x18,48x27,72x40,108x61,160x90,240x135,360x202,480x270,540x304,640x360,720x405,934x525&from=bu&cs=240x135",
+            contentImageUrl = listOf(),
             isLiked = false
         ),
         onLikeClicked = {},
