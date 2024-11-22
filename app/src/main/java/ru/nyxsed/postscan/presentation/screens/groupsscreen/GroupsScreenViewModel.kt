@@ -8,8 +8,14 @@ import ru.nyxsed.postscan.domain.models.GroupEntity
 
 class GroupsScreenViewModel(
     private val dbRepository: DbRepository,
-): ViewModel() {
+) : ViewModel() {
     val groups = dbRepository.getAllGroups()
+
+    fun addGroup(group: GroupEntity) {
+        viewModelScope.launch {
+            dbRepository.addGroup(group)
+        }
+    }
 
     fun deleteGroup(group: GroupEntity) {
         viewModelScope.launch {

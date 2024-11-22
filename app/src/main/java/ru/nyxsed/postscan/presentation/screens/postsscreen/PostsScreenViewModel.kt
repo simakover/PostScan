@@ -33,6 +33,12 @@ class PostsScreenViewModel(
         }
     }
 
+    fun addPost(post: PostEntity) {
+        viewModelScope.launch {
+            dbRepository.addPost(post)
+        }
+    }
+
     fun deletePost(post: PostEntity) {
         viewModelScope.launch {
             dbRepository.deletePost(post)
