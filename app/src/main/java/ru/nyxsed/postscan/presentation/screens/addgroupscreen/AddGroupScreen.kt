@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
@@ -44,13 +45,11 @@ val AddGroupScreen by navDestination<GroupEntity> {
     val scope = CoroutineScope(Dispatchers.Default)
 
     var group by remember { mutableStateOf(GroupEntity()) }
-    var buttonLabel by remember { mutableStateOf("Добавить группу") }
-    var lastFetchDate by remember { mutableStateOf(convertLongToTime(System.currentTimeMillis()).replace(".","")) }
+    var lastFetchDate by remember { mutableStateOf(convertLongToTime(System.currentTimeMillis()).replace(".", "")) }
 
     LaunchedEffect(true) {
         groupArg?.let {
-            buttonLabel = "Редактировать группу"
-            lastFetchDate = convertLongToTime(it.lastFetchDate).replace(".","")
+            lastFetchDate = convertLongToTime(it.lastFetchDate).replace(".", "")
             group = it
         }
     }
@@ -79,7 +78,7 @@ val AddGroupScreen by navDestination<GroupEntity> {
                 group = group.copy(screenName = it)
             },
             label = {
-                Text("Имя или id группы")
+                Text(stringResource(R.string.group_name_or_id))
             }
         )
         Button(
@@ -92,7 +91,7 @@ val AddGroupScreen by navDestination<GroupEntity> {
                 }
             }
         ) {
-            Text("Искать группу")
+            Text(stringResource(R.string.search_for_group))
         }
         TextField(
             modifier = Modifier
@@ -103,7 +102,7 @@ val AddGroupScreen by navDestination<GroupEntity> {
                 group = group.copy(name = it)
             },
             label = {
-                Text("Имя группы")
+                Text(stringResource(R.string.group_name))
             }
         )
         TextField(
@@ -119,7 +118,7 @@ val AddGroupScreen by navDestination<GroupEntity> {
             visualTransformation = MaskVisualTransformation(DATE_MASK),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             label = {
-                Text("Дата последнего сканирования")
+                Text(stringResource(R.string.last_fetch_date))
             }
         )
         Button(
@@ -131,7 +130,7 @@ val AddGroupScreen by navDestination<GroupEntity> {
                 navController.back()
             }
         ) {
-            Text(buttonLabel)
+            Text(text = if (groupArg == null) stringResource(R.string.add_group) else stringResource(R.string.update_group))
         }
     }
 }
