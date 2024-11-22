@@ -2,4 +2,10 @@
     <string name="app_name">PostScan</string>
     <integer name="com_vk_sdk_AppId">7867126</integer>
     <string name="LogIn">Войти</string>
+    <string name="add_group">Add Group</string>
+    <string name="update_group">Update Group</string>
+    <string name="group_name_or_id">Group Name or Id</string>
+    <string name="search_for_group">Search for Group</string>
+    <string name="group_name">Group Name</string>
+    <string name="last_fetch_date">Last Fetch Date</string>
 </resources>

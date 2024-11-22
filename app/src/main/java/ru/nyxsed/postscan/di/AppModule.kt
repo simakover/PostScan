@@ -8,9 +8,9 @@ import org.koin.dsl.module
 import ru.nyxsed.postscan.SharedViewModel
 import ru.nyxsed.postscan.data.repository.DbRepository
 import ru.nyxsed.postscan.data.repository.VkRepository
-import ru.nyxsed.postscan.presentation.PostsScreenViewModel
 import ru.nyxsed.postscan.presentation.screens.addgroupscreen.AddGroupScreenViewModel
 import ru.nyxsed.postscan.presentation.screens.groupsscreen.GroupsScreenViewModel
+import ru.nyxsed.postscan.presentation.screens.postsscreen.PostsScreenViewModel
 
 val appModule = module {
     // repositories
