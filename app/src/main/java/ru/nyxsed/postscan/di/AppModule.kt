@@ -10,6 +10,7 @@ import ru.nyxsed.postscan.data.repository.DbRepository
 import ru.nyxsed.postscan.data.repository.VkRepository
 import ru.nyxsed.postscan.presentation.screens.addgroupscreen.AddGroupScreenViewModel
 import ru.nyxsed.postscan.presentation.screens.groupsscreen.GroupsScreenViewModel
+import ru.nyxsed.postscan.presentation.screens.imagepagerscreen.ImagePagerViewModel
 import ru.nyxsed.postscan.presentation.screens.postsscreen.PostsScreenViewModel
 
 val appModule = module {
@@ -57,6 +58,12 @@ val appModule = module {
     viewModel<AddGroupScreenViewModel> {
         AddGroupScreenViewModel(
             dbRepository = get(),
+            vkRepository = get()
+        )
+    }
+
+    viewModel<ImagePagerViewModel> {
+        ImagePagerViewModel(
             vkRepository = get()
         )
     }
