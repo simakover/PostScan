@@ -11,9 +11,15 @@ object Constants {
     const val VK_BASE_URL = "https://api.vk.com/method/"
     const val VK_WALL_URL = "https://vk.com/wall"
     const val VK_PHOTO_URL = "https://vk.com/photo"
+
     const val MANGA_SEARCH_ACTION = "eu.kanade.tachiyomi.SEARCH"
+
     const val DATE_MASK = "##.##.####"
     const val DATE_LENGTH = 8 // Equals to "##.##.####".count { it == '#' }
+
+    const val PROGRESS_CHANNEL_ID = "progress_channel"
+    const val PROGRESS_CHANNEL_NAME = "Progress Notifications"
+    const val PROGRESS_NOTIFICATION_ID = 1
 
     fun convertLongToTime(time: Long): String {
         val date = Date(time)

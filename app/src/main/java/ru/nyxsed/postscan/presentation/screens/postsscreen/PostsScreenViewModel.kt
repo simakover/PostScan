@@ -25,7 +25,7 @@ class PostsScreenViewModel(
     fun loadPosts(context: Context) {
         viewModelScope.launch {
             initNotification(context)
-            groups.value.forEachIndexed {index, group ->
+            groups.value.forEachIndexed { index, group ->
                 val posts = vkRepository.getPostsForGroup(group)
                 val updatedGroup = group.copy(
                     lastFetchDate = (System.currentTimeMillis())
@@ -34,7 +34,7 @@ class PostsScreenViewModel(
                 posts.forEach { post ->
                     dbRepository.addPost(post)
                 }
-                val percentage = ( index + 1) * 100 / groups.value.size
+                val percentage = (index + 1) * 100 / groups.value.size
                 updateProgress(context, percentage)
             }
             completeNotification(context)
