@@ -28,6 +28,8 @@ import org.koin.androidx.compose.koinViewModel
 import ru.nyxsed.postscan.R
 import ru.nyxsed.postscan.SharedViewModel
 import ru.nyxsed.postscan.presentation.screens.groupsscreen.GroupsScreen
+import ru.nyxsed.postscan.presentation.screens.imagepagerscreen.ImagePagerArgs
+import ru.nyxsed.postscan.presentation.screens.imagepagerscreen.ImagePagerScreen
 import ru.nyxsed.postscan.presentation.screens.loginscreen.LoginScreen
 
 val PostsScreen by navDestination<Unit> {
@@ -114,6 +116,10 @@ val PostsScreen by navDestination<Unit> {
                             clipboardManager.setText(
                                 annotatedString = AnnotatedString(it.contentText)
                             )
+                        },
+                        onImageClicked = { post, index ->
+                            val imagePagerArgs = ImagePagerArgs(post,index)
+                            navController.navigate(ImagePagerScreen, imagePagerArgs)
                         }
                     )
                 }
