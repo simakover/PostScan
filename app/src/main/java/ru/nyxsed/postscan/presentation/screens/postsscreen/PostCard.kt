@@ -23,7 +23,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -60,15 +59,10 @@ fun PostCard(
                     .padding(top = 8.dp)
                     .fillMaxWidth(),
             ) {
-                AsyncImage(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    model = post.contentImageUrl?.first(),
-                    contentDescription = null,
-                    placeholder = painterResource(R.drawable.ic_placeholder),
-                    contentScale = ContentScale.FillWidth
+                PostMultipleImages(
+                    images = post.contentImageUrl
                 )
-                if (post.contentImageUrl.isNotEmpty()) {
+                if (post.contentImageUrl.size > 9) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth(),
@@ -79,8 +73,8 @@ fun PostCard(
                                 .padding(top = 8.dp, end = 8.dp)
                                 .clip(CircleShape)
                                 .size(25.dp)
-                                .background(MaterialTheme.colorScheme.secondary)
-                            ,contentAlignment = Alignment.Center
+                                .background(MaterialTheme.colorScheme.secondary),
+                            contentAlignment = Alignment.Center
                         ) {
                             Text(
                                 modifier = Modifier,
@@ -95,30 +89,20 @@ fun PostCard(
 
                 }
             }
-            Text(
-                modifier = Modifier
-                    .padding(top = 8.dp)
-                    .combinedClickable(
-                        onClick = { },
-                        onLongClick = {
-                            onTextLongClick(post)
-                        }
-                    ),
-                text = post.contentText,
-                color = MaterialTheme.colorScheme.onSecondary,
-            )
-            Text(
-                modifier = Modifier
-                    .padding(top = 8.dp)
-                    .combinedClickable(
-                        onClick = { },
-                        onLongClick = {
-                            onTextLongClick(post)
-                        }
-                    ),
-                text = post.contentText,
-                color = MaterialTheme.colorScheme.onSecondary,
-            )
+            if (post.contentText.isNotEmpty()) {
+                Text(
+                    modifier = Modifier
+                        .padding(top = 8.dp)
+                        .combinedClickable(
+                            onClick = { },
+                            onLongClick = {
+                                onTextLongClick(post)
+                            }
+                        ),
+                    text = post.contentText,
+                    color = MaterialTheme.colorScheme.onSecondary,
+                )
+            }
             Row(
                 modifier = Modifier
                     .fillMaxWidth()

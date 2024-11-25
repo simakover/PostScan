@@ -19,7 +19,7 @@ class VkMapper {
 
 
                 val images = post.attachments?.map { attachment ->
-                    attachment.photo.sizes.find { it.type == "p" }?.url ?: ""
+                    attachment.photo?.sizes?.find { it.type == "p" }?.url ?: ""
                 } ?: emptyList()
 
                 val postEnt = PostEntity(
