@@ -14,5 +14,6 @@ data class PostEntity(
     val publicationDate: Long,
     val contentText: String,
     val contentImageUrl: List<String>,
+    val contentVideoUrl: List<String>,
     val isLiked: Boolean,
 )

@@ -22,7 +22,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -60,7 +59,8 @@ fun PostCard(
                     .fillMaxWidth(),
             ) {
                 PostMultipleImages(
-                    images = post.contentImageUrl
+                    images = post.contentImageUrl,
+                    videos = post.contentVideoUrl,
                 )
                 if (post.contentImageUrl.size > 9) {
                     Row(
@@ -79,7 +79,7 @@ fun PostCard(
                             Text(
                                 modifier = Modifier,
                                 text = post.contentImageUrl.size.toString(),
-                                color = Color.White,
+                                color = MaterialTheme.colorScheme.onSecondary,
                                 style = MaterialTheme.typography.titleMedium,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis
@@ -224,7 +224,8 @@ private fun PostCardPreview() {
             publicationDate = 1732096802000,
             contentText = "\uD83C\uDFB2 21.11 ЧЕТВЕРГ - Играем в настолки!    Откроем новинки издательства Фабрика Игр — «Омерта», «Пикси» и «Король под Горой». К вашим услугам наша гигантская коллекция настолок и лучший в мире гейм-мастер [id8395407|Дима]    ⏰ Начало в 18:00  \uD83D\uDCB0 Участие 250₽, которые мы возвращаем в виде купона достоинством 150₽",
             contentImageUrl = listOf(),
-            isLiked = false
+            isLiked = false,
+            contentVideoUrl = listOf()
         ),
         onLikeClicked = {},
         onPostDeleteClicked = {},
