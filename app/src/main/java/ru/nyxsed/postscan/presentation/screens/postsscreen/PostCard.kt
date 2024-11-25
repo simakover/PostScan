@@ -41,6 +41,7 @@ fun PostCard(
     onToVkClicked: (PostEntity) -> Unit,
     onToMihonClicked: (PostEntity) -> Unit,
     onTextLongClick: (PostEntity) -> Unit,
+    onImageClicked: (PostEntity, Int) -> Unit,
 ) {
     Card {
         Column(
@@ -61,6 +62,9 @@ fun PostCard(
                 PostMultipleImages(
                     images = post.contentImageUrl,
                     videos = post.contentVideoUrl,
+                    onImageClicked = {
+                        onImageClicked(post, it)
+                    }
                 )
                 if (post.contentImageUrl.size > 9) {
                     Row(
@@ -231,6 +235,7 @@ private fun PostCardPreview() {
         onPostDeleteClicked = {},
         onToVkClicked = {},
         onToMihonClicked = {},
-        onTextLongClick = {}
+        onTextLongClick = {},
+        onImageClicked = {_,_ ->}
     )
 }

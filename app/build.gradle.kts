@@ -82,4 +82,7 @@ dependencies {
     // vk api
     implementation("com.vk:android-sdk-core:4.1.0")
     implementation("com.vk:android-sdk-api:4.1.0")
+
+    // pager
+    implementation("androidx.compose.foundation:foundation:1.7.5")
 }
