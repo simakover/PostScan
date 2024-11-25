@@ -14,12 +14,12 @@ import ru.nyxsed.postscan.domain.models.PostEntity
 
 val ImagePagerScreen by navDestination<ImagePagerArgs> {
     val imagePagerArgs = navArgs()
-    val urls = imagePagerArgs.post.contentImageUrl
+    val content = imagePagerArgs.post.content
     val index = imagePagerArgs.index
 
     val pagerState = rememberPagerState(
         initialPage = index,
-        pageCount = { urls.size }
+        pageCount = { content.size }
     )
     HorizontalPager(
         modifier = Modifier
@@ -29,7 +29,7 @@ val ImagePagerScreen by navDestination<ImagePagerArgs> {
         AsyncImage(
             modifier = Modifier
                 .fillMaxSize(),
-            model = urls[index],
+            model = content[index].urlBig,
             contentDescription = null,
             placeholder = painterResource(R.drawable.ic_placeholder),
             contentScale = ContentScale.Fit
