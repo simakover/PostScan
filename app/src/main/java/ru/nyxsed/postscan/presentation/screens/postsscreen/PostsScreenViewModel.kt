@@ -1,5 +1,6 @@
 package ru.nyxsed.postscan.presentation.screens.postsscreen
 
+import android.content.Context
 import android.content.Intent
 import androidx.compose.ui.platform.UriHandler
 import androidx.lifecycle.ViewModel
@@ -10,6 +11,9 @@ import ru.nyxsed.postscan.data.repository.VkRepository
 import ru.nyxsed.postscan.domain.models.PostEntity
 import ru.nyxsed.postscan.util.Constants.MANGA_SEARCH_ACTION
 import ru.nyxsed.postscan.util.Constants.VK_WALL_URL
+import ru.nyxsed.postscan.util.NotificationHelper.completeNotification
+import ru.nyxsed.postscan.util.NotificationHelper.initNotification
+import ru.nyxsed.postscan.util.NotificationHelper.updateProgress
 
 class PostsScreenViewModel(
     private val dbRepository: DbRepository,
@@ -18,9 +22,10 @@ class PostsScreenViewModel(
     val posts = dbRepository.getAllPosts()
     val groups = dbRepository.getAllGroups()
 
-    fun loadPosts() {
+    fun loadPosts(context: Context) {
         viewModelScope.launch {
-            groups.value.forEach { group ->
+            initNotification(context)
+            groups.value.forEachIndexed {index, group ->
                 val posts = vkRepository.getPostsForGroup(group)
                 val updatedGroup = group.copy(
                     lastFetchDate = (System.currentTimeMillis())
@@ -29,7 +34,10 @@ class PostsScreenViewModel(
                 posts.forEach { post ->
                     dbRepository.addPost(post)
                 }
+                val percentage = ( index + 1) * 100 / groups.value.size
+                updateProgress(context, percentage)
             }
+            completeNotification(context)
         }
     }
 

@@ -58,7 +58,7 @@ val PostsScreen by navDestination<Unit> {
                         return@PostsScreenBar
                     }
                     when (authState.value) {
-                        AuthState.Authorized -> postsScreenViewModel.loadPosts()
+                        AuthState.Authorized -> postsScreenViewModel.loadPosts(context)
                         AuthState.NotAuthorized -> navController.navigate(LoginScreen)
                     }
                 },
