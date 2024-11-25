@@ -5,9 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -28,34 +26,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import ru.nyxsed.postscan.R
+import ru.nyxsed.postscan.domain.models.ContentEntity
+import ru.nyxsed.postscan.domain.models.PostEntity
 
 @Composable
 fun PostMultipleImages(
-    images: List<String>,
-    videos: List<String>,
+    post: PostEntity,
     onImageClicked: (Int) -> Unit,
 ) {
-    val contentImages: MutableList<ContentImage> = mutableListOf()
 
-    images.forEach {
-        contentImages.add(
-            ContentImage(
-                type = "photo",
-                url = it
-            )
-        )
-    }
-
-    videos.forEach {
-        contentImages.add(
-            ContentImage(
-                type = "video",
-                url = it
-            )
-        )
-    }
-
-    when (contentImages.size) {
+    when (post.content.size) {
         0 -> {
             return
         }
@@ -67,8 +47,8 @@ fun PostMultipleImages(
                     .height(300.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                ImageItem(contentImages = contentImages, index = 0, onImageClicked = onImageClicked)
-                ImageItem(contentImages = contentImages, index = 1, onImageClicked = onImageClicked)
+                ImageItem(modifier = Modifier.weight(1f), content = post.content[0], onImageClicked = { onImageClicked(0) })
+                ImageItem(modifier = Modifier.weight(1f), content = post.content[1], onImageClicked = { onImageClicked(1) })
             }
         }
 
@@ -79,14 +59,14 @@ fun PostMultipleImages(
                     .height(300.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                ImageItem(contentImages = contentImages, index = 0, onImageClicked = onImageClicked)
+                ImageItem(modifier = Modifier.weight(1f), content = post.content[0], onImageClicked = { onImageClicked(0) })
                 Column(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxSize()
                 ) {
-                    ImageItem(contentImages = contentImages, index = 1, onImageClicked = onImageClicked)
-                    ImageItem(contentImages = contentImages, index = 2, onImageClicked = onImageClicked)
+                    ImageItem(modifier = Modifier.weight(1f), content = post.content[1], onImageClicked = { onImageClicked(1) })
+                    ImageItem(modifier = Modifier.weight(1f), content = post.content[2], onImageClicked = { onImageClicked(2) })
                 }
             }
         }
@@ -103,16 +83,16 @@ fun PostMultipleImages(
                         .weight(1f)
                         .fillMaxSize()
                 ) {
-                    ImageItem(contentImages = contentImages, index = 0, onImageClicked = onImageClicked)
-                    ImageItem(contentImages = contentImages, index = 1, onImageClicked = onImageClicked)
+                    ImageItem(modifier = Modifier.weight(1f), content = post.content[0], onImageClicked = { onImageClicked(0) })
+                    ImageItem(modifier = Modifier.weight(1f), content = post.content[1], onImageClicked = { onImageClicked(1) })
                 }
                 Column(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxSize()
                 ) {
-                    ImageItem(contentImages = contentImages, index = 2, onImageClicked = onImageClicked)
-                    ImageItem(contentImages = contentImages, index = 3, onImageClicked = onImageClicked)
+                    ImageItem(modifier = Modifier.weight(1f), content = post.content[2], onImageClicked = { onImageClicked(2) })
+                    ImageItem(modifier = Modifier.weight(1f), content = post.content[3], onImageClicked = { onImageClicked(3) })
                 }
             }
         }
@@ -129,17 +109,17 @@ fun PostMultipleImages(
                         .weight(1f)
                         .fillMaxSize()
                 ) {
-                    ImageItem(contentImages = contentImages, index = 0, onImageClicked = onImageClicked)
-                    ImageItem(contentImages = contentImages, index = 1, onImageClicked = onImageClicked)
-                    ImageItem(contentImages = contentImages, index = 2, onImageClicked = onImageClicked)
+                    ImageItem(modifier = Modifier.weight(1f), content = post.content[0], onImageClicked = { onImageClicked(0) })
+                    ImageItem(modifier = Modifier.weight(1f), content = post.content[1], onImageClicked = { onImageClicked(1) })
+                    ImageItem(modifier = Modifier.weight(1f), content = post.content[2], onImageClicked = { onImageClicked(2) })
                 }
                 Column(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxSize()
                 ) {
-                    ImageItem(contentImages = contentImages, index = 3, onImageClicked = onImageClicked)
-                    ImageItem(contentImages = contentImages, index = 4, onImageClicked = onImageClicked)
+                    ImageItem(modifier = Modifier.weight(1f), content = post.content[3], onImageClicked = { onImageClicked(3) })
+                    ImageItem(modifier = Modifier.weight(1f), content = post.content[4], onImageClicked = { onImageClicked(4) })
                 }
             }
         }
@@ -156,18 +136,18 @@ fun PostMultipleImages(
                         .weight(1f)
                         .fillMaxSize()
                 ) {
-                    ImageItem(contentImages = contentImages, index = 0, onImageClicked = onImageClicked)
-                    ImageItem(contentImages = contentImages, index = 1, onImageClicked = onImageClicked)
-                    ImageItem(contentImages = contentImages, index = 2, onImageClicked = onImageClicked)
+                    ImageItem(modifier = Modifier.weight(1f), content = post.content[0], onImageClicked = { onImageClicked(0) })
+                    ImageItem(modifier = Modifier.weight(1f), content = post.content[1], onImageClicked = { onImageClicked(1) })
+                    ImageItem(modifier = Modifier.weight(1f), content = post.content[2], onImageClicked = { onImageClicked(2) })
                 }
                 Row(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxSize()
                 ) {
-                    ImageItem(contentImages = contentImages, index = 3, onImageClicked = onImageClicked)
-                    ImageItem(contentImages = contentImages, index = 4, onImageClicked = onImageClicked)
-                    ImageItem(contentImages = contentImages, index = 5, onImageClicked = onImageClicked)
+                    ImageItem(modifier = Modifier.weight(1f), content = post.content[3], onImageClicked = { onImageClicked(3) })
+                    ImageItem(modifier = Modifier.weight(1f), content = post.content[4], onImageClicked = { onImageClicked(4) })
+                    ImageItem(modifier = Modifier.weight(1f), content = post.content[5], onImageClicked = { onImageClicked(5) })
                 }
             }
         }
@@ -184,25 +164,25 @@ fun PostMultipleImages(
                         .weight(1f)
                         .fillMaxSize()
                 ) {
-                    ImageItem(contentImages = contentImages, index = 0, onImageClicked = onImageClicked)
-                    ImageItem(contentImages = contentImages, index = 1, onImageClicked = onImageClicked)
-                    ImageItem(contentImages = contentImages, index = 2, onImageClicked = onImageClicked)
+                    ImageItem(modifier = Modifier.weight(1f), content = post.content[0], onImageClicked = { onImageClicked(0) })
+                    ImageItem(modifier = Modifier.weight(1f), content = post.content[1], onImageClicked = { onImageClicked(1) })
+                    ImageItem(modifier = Modifier.weight(1f), content = post.content[2], onImageClicked = { onImageClicked(2) })
                 }
                 Row(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxSize()
                 ) {
-                    ImageItem(contentImages = contentImages, index = 3, onImageClicked = onImageClicked)
-                    ImageItem(contentImages = contentImages, index = 4, onImageClicked = onImageClicked)
-                    ImageItem(contentImages = contentImages, index = 5, onImageClicked = onImageClicked)
+                    ImageItem(modifier = Modifier.weight(1f), content = post.content[3], onImageClicked = { onImageClicked(3) })
+                    ImageItem(modifier = Modifier.weight(1f), content = post.content[4], onImageClicked = { onImageClicked(4) })
+                    ImageItem(modifier = Modifier.weight(1f), content = post.content[5], onImageClicked = { onImageClicked(5) })
                 }
                 Row(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxSize()
                 ) {
-                    ImageItem(contentImages = contentImages, index = 6, onImageClicked = onImageClicked)
+                    ImageItem(modifier = Modifier.weight(1f), content = post.content[6], onImageClicked = { onImageClicked(6) })
                 }
             }
         }
@@ -219,26 +199,26 @@ fun PostMultipleImages(
                         .weight(1f)
                         .fillMaxSize()
                 ) {
-                    ImageItem(contentImages = contentImages, index = 0, onImageClicked = onImageClicked)
-                    ImageItem(contentImages = contentImages, index = 1, onImageClicked = onImageClicked)
-                    ImageItem(contentImages = contentImages, index = 2, onImageClicked = onImageClicked)
+                    ImageItem(modifier = Modifier.weight(1f), content = post.content[0], onImageClicked = { onImageClicked(0) })
+                    ImageItem(modifier = Modifier.weight(1f), content = post.content[1], onImageClicked = { onImageClicked(1) })
+                    ImageItem(modifier = Modifier.weight(1f), content = post.content[2], onImageClicked = { onImageClicked(2) })
                 }
                 Row(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxSize()
                 ) {
-                    ImageItem(contentImages = contentImages, index = 3, onImageClicked = onImageClicked)
-                    ImageItem(contentImages = contentImages, index = 4, onImageClicked = onImageClicked)
-                    ImageItem(contentImages = contentImages, index = 5, onImageClicked = onImageClicked)
+                    ImageItem(modifier = Modifier.weight(1f), content = post.content[3], onImageClicked = { onImageClicked(3) })
+                    ImageItem(modifier = Modifier.weight(1f), content = post.content[4], onImageClicked = { onImageClicked(4) })
+                    ImageItem(modifier = Modifier.weight(1f), content = post.content[5], onImageClicked = { onImageClicked(5) })
                 }
                 Row(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxSize()
                 ) {
-                    ImageItem(contentImages = contentImages, index = 6, onImageClicked = onImageClicked)
-                    ImageItem(contentImages = contentImages, index = 7, onImageClicked = onImageClicked)
+                    ImageItem(modifier = Modifier.weight(1f), content = post.content[6], onImageClicked = { onImageClicked(6) })
+                    ImageItem(modifier = Modifier.weight(1f), content = post.content[7], onImageClicked = { onImageClicked(6) })
                 }
             }
         }
@@ -255,27 +235,27 @@ fun PostMultipleImages(
                         .weight(1f)
                         .fillMaxSize()
                 ) {
-                    ImageItem(contentImages = contentImages, index = 0, onImageClicked = onImageClicked)
-                    ImageItem(contentImages = contentImages, index = 1, onImageClicked = onImageClicked)
-                    ImageItem(contentImages = contentImages, index = 2, onImageClicked = onImageClicked)
+                    ImageItem(modifier = Modifier.weight(1f), content = post.content[0], onImageClicked = { onImageClicked(0) })
+                    ImageItem(modifier = Modifier.weight(1f), content = post.content[1], onImageClicked = { onImageClicked(1) })
+                    ImageItem(modifier = Modifier.weight(1f), content = post.content[2], onImageClicked = { onImageClicked(2) })
                 }
                 Row(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxSize()
                 ) {
-                    ImageItem(contentImages = contentImages, index = 3, onImageClicked = onImageClicked)
-                    ImageItem(contentImages = contentImages, index = 4, onImageClicked = onImageClicked)
-                    ImageItem(contentImages = contentImages, index = 5, onImageClicked = onImageClicked)
+                    ImageItem(modifier = Modifier.weight(1f), content = post.content[3], onImageClicked = { onImageClicked(3) })
+                    ImageItem(modifier = Modifier.weight(1f), content = post.content[4], onImageClicked = { onImageClicked(4) })
+                    ImageItem(modifier = Modifier.weight(1f), content = post.content[5], onImageClicked = { onImageClicked(5) })
                 }
                 Row(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxSize()
                 ) {
-                    ImageItem(contentImages = contentImages, index = 6, onImageClicked = onImageClicked)
-                    ImageItem(contentImages = contentImages, index = 7, onImageClicked = onImageClicked)
-                    ImageItem(contentImages = contentImages, index = 8, onImageClicked = onImageClicked)
+                    ImageItem(modifier = Modifier.weight(1f), content = post.content[6], onImageClicked = { onImageClicked(6) })
+                    ImageItem(modifier = Modifier.weight(1f), content = post.content[7], onImageClicked = { onImageClicked(6) })
+                    ImageItem(modifier = Modifier.weight(1f), content = post.content[8], onImageClicked = { onImageClicked(8) })
                 }
             }
         }
@@ -292,35 +272,35 @@ fun PostMultipleImages(
                         .weight(1f)
                         .fillMaxSize()
                 ) {
-                    ImageItem(contentImages = contentImages, index = 0, onImageClicked = onImageClicked)
-                    ImageItem(contentImages = contentImages, index = 1, onImageClicked = onImageClicked)
-                    ImageItem(contentImages = contentImages, index = 2, onImageClicked = onImageClicked)
+                    ImageItem(modifier = Modifier.weight(1f), content = post.content[0], onImageClicked = { onImageClicked(0) })
+                    ImageItem(modifier = Modifier.weight(1f), content = post.content[1], onImageClicked = { onImageClicked(1) })
+                    ImageItem(modifier = Modifier.weight(1f), content = post.content[2], onImageClicked = { onImageClicked(2) })
                 }
                 Row(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxSize()
                 ) {
-                    ImageItem(contentImages = contentImages, index = 3, onImageClicked = onImageClicked)
-                    ImageItem(contentImages = contentImages, index = 4, onImageClicked = onImageClicked)
-                    ImageItem(contentImages = contentImages, index = 5, onImageClicked = onImageClicked)
+                    ImageItem(modifier = Modifier.weight(1f), content = post.content[3], onImageClicked = { onImageClicked(3) })
+                    ImageItem(modifier = Modifier.weight(1f), content = post.content[4], onImageClicked = { onImageClicked(4) })
+                    ImageItem(modifier = Modifier.weight(1f), content = post.content[5], onImageClicked = { onImageClicked(5) })
                 }
                 Row(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxSize()
                 ) {
-                    ImageItem(contentImages = contentImages, index = 6, onImageClicked = onImageClicked)
-                    ImageItem(contentImages = contentImages, index = 7, onImageClicked = onImageClicked)
-                    ImageItem(contentImages = contentImages, index = 8, onImageClicked = onImageClicked)
-                    ImageItem(contentImages = contentImages, index = 9, onImageClicked = onImageClicked)
+                    ImageItem(modifier = Modifier.weight(1f), content = post.content[6], onImageClicked = { onImageClicked(6) })
+                    ImageItem(modifier = Modifier.weight(1f), content = post.content[7], onImageClicked = { onImageClicked(6) })
+                    ImageItem(modifier = Modifier.weight(1f), content = post.content[8], onImageClicked = { onImageClicked(8) })
+                    ImageItem(modifier = Modifier.weight(1f), content = post.content[9], onImageClicked = { onImageClicked(9) })
                 }
             }
         }
 
         else -> {
             Row {
-                ImageItem(contentImages = contentImages, index = 0, onImageClicked = onImageClicked)
+                ImageItem(modifier = Modifier.weight(1f), content = post.content[0], onImageClicked = { onImageClicked(0) })
             }
 
         }
@@ -328,30 +308,29 @@ fun PostMultipleImages(
 }
 
 @Composable
-fun RowScope.ImageItem(
-    contentImages: List<ContentImage>,
-    index: Int,
-    onImageClicked: (Int) -> Unit,
+fun ImageItem(
+    modifier: Modifier,
+    content: ContentEntity,
+    onImageClicked: () -> Unit,
 ) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
-            .weight(1f)
             .padding(1.dp)
             .clickable(onClick = {
-                onImageClicked(index)
+                onImageClicked()
             }),
         contentAlignment = Alignment.Center
     ) {
         AsyncImage(
             modifier = Modifier
                 .fillMaxSize(),
-            model = contentImages[index].url,
+            model = content.urlMedium,
             contentDescription = null,
             placeholder = painterResource(R.drawable.ic_placeholder),
             contentScale = ContentScale.Crop
         )
-        if (contentImages[index].type == "video") {
+        if (content.type == "video") {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -377,59 +356,3 @@ fun RowScope.ImageItem(
         }
     }
 }
-
-@Composable
-fun ColumnScope.ImageItem(
-    contentImages: List<ContentImage>,
-    index: Int,
-    onImageClicked: (Int) -> Unit,
-) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .weight(1f)
-            .padding(1.dp)
-            .clickable(onClick = {
-                onImageClicked(index)
-            }),
-        contentAlignment = Alignment.Center
-    ) {
-        AsyncImage(
-            modifier = Modifier
-                .fillMaxSize(),
-            model = contentImages[index].url,
-            contentDescription = null,
-            placeholder = painterResource(R.drawable.ic_placeholder),
-            contentScale = ContentScale.Crop
-        )
-        if (contentImages[index].type == "video") {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .alpha(0.5f),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Box(
-                    modifier = Modifier
-                        .clip(CircleShape)
-                        .size(150.dp)
-                        .background(MaterialTheme.colorScheme.secondary),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        imageVector = Icons.Filled.PlayArrow,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSecondary
-                    )
-                }
-            }
-        }
-    }
-}
-
-data class ContentImage(
-    val type: String,
-    val url: String,
-)
