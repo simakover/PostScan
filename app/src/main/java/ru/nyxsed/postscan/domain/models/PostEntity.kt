@@ -14,5 +14,5 @@ data class PostEntity(
     val publicationDate: Long,
     val contentText: String,
     val content: List<ContentEntity>,
-    val isLiked: Boolean,
+    var isLiked: Boolean,
 )

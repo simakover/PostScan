@@ -5,6 +5,7 @@ import com.vk.api.sdk.auth.VKAccessToken
 import kotlinx.coroutines.delay
 import ru.nyxsed.postscan.data.mapper.VkMapper
 import ru.nyxsed.postscan.data.network.ApiService
+import ru.nyxsed.postscan.domain.models.ContentEntity
 import ru.nyxsed.postscan.domain.models.GroupEntity
 import ru.nyxsed.postscan.domain.models.PostEntity
 
@@ -40,9 +41,8 @@ class VkRepository(
             }
 
             startFrom = response.content?.nextFrom
-            delay(500)
+            delay(350)
         }
-
         return posts.toList()
     }
 
@@ -60,14 +60,44 @@ class VkRepository(
             apiService.addLike(
                 token = getAccessToken(),
                 ownerId = post.ownerId,
-                postId = post.postId
+                itemId = post.postId,
+                type = "post"
             )
         } else {
             apiService.deleteLike(
                 token = getAccessToken(),
                 ownerId = post.ownerId,
-                postId = post.postId
+                itemId = post.postId,
+                type = "post"
             )
         }
+    }
+
+    suspend fun changeLikeStatus(contentEntity: ContentEntity) {
+        if (!contentEntity.isLiked) {
+            apiService.addLike(
+                token = getAccessToken(),
+                ownerId = contentEntity.ownerId,
+                itemId = contentEntity.contentId,
+                type = contentEntity.type
+            )
+        } else {
+            apiService.deleteLike(
+                token = getAccessToken(),
+                ownerId = contentEntity.ownerId,
+                itemId = contentEntity.contentId,
+                type = contentEntity.type
+            )
+        }
+    }
+
+    suspend fun checkLikeStatus(contentEntity: ContentEntity) : Boolean {
+        val response = apiService.isLiked(
+            token = getAccessToken(),
+            ownerId = contentEntity.ownerId,
+            itemId = contentEntity.contentId,
+            type = contentEntity.type
+        )
+        return response.response.liked == 1
     }
 }
