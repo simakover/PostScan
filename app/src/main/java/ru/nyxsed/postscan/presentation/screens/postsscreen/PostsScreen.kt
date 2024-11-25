@@ -1,6 +1,7 @@
 package ru.nyxsed.postscan.presentation.screens.postsscreen
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -31,6 +32,7 @@ import ru.nyxsed.postscan.presentation.screens.groupsscreen.GroupsScreen
 import ru.nyxsed.postscan.presentation.screens.imagepagerscreen.ImagePagerArgs
 import ru.nyxsed.postscan.presentation.screens.imagepagerscreen.ImagePagerScreen
 import ru.nyxsed.postscan.presentation.screens.loginscreen.LoginScreen
+import ru.nyxsed.postscan.util.Constants.isInternetAvailable
 
 val PostsScreen by navDestination<Unit> {
     val postsScreenViewModel = koinViewModel<PostsScreenViewModel>()
@@ -50,6 +52,11 @@ val PostsScreen by navDestination<Unit> {
         topBar = {
             PostsScreenBar(
                 onRefreshClicked = {
+                    if (!isInternetAvailable(context)) {
+                        Toast.makeText(context, context.getString(R.string.no_internet_connection), Toast.LENGTH_SHORT)
+                            .show()
+                        return@PostsScreenBar
+                    }
                     when (authState.value) {
                         AuthState.Authorized -> postsScreenViewModel.loadPosts()
                         AuthState.NotAuthorized -> navController.navigate(LoginScreen)
@@ -118,7 +125,7 @@ val PostsScreen by navDestination<Unit> {
                             )
                         },
                         onImageClicked = { post, index ->
-                            val imagePagerArgs = ImagePagerArgs(post,index)
+                            val imagePagerArgs = ImagePagerArgs(post, index)
                             navController.navigate(ImagePagerScreen, imagePagerArgs)
                         }
                     )

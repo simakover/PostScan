@@ -1,5 +1,6 @@
 package ru.nyxsed.postscan.presentation.screens.loginscreen
 
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -13,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -24,9 +26,11 @@ import org.koin.androidx.compose.koinViewModel
 import ru.nyxsed.postscan.R
 import ru.nyxsed.postscan.SharedViewModel
 import ru.nyxsed.postscan.presentation.ui.theme.VkBlue
+import ru.nyxsed.postscan.util.Constants.isInternetAvailable
 
 val LoginScreen by navDestination<Unit> {
 
+    val context = LocalContext.current
     val sharedViewModel = koinViewModel<SharedViewModel>()
 
     val navController = navController()
@@ -56,6 +60,11 @@ val LoginScreen by navDestination<Unit> {
                 contentColor = Color.White
             ),
             onClick = {
+                if (!isInternetAvailable(context)) {
+                    Toast.makeText(context, context.getString(R.string.no_internet_connection), Toast.LENGTH_SHORT)
+                        .show()
+                    return@Button
+                }
                 launcher.launch(listOf(VKScope.WALL, VKScope.FRIENDS))
             }
         ) {
