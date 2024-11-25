@@ -17,9 +17,12 @@ class VkMapper {
             for (post in posts) {
                 val group = groups?.find { it.id == post.ownerId.absoluteValue } ?: continue
 
-
                 val images = post.attachments?.map { attachment ->
                     attachment.photo?.sizes?.find { it.type == "p" }?.url ?: ""
+                } ?: emptyList()
+
+                val videoImages = post.attachments?.map { attachment ->
+                    attachment.video?.image?.last()?.url ?: ""
                 } ?: emptyList()
 
                 val postEnt = PostEntity(
@@ -29,9 +32,11 @@ class VkMapper {
                     ownerImageUrl = group.photo50,
                     publicationDate = post.date * 1000,
                     contentText = post.text,
-                    contentImageUrl = images,
+                    contentImageUrl = images.filter { it.isNotEmpty() },
+                    contentVideoUrl = videoImages.filter { it.isNotEmpty() },
                     isLiked = post.likes.userLikes > 0
                 )
+
                 result.add(postEnt)
             }
         }
