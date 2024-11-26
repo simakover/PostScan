@@ -115,7 +115,7 @@ val PostsScreen by navDestination<Unit> {
                         },
                         onToMihonClicked = {
                             val intent = postsScreenViewModel.mihonIntent(
-                                query = it.contentText
+                                query = it
                             )
                             startActivity(context, intent, Bundle())
                         },

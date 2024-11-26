@@ -16,4 +16,5 @@
     <string name="loading_posts">Loading posts</string>
     <string name="loading_progress">loading progress</string>
     <string name="loading_completed">Loading Completed</string>
+    <string name="albums">Albums:</string>
 </resources>
