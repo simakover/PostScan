@@ -6,7 +6,6 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "groups")
 data class GroupEntity(
     @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
     var groupId: Long? = null,
     var name: String = "",
     var screenName: String = "",

@@ -65,7 +65,7 @@ fun PostCard(
                         onImageClicked(post, it)
                     }
                 )
-                if (post.content.size > 9) {
+                if (post.content.size > 10) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth(),

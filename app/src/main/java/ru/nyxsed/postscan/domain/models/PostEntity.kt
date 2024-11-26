@@ -6,7 +6,6 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "posts")
 data class PostEntity(
     @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
     val postId : Long,
     val ownerId: Long,
     val ownerName: String,

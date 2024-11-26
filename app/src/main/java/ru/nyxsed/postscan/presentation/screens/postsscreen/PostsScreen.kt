@@ -82,7 +82,7 @@ val PostsScreen by navDestination<Unit> {
         ) {
             items(
                 items = postListState.value,
-                key = { it.id }
+                key = { it.postId }
             ) {
                 Box(
                     modifier = Modifier

@@ -19,5 +19,5 @@ data class ItemResponse(
     @SerializedName("text")
     val text: String,
     @SerializedName("copy_history")
-    val copyHistory: List<ItemCopyResponse>?
+    val copyHistory: List<ItemResponse>?
 )
