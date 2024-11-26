@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import ru.nyxsed.postscan.R
 import ru.nyxsed.postscan.domain.models.PostEntity
+import ru.nyxsed.postscan.presentation.ui.theme.VkBlue
 import ru.nyxsed.postscan.presentation.ui.theme.likedHeart
 import ru.nyxsed.postscan.util.Constants.convertLongToTime
 
@@ -182,6 +183,16 @@ fun PostHeader(
             placeholder = painterResource(R.drawable.ic_placeholder),
             contentDescription = null,
         )
+        if (post.haveReposts) {
+            Icon(
+                modifier = Modifier
+                    .padding(start = 8.dp)
+                    .size(25.dp),
+                painter = painterResource(R.drawable.ic_arrow_repost),
+                contentDescription = null,
+                tint = VkBlue
+            )
+        }
         Column(
             modifier = Modifier
                 .padding(start = 8.dp)

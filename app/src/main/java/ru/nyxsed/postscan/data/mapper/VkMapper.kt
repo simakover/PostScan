@@ -47,7 +47,41 @@ class VkMapper {
                         listContentEntity.add(contentEntity)
                     }
                 }
-                
+
+                val copyHistory = post.copyHistory
+                copyHistory?.forEach {repost ->
+                    val listRepostContentEntity : MutableList<ContentEntity> = mutableListOf()
+
+                    repost.attachments?.forEach { attachment ->
+                        val attachmentPhoto = attachment.photo
+                        attachmentPhoto?.let { photo ->
+                            val contentEntity = ContentEntity(
+                                contentId = photo.id,
+                                ownerId = photo.ownerId,
+                                type = attachment.type,
+                                urlSmall = photo.sizes.find { it.type == "s"  }?.url ?: "",
+                                urlMedium = photo.sizes.find { it.type == "p"  }?.url ?: "",
+                                urlBig = photo.sizes.find { it.type == "w"  }?.url ?: "",
+                            )
+                            listRepostContentEntity.add(contentEntity)
+                        }
+
+                        val attachmentVideo = attachment.video
+                        attachmentVideo?.let { video ->
+                            val contentEntity = ContentEntity(
+                                contentId = video.id,
+                                ownerId = video.ownerId,
+                                type = attachment.type,
+                                urlSmall = video.image.find { it.url.takeLast(5) == "vid_s" }?.url ?: "",
+                                urlMedium = video.image.find { it.url.takeLast(5) == "vid_l" }?.url ?: "",
+                                urlBig = video.image.find { it.url.takeLast(5) == "vid_x" }?.url ?: "",
+                            )
+                            listRepostContentEntity.add(contentEntity)
+                        }
+                    }
+                    listContentEntity.addAll(listRepostContentEntity)
+                }
+
                 val postEnt = PostEntity(
                     postId = post.id,
                     ownerId = post.ownerId,
@@ -57,6 +91,7 @@ class VkMapper {
                     contentText = post.text,
                     isLiked = post.likes.userLikes > 0,
                     content = listContentEntity,
+                    haveReposts = if (copyHistory.isNullOrEmpty()) false else true
                 )
 
                 result.add(postEnt)
