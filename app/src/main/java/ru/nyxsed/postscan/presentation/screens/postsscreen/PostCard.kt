@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -22,7 +23,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
@@ -39,7 +43,7 @@ fun PostCard(
     onPostDeleteClicked: (PostEntity) -> Unit,
     onLikeClicked: (PostEntity) -> Unit,
     onToVkClicked: (PostEntity) -> Unit,
-    onToMihonClicked: (PostEntity) -> Unit,
+    onToMihonClicked: (String) -> Unit,
     onTextLongClick: (PostEntity) -> Unit,
     onImageClicked: (PostEntity, Int) -> Unit,
 ) {
@@ -96,6 +100,7 @@ fun PostCard(
                 Text(
                     modifier = Modifier
                         .padding(top = 8.dp)
+                        .fillMaxWidth()
                         .combinedClickable(
                             onClick = { },
                             onLongClick = {
@@ -105,6 +110,57 @@ fun PostCard(
                     text = post.contentText,
                     color = MaterialTheme.colorScheme.onSecondary,
                 )
+            }
+            if (post.content.filter { it.type == "album" }.isNotEmpty()) {
+                Text(
+                    modifier = Modifier
+                        .padding(top = 8.dp)
+                        .fillMaxWidth(),
+                    text = stringResource(R.string.albums),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onSecondary,
+                )
+                post.content
+                    .filter { it.type == "album" }
+                    .forEach {
+                        Row(
+                            modifier = Modifier
+                                .padding(top = 2.dp)
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(4.dp))
+                                .background(lerp(MaterialTheme.colorScheme.secondary, Color.Black, 0.1f)),
+                            horizontalArrangement = Arrangement.Start,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .padding(8.dp)
+                                    .combinedClickable(
+                                        onClick = { },
+                                        onLongClick = {
+                                            onTextLongClick(post)
+                                        }
+                                    ),
+                                text = it.title,
+                                color = MaterialTheme.colorScheme.onSecondary,
+                            )
+                            IconButton(
+                                modifier = Modifier
+                                    .padding(8.dp)
+                                    .size(24.dp),
+                                onClick = {
+                                    onToMihonClicked(it.title)
+                                }
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_mihon),
+                                    tint = MaterialTheme.colorScheme.onSecondary,
+                                    contentDescription = null
+                                )
+                            }
+                        }
+                    }
             }
             Row(
                 modifier = Modifier
@@ -124,7 +180,7 @@ fun PostCard(
                 }
                 IconButton(
                     onClick = {
-                        onToMihonClicked(post)
+                        onToMihonClicked(post.contentText)
                     }
                 ) {
                     Icon(
