@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,34 +42,36 @@ val LoginScreen by navDestination<Unit> {
         navController.back()
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(vertical = 200.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceAround
-    ) {
-        Image(
+    Scaffold { paddings ->
+        Column(
             modifier = Modifier
-                .size(150.dp),
-            painter = painterResource(id = R.drawable.vk_logo),
-            contentDescription = null
-        )
-        Button(
-            colors = ButtonDefaults.buttonColors(
-                containerColor = VkBlue,
-                contentColor = Color.White
-            ),
-            onClick = {
-                if (!isInternetAvailable(context)) {
-                    Toast.makeText(context, context.getString(R.string.no_internet_connection), Toast.LENGTH_SHORT)
-                        .show()
-                    return@Button
-                }
-                launcher.launch(listOf(VKScope.WALL, VKScope.FRIENDS))
-            }
+                .fillMaxSize()
+                .padding(vertical = 200.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceAround
         ) {
-            Text(text = stringResource(R.string.LogIn))
+            Image(
+                modifier = Modifier
+                    .size(150.dp),
+                painter = painterResource(id = R.drawable.vk_logo),
+                contentDescription = null
+            )
+            Button(
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = VkBlue,
+                    contentColor = Color.White
+                ),
+                onClick = {
+                    if (!isInternetAvailable(context)) {
+                        Toast.makeText(context, context.getString(R.string.no_internet_connection), Toast.LENGTH_SHORT)
+                            .show()
+                        return@Button
+                    }
+                    launcher.launch(listOf(VKScope.WALL, VKScope.FRIENDS))
+                }
+            ) {
+                Text(text = stringResource(R.string.LogIn))
+            }
         }
     }
 }

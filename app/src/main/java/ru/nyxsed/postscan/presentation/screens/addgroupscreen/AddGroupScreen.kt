@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.LaunchedEffect
@@ -58,89 +59,91 @@ val AddGroupScreen by navDestination<GroupEntity> {
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(8.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        AsyncImage(
+    Scaffold { paddings ->
+        Column(
             modifier = Modifier
-                .clip(CircleShape)
-                .size(50.dp),
-            model = group.avatarUrl,
-            placeholder = painterResource(R.drawable.ic_placeholder),
-            contentDescription = null,
-        )
-        TextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 10.dp),
-            value = group.screenName,
-            onValueChange = {
-                group = group.copy(screenName = it)
-            },
-            label = {
-                Text(stringResource(R.string.group_name_or_id))
-            }
-        )
-        Button(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 10.dp),
-            onClick = {
-                scope.launch {
-                    if (!isInternetAvailable(context)) {
-                        Toast.makeText(context, context.getString(R.string.no_internet_connection), Toast.LENGTH_SHORT)
-                            .show()
-                        return@launch
-                    }
-                    group = addGroupScreenViewModel.groupsGetById(group.screenName)
+                .fillMaxSize()
+                .padding(8.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            AsyncImage(
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .size(50.dp),
+                model = group.avatarUrl,
+                placeholder = painterResource(R.drawable.ic_placeholder),
+                contentDescription = null,
+            )
+            TextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 10.dp),
+                value = group.screenName,
+                onValueChange = {
+                    group = group.copy(screenName = it)
+                },
+                label = {
+                    Text(stringResource(R.string.group_name_or_id))
+                }
+            )
+            Button(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 10.dp),
+                onClick = {
+                    scope.launch {
+                        if (!isInternetAvailable(context)) {
+                            Toast.makeText(context, context.getString(R.string.no_internet_connection), Toast.LENGTH_SHORT)
+                                .show()
+                            return@launch
+                        }
+                        group = addGroupScreenViewModel.groupsGetById(group.screenName)
 
+                    }
                 }
+            ) {
+                Text(stringResource(R.string.search_for_group))
             }
-        ) {
-            Text(stringResource(R.string.search_for_group))
-        }
-        TextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 30.dp),
-            value = group.name,
-            onValueChange = {
-                group = group.copy(name = it)
-            },
-            label = {
-                Text(stringResource(R.string.group_name))
-            }
-        )
-        TextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 10.dp),
-            value = lastFetchDate,
-            onValueChange = {
-                if (it.length <= DATE_LENGTH) {
-                    lastFetchDate = it
+            TextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 30.dp),
+                value = group.name,
+                onValueChange = {
+                    group = group.copy(name = it)
+                },
+                label = {
+                    Text(stringResource(R.string.group_name))
                 }
-            },
-            visualTransformation = MaskVisualTransformation(DATE_MASK),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            label = {
-                Text(stringResource(R.string.last_fetch_date))
+            )
+            TextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 10.dp),
+                value = lastFetchDate,
+                onValueChange = {
+                    if (it.length <= DATE_LENGTH) {
+                        lastFetchDate = it
+                    }
+                },
+                visualTransformation = MaskVisualTransformation(DATE_MASK),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                label = {
+                    Text(stringResource(R.string.last_fetch_date))
+                }
+            )
+            Button(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 10.dp),
+                onClick = {
+                    addGroupScreenViewModel.addGroup(group, lastFetchDate)
+                    navController.back()
+                }
+            ) {
+                Text(text = if (groupArg == null) stringResource(R.string.add_group) else stringResource(R.string.update_group))
             }
-        )
-        Button(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 10.dp),
-            onClick = {
-                addGroupScreenViewModel.addGroup(group, lastFetchDate)
-                navController.back()
-            }
-        ) {
-            Text(text = if (groupArg == null) stringResource(R.string.add_group) else stringResource(R.string.update_group))
         }
     }
 }
