@@ -14,6 +14,8 @@ object Constants {
 
     const val MANGA_SEARCH_ACTION = "eu.kanade.tachiyomi.SEARCH"
 
+    const val YANDEX_SEARCH_URL = "https://yandex.ru/images/search?rpt=imageview&url="
+
     const val DATE_MASK = "##.##.####"
     const val DATE_LENGTH = 8 // Equals to "##.##.####".count { it == '#' }
 
