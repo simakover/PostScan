@@ -18,6 +18,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -128,6 +129,19 @@ val ImagePagerScreen by navDestination<ImagePagerArgs> {
                         ) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = null,
+                                tint = Color.White
+                            )
+                        }
+                    },
+                    actions = {
+                        IconButton(
+                            onClick = {
+                                imagePagerViewModel.findYandexImage(uriHandler,content[pagerState.currentPage].urlBig)
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.Search,
                                 contentDescription = null,
                                 tint = Color.White
                             )
