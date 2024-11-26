@@ -3,7 +3,7 @@ package ru.nyxsed.postscan.data.models.response.newsfeedget
 
 import com.google.gson.annotations.SerializedName
 
-data class ItemResponse(
+data class ItemCopyResponse(
     @SerializedName("attachments")
     val attachments: List<AttachmentResponse>?,
     @SerializedName("date")
@@ -17,7 +17,5 @@ data class ItemResponse(
     @SerializedName("post_id")
     val postId: Long,
     @SerializedName("text")
-    val text: String,
-    @SerializedName("copy_history")
-    val copyHistory: List<ItemCopyResponse>?
+    val text: String
 )
