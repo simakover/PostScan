@@ -61,7 +61,7 @@ val GroupsScreen by navDestination<Unit> {
         ) {
             items(
                 items = groupsState.value,
-                key = { it.id }
+                key = { it.groupId!! }
             ) {
                 Box(
                     modifier = Modifier

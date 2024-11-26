@@ -32,7 +32,7 @@ class VkRepository(
                 token = getAccessToken(),
                 sourceId = (groupEntity.groupId?.times(-1)).toString(),
                 startFrom = startFrom,
-                startTime = (lastFetchDate/1000).toString()
+                startTime = (lastFetchDate / 1000).toString()
             )
 
             val responsePosts = mapper.mapNewsFeedResponseToPosts(response)
@@ -55,6 +55,7 @@ class VkRepository(
         return mapper.mapGroupsGetByIdResponseToGroup(response)
     }
 
+    // post
     suspend fun changeLikeStatus(post: PostEntity) {
         if (!post.isLiked) {
             apiService.addLike(
@@ -73,30 +74,31 @@ class VkRepository(
         }
     }
 
+    // content
     suspend fun changeLikeStatus(contentEntity: ContentEntity) {
         if (!contentEntity.isLiked) {
             apiService.addLike(
                 token = getAccessToken(),
                 ownerId = contentEntity.ownerId,
                 itemId = contentEntity.contentId,
-                type = contentEntity.type
+                type = if (contentEntity.type == "album") "photo" else contentEntity.type
             )
         } else {
             apiService.deleteLike(
                 token = getAccessToken(),
                 ownerId = contentEntity.ownerId,
                 itemId = contentEntity.contentId,
-                type = contentEntity.type
+                type = if (contentEntity.type == "album") "photo" else contentEntity.type
             )
         }
     }
 
-    suspend fun checkLikeStatus(contentEntity: ContentEntity) : Boolean {
+    suspend fun checkLikeStatus(contentEntity: ContentEntity): Boolean {
         val response = apiService.isLiked(
             token = getAccessToken(),
             ownerId = contentEntity.ownerId,
             itemId = contentEntity.contentId,
-            type = contentEntity.type
+            type = if (contentEntity.type == "album") "photo" else contentEntity.type
         )
         return response.response.liked == 1
     }

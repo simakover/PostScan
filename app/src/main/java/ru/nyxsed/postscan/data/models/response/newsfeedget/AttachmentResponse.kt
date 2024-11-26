@@ -10,4 +10,6 @@ data class AttachmentResponse(
     val photo: PhotoResponse?,
     @SerializedName("video")
     val video: VideoResponse?,
+    @SerializedName("album")
+    val album: AlbumResponse?,
 )

@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -218,7 +219,7 @@ fun PostMultipleImages(
                         .fillMaxSize()
                 ) {
                     ImageItem(modifier = Modifier.weight(1f), content = post.content[6], onImageClicked = { onImageClicked(6) })
-                    ImageItem(modifier = Modifier.weight(1f), content = post.content[7], onImageClicked = { onImageClicked(6) })
+                    ImageItem(modifier = Modifier.weight(1f), content = post.content[7], onImageClicked = { onImageClicked(7) })
                 }
             }
         }
@@ -254,7 +255,7 @@ fun PostMultipleImages(
                         .fillMaxSize()
                 ) {
                     ImageItem(modifier = Modifier.weight(1f), content = post.content[6], onImageClicked = { onImageClicked(6) })
-                    ImageItem(modifier = Modifier.weight(1f), content = post.content[7], onImageClicked = { onImageClicked(6) })
+                    ImageItem(modifier = Modifier.weight(1f), content = post.content[7], onImageClicked = { onImageClicked(7) })
                     ImageItem(modifier = Modifier.weight(1f), content = post.content[8], onImageClicked = { onImageClicked(8) })
                 }
             }
@@ -291,7 +292,7 @@ fun PostMultipleImages(
                         .fillMaxSize()
                 ) {
                     ImageItem(modifier = Modifier.weight(1f), content = post.content[6], onImageClicked = { onImageClicked(6) })
-                    ImageItem(modifier = Modifier.weight(1f), content = post.content[7], onImageClicked = { onImageClicked(6) })
+                    ImageItem(modifier = Modifier.weight(1f), content = post.content[7], onImageClicked = { onImageClicked(7) })
                     ImageItem(modifier = Modifier.weight(1f), content = post.content[8], onImageClicked = { onImageClicked(8) })
                     ImageItem(modifier = Modifier.weight(1f), content = post.content[9], onImageClicked = { onImageClicked(9) })
                 }
@@ -320,7 +321,7 @@ fun ImageItem(
             .clickable(onClick = {
                 onImageClicked()
             }),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.TopEnd
     ) {
         AsyncImage(
             modifier = Modifier
@@ -330,28 +331,23 @@ fun ImageItem(
             placeholder = painterResource(R.drawable.ic_placeholder),
             contentScale = ContentScale.Crop
         )
-        if (content.type == "video") {
-            Row(
+        if (content.type in listOf("video", "album")) {
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .alpha(0.5f),
-                horizontalArrangement = Arrangement.Center
+                    .padding(4.dp)
+                    .clip(CircleShape)
+                    .size(30.dp)
+                    .background(MaterialTheme.colorScheme.secondary)
+                    .alpha(0.7f)
             ) {
-                Box(
+                Icon(
                     modifier = Modifier
-                        .clip(CircleShape)
-                        .size(150.dp)
-                        .background(MaterialTheme.colorScheme.secondary),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        imageVector = Icons.Filled.PlayArrow,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSecondary
-                    )
-                }
+                        .padding(4.dp)
+                        .fillMaxSize(),
+                    imageVector = if (content.type == "video") Icons.Filled.PlayArrow else Icons.Filled.DateRange,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSecondary
+                )
             }
         }
     }

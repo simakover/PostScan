@@ -1,6 +1,7 @@
 package ru.nyxsed.postscan.data.mapper
 
 import ru.nyxsed.postscan.data.models.response.groupsgetbyid.GroupsGetByIdResponse
+import ru.nyxsed.postscan.data.models.response.newsfeedget.AttachmentResponse
 import ru.nyxsed.postscan.data.models.response.newsfeedget.NewsFeedGetResponse
 import ru.nyxsed.postscan.domain.models.ContentEntity
 import ru.nyxsed.postscan.domain.models.GroupEntity
@@ -18,65 +19,23 @@ class VkMapper {
             for (post in posts) {
                 val group = groups?.find { it.id == post.ownerId.absoluteValue } ?: continue
 
-                val listContentEntity : MutableList<ContentEntity> = mutableListOf()
-                
-                post.attachments?.forEach { attachment ->
-                    val attachmentPhoto = attachment.photo
-                    attachmentPhoto?.let { photo ->
-                        val contentEntity = ContentEntity(
-                            contentId = photo.id,
-                            ownerId = photo.ownerId,
-                            type = attachment.type,
-                            urlSmall = photo.sizes.find { it.type == "s"  }?.url ?: "",
-                            urlMedium = photo.sizes.find { it.type == "p"  }?.url ?: "",
-                            urlBig = photo.sizes.find { it.type == "w"  }?.url ?: "",
-                        )
-                        listContentEntity.add(contentEntity)
-                    }
+                val listContentEntity: MutableList<ContentEntity> = mutableListOf()
 
-                    val attachmentVideo = attachment.video
-                    attachmentVideo?.let { video ->
-                        val contentEntity = ContentEntity(
-                            contentId = video.id,
-                            ownerId = video.ownerId,
-                            type = attachment.type,
-                            urlSmall = video.image.find { it.url.takeLast(5) == "vid_s" }?.url ?: "",
-                            urlMedium = video.image.find { it.url.takeLast(5) == "vid_l" }?.url ?: "",
-                            urlBig = video.image.find { it.url.takeLast(5) == "vid_x" }?.url ?: "",
-                        )
-                        listContentEntity.add(contentEntity)
+                post.attachments?.forEach { attachment ->
+                    val content = getContentEntity(attachment)
+                    if (content != null) {
+                        listContentEntity.add(content)
                     }
                 }
 
                 val copyHistory = post.copyHistory
-                copyHistory?.forEach {repost ->
-                    val listRepostContentEntity : MutableList<ContentEntity> = mutableListOf()
+                copyHistory?.forEach { repost ->
+                    val listRepostContentEntity: MutableList<ContentEntity> = mutableListOf()
 
                     repost.attachments?.forEach { attachment ->
-                        val attachmentPhoto = attachment.photo
-                        attachmentPhoto?.let { photo ->
-                            val contentEntity = ContentEntity(
-                                contentId = photo.id,
-                                ownerId = photo.ownerId,
-                                type = attachment.type,
-                                urlSmall = photo.sizes.find { it.type == "s"  }?.url ?: "",
-                                urlMedium = photo.sizes.find { it.type == "p"  }?.url ?: "",
-                                urlBig = photo.sizes.find { it.type == "w"  }?.url ?: "",
-                            )
-                            listRepostContentEntity.add(contentEntity)
-                        }
-
-                        val attachmentVideo = attachment.video
-                        attachmentVideo?.let { video ->
-                            val contentEntity = ContentEntity(
-                                contentId = video.id,
-                                ownerId = video.ownerId,
-                                type = attachment.type,
-                                urlSmall = video.image.find { it.url.takeLast(5) == "vid_s" }?.url ?: "",
-                                urlMedium = video.image.find { it.url.takeLast(5) == "vid_l" }?.url ?: "",
-                                urlBig = video.image.find { it.url.takeLast(5) == "vid_x" }?.url ?: "",
-                            )
-                            listRepostContentEntity.add(contentEntity)
+                        val content = getContentEntity(attachment)
+                        if (content != null) {
+                            listRepostContentEntity.add(content)
                         }
                     }
                     listContentEntity.addAll(listRepostContentEntity)
@@ -111,5 +70,71 @@ class VkMapper {
             avatarUrl = group?.photo50 ?: "",
             lastFetchDate = System.currentTimeMillis()
         )
+    }
+
+    private fun getContentEntity(attachment: AttachmentResponse): ContentEntity? {
+        var contentId: Long = 0
+        var ownerId: Long = 0
+        var type: String = ""
+        var isLiked: Boolean = false
+        var urlSmall: String = ""
+        var urlMedium: String = ""
+        var urlBig: String = ""
+        var title: String = ""
+
+        when (attachment.type) {
+            "photo" -> {
+                val attachmentPhoto = attachment.photo
+                attachmentPhoto?.let { photo ->
+                    contentId = photo.id
+                    ownerId = photo.ownerId
+                    type = attachment.type
+                    urlSmall = photo.sizes.find { it.type == "s" }?.url ?: ""
+                    urlMedium = photo.sizes.find { it.type == "p" }?.url ?: ""
+                    urlBig = photo.sizes.find { it.type == "w" }?.url ?: ""
+                    contentId = photo.id
+                }
+            }
+
+            "video" -> {
+                val attachmentVideo = attachment.video
+                attachmentVideo?.let { video ->
+                    contentId = video.id
+                    ownerId = video.ownerId
+                    type = attachment.type
+                    urlSmall = video.image.find { it.url.takeLast(5) == "vid_s" }?.url ?: ""
+                    urlMedium = video.image.find { it.url.takeLast(5) == "vid_l" }?.url ?: ""
+                    urlBig = video.image.find { it.url.takeLast(5) == "vid_x" }?.url ?: ""
+                }
+            }
+
+            "album" -> {
+                val attachmentAlbum = attachment.album
+                attachmentAlbum?.let { album ->
+                    contentId = album.thumb.id
+                    ownerId = album.thumb.ownerId
+                    type = attachment.type
+                    urlSmall = album.thumb.sizes.find { it.type == "s" }?.url ?: ""
+                    urlMedium = album.thumb.sizes.find { it.type == "p" }?.url ?: ""
+                    urlBig = album.thumb.sizes.find { it.type == "w" }?.url ?: ""
+                    title = album.title
+                }
+            }
+        }
+
+        return if (contentId != 0L) {
+            ContentEntity(
+                contentId = contentId,
+                ownerId = ownerId,
+                type = type,
+                isLiked = isLiked,
+                urlSmall = urlSmall,
+                urlMedium = urlMedium,
+                urlBig = urlBig,
+                title = title
+            )
+        } else {
+            null
+        }
     }
 }

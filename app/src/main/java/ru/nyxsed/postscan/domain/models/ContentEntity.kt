@@ -8,4 +8,5 @@ data class ContentEntity(
     val urlSmall: String,
     val urlMedium: String,
     val urlBig: String,
+    val title: String,
 )
