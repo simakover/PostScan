@@ -106,11 +106,11 @@ val ImagePagerScreen by navDestination<ImagePagerArgs> {
         }
     }
 
-    var fullScreen by remember { mutableStateOf(false) }
+    var notFullScreen by remember { mutableStateOf(true) }
 
     Scaffold(
         topBar = {
-            if (!fullScreen) {
+            if (notFullScreen) {
                 TopAppBar(
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = Color.Black
@@ -167,7 +167,7 @@ val ImagePagerScreen by navDestination<ImagePagerArgs> {
                     modifier = Modifier
                         .fillMaxSize()
                         .clickable(onClick = {
-                            fullScreen = !fullScreen
+                            notFullScreen = !notFullScreen
                         }),
                     model = content[index].urlBig,
                     contentDescription = null,
@@ -175,7 +175,7 @@ val ImagePagerScreen by navDestination<ImagePagerArgs> {
                     contentScale = ContentScale.Fit
                 )
             }
-            if (!fullScreen) {
+            if (notFullScreen) {
                 LazyRow(
                     modifier = Modifier
                         .fillMaxWidth(),
