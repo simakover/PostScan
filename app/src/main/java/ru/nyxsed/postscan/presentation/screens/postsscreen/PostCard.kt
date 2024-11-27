@@ -46,6 +46,7 @@ fun PostCard(
     onToMihonClicked: (String) -> Unit,
     onTextLongClick: (PostEntity) -> Unit,
     onImageClicked: (PostEntity, Int) -> Unit,
+    onCommentsClicked: (PostEntity) -> Unit,
 ) {
     Card {
         Column(
@@ -196,7 +197,9 @@ fun PostCard(
                         .weight(1f)
                 )
                 IconButton(
-                    onClick = {}
+                    onClick = {
+                        onCommentsClicked(post)
+                    }
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.ic_comment),

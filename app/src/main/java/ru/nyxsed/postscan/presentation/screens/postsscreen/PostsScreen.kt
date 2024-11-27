@@ -51,6 +51,7 @@ import org.koin.androidx.compose.koinViewModel
 import ru.nyxsed.postscan.R
 import ru.nyxsed.postscan.SharedViewModel
 import ru.nyxsed.postscan.domain.models.GroupEntity
+import ru.nyxsed.postscan.presentation.screens.commentsscreen.CommentsScreen
 import ru.nyxsed.postscan.presentation.screens.groupsscreen.GroupsScreen
 import ru.nyxsed.postscan.presentation.screens.imagepagerscreen.ImagePagerArgs
 import ru.nyxsed.postscan.presentation.screens.imagepagerscreen.ImagePagerScreen
@@ -62,7 +63,6 @@ val PostsScreen by navDestination<Unit> {
     val postListState = postsScreenViewModel.posts.collectAsState()
     val groupListState = postsScreenViewModel.groups.collectAsState()
 
-
     val sharedViewModel = koinViewModel<SharedViewModel>()
     val authState = sharedViewModel.authStateFlow.collectAsState()
 
@@ -72,7 +72,6 @@ val PostsScreen by navDestination<Unit> {
     val clipboardManager = LocalClipboardManager.current
     val snackbarHostState = SnackbarHostState()
     val scope = rememberCoroutineScope()
-
 
     var groupSelected by rememberSaveable { mutableLongStateOf(0L) }
     val scrollState = rememberSaveable(saver = LazyListState.Saver) {
@@ -89,7 +88,13 @@ val PostsScreen by navDestination<Unit> {
                         return@PostsScreenBar
                     }
                     when (authState.value) {
-                        AuthState.Authorized -> postsScreenViewModel.loadPosts(context)
+                        AuthState.Authorized -> {
+                            postsScreenViewModel.loadPosts(context)
+                            scope.launch {
+                                scrollState.scrollToItem(0)
+                            }
+                        }
+
                         AuthState.NotAuthorized -> navController.navigate(LoginScreen)
                     }
                 },
@@ -191,6 +196,22 @@ val PostsScreen by navDestination<Unit> {
                             onImageClicked = { post, index ->
                                 val imagePagerArgs = ImagePagerArgs(post, index)
                                 navController.navigate(ImagePagerScreen, imagePagerArgs)
+                            },
+                            onCommentsClicked = {
+
+                                if (!isInternetAvailable(context)) {
+                                    Toast.makeText(
+                                        context,
+                                        context.getString(R.string.no_internet_connection),
+                                        Toast.LENGTH_SHORT
+                                    )
+                                        .show()
+                                    return@PostCard
+                                }
+                                when (authState.value) {
+                                    AuthState.Authorized -> navController.navigate(CommentsScreen, it)
+                                    AuthState.NotAuthorized -> navController.navigate(LoginScreen)
+                                }
                             }
                         )
                     }

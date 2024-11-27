@@ -3,9 +3,15 @@ package ru.nyxsed.postscan.data.mapper
 import ru.nyxsed.postscan.data.models.response.groupsgetbyid.GroupsGetByIdResponse
 import ru.nyxsed.postscan.data.models.response.newsfeedget.AttachmentResponse
 import ru.nyxsed.postscan.data.models.response.newsfeedget.NewsFeedGetResponse
+import ru.nyxsed.postscan.data.models.response.wallgetcomments.ItemResponse
+import ru.nyxsed.postscan.data.models.response.wallgetcomments.ProfilesResponse
+import ru.nyxsed.postscan.data.models.response.wallgetcomments.WallGetCommentsResponse
+import ru.nyxsed.postscan.domain.models.CommentEntity
 import ru.nyxsed.postscan.domain.models.ContentEntity
 import ru.nyxsed.postscan.domain.models.GroupEntity
 import ru.nyxsed.postscan.domain.models.PostEntity
+import ru.nyxsed.postscan.util.Constants.findOrFirst
+import ru.nyxsed.postscan.util.Constants.findOrLast
 import kotlin.math.absoluteValue
 
 class VkMapper {
@@ -72,6 +78,63 @@ class VkMapper {
         )
     }
 
+    fun mapWallGetCommentsResponseToComments(response: WallGetCommentsResponse): List<CommentEntity> {
+        val result = mutableListOf<CommentEntity>()
+
+        val comments = response.content?.items
+        val profiles = response.content?.profiles
+
+        comments?.let { comments ->
+            for (comment in comments) {
+
+                val threadComments = comment.thread?.items
+                threadComments?.let { threadComments ->
+
+                    for (threadComment in threadComments) {
+                        val threadProfile = profiles?.find { it.id == threadComment.fromId.absoluteValue } ?: continue
+                        val threadCommentEntity = getCommentEntity(
+                            comment = threadComment,
+                            profile = threadProfile,
+                        )
+                        result.add(threadCommentEntity)
+                    }
+                }
+
+                val profile = profiles?.find { it.id == comment.fromId.absoluteValue } ?: continue
+                val commentEntity = getCommentEntity(
+                    comment = comment,
+                    profile = profile,
+                )
+
+                result.add(commentEntity)
+            }
+        }
+
+        return result
+    }
+
+    private fun getCommentEntity(comment: ItemResponse, profile: ProfilesResponse): CommentEntity {
+        val listContentEntity: MutableList<ContentEntity> = mutableListOf()
+
+        comment.attachments?.forEach { attachment ->
+            val content = getContentEntity(attachment)
+            if (content != null) {
+                listContentEntity.add(content)
+            }
+        }
+
+        return CommentEntity(
+            commentId = comment.commentId,
+            ownerId = comment.ownerId,
+            ownerName = "${profile.firstName} ${profile.lastName}",
+            ownerImageUrl = profile.photo50,
+            publicationDate = comment.date,
+            contentText = comment.text,
+            content = listContentEntity,
+            parentStack = comment.parentsStack.firstOrNull()
+        )
+    }
+
     private fun getContentEntity(attachment: AttachmentResponse): ContentEntity? {
         var contentId: Long = 0
         var ownerId: Long = 0
@@ -89,9 +152,9 @@ class VkMapper {
                     contentId = photo.id
                     ownerId = photo.ownerId
                     type = attachment.type
-                    urlSmall = photo.sizes.find { it.type == "s" }?.url ?: ""
-                    urlMedium = photo.sizes.find { it.type == "p" }?.url ?: ""
-                    urlBig = photo.sizes.find { it.type == "w" }?.url ?: ""
+                    urlSmall = photo.sizes.findOrFirst { it.type == "s" }?.url ?: ""
+                    urlMedium = photo.sizes.findOrLast { it.type == "x" }?.url ?: ""
+                    urlBig = photo.sizes.findOrLast { it.type == "z" }?.url ?: ""
                     contentId = photo.id
                 }
             }
@@ -102,9 +165,9 @@ class VkMapper {
                     contentId = video.id
                     ownerId = video.ownerId
                     type = attachment.type
-                    urlSmall = video.image.find { it.url.takeLast(5) == "vid_s" }?.url ?: ""
-                    urlMedium = video.image.find { it.url.takeLast(5) == "vid_l" }?.url ?: ""
-                    urlBig = video.image.find { it.url.takeLast(5) == "vid_x" }?.url ?: ""
+                    urlSmall = video.image.findOrFirst { it.url.takeLast(5) == "vid_s" }?.url ?: ""
+                    urlMedium = video.image.findOrLast { it.url.takeLast(5) == "vid_l" }?.url ?: ""
+                    urlBig = video.image.findOrLast { it.url.takeLast(5) == "vid_x" }?.url ?: ""
                 }
             }
 
@@ -114,9 +177,9 @@ class VkMapper {
                     contentId = album.thumb.id
                     ownerId = album.thumb.ownerId
                     type = attachment.type
-                    urlSmall = album.thumb.sizes.find { it.type == "s" }?.url ?: ""
-                    urlMedium = album.thumb.sizes.find { it.type == "p" }?.url ?: ""
-                    urlBig = album.thumb.sizes.find { it.type == "w" }?.url ?: ""
+                    urlSmall = album.thumb.sizes.findOrFirst { it.type == "s" }?.url ?: ""
+                    urlMedium = album.thumb.sizes.findOrLast { it.type == "x" }?.url ?: ""
+                    urlBig = album.thumb.sizes.findOrLast { it.type == "z" }?.url ?: ""
                     title = album.title
                 }
             }

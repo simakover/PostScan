@@ -8,7 +8,9 @@ import org.koin.dsl.module
 import ru.nyxsed.postscan.SharedViewModel
 import ru.nyxsed.postscan.data.repository.DbRepository
 import ru.nyxsed.postscan.data.repository.VkRepository
+import ru.nyxsed.postscan.domain.models.PostEntity
 import ru.nyxsed.postscan.presentation.screens.addgroupscreen.AddGroupScreenViewModel
+import ru.nyxsed.postscan.presentation.screens.commentsscreen.CommentsScreenViewModel
 import ru.nyxsed.postscan.presentation.screens.groupsscreen.GroupsScreenViewModel
 import ru.nyxsed.postscan.presentation.screens.imagepagerscreen.ImagePagerViewModel
 import ru.nyxsed.postscan.presentation.screens.postsscreen.PostsScreenViewModel
@@ -65,6 +67,13 @@ val appModule = module {
     viewModel<ImagePagerViewModel> {
         ImagePagerViewModel(
             vkRepository = get()
+        )
+    }
+
+    viewModel<CommentsScreenViewModel> { (post: PostEntity) ->
+        CommentsScreenViewModel(
+            vkRepository = get(),
+            post = post
         )
     }
 }
