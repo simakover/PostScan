@@ -29,7 +29,7 @@ import ru.nyxsed.postscan.util.Constants.convertLongToTime
 @Composable
 fun CommentCard(
     comment: CommentEntity,
-    replys: List<CommentEntity>,
+    replays: List<CommentEntity>,
     onToMihonClicked: (CommentEntity) -> Unit,
 ) {
     Card {
@@ -87,7 +87,7 @@ fun CommentCard(
                 text = comment.contentText,
                 color = MaterialTheme.colorScheme.onSecondary
             )
-            replys.forEach { reply ->
+            replays.forEach { reply ->
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center,

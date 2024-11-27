@@ -44,7 +44,7 @@ val CommentsScreen by navDestination<PostEntity> {
             ) { originalComment ->
                 CommentCard(
                     comment = originalComment,
-                    replys = comments
+                    replays = comments
                         .filter { it.parentStack == originalComment.commentId }
                         .filter { it.contentText.isNotEmpty() || it.content.isNotEmpty() },
                     onToMihonClicked = {
