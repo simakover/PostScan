@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import com.composegears.tiamat.Navigation
 import com.composegears.tiamat.rememberNavController
 import ru.nyxsed.postscan.presentation.screens.addgroupscreen.AddGroupScreen
+import ru.nyxsed.postscan.presentation.screens.commentsscreen.CommentsScreen
 import ru.nyxsed.postscan.presentation.screens.groupsscreen.GroupsScreen
 import ru.nyxsed.postscan.presentation.screens.imagepagerscreen.ImagePagerScreen
 import ru.nyxsed.postscan.presentation.screens.loginscreen.LoginScreen
@@ -26,6 +27,7 @@ class MainActivity : ComponentActivity() {
                     GroupsScreen,
                     AddGroupScreen,
                     ImagePagerScreen,
+                    CommentsScreen,
                 )
             )
             PostScanTheme {

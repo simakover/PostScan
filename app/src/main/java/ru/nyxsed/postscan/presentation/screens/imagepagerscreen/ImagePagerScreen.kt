@@ -65,7 +65,7 @@ val ImagePagerScreen by navDestination<ImagePagerArgs> {
     val scope = CoroutineScope(Dispatchers.IO)
 
     val sharedViewModel = koinViewModel<SharedViewModel>()
-    val authState = sharedViewModel.authStateFlow.collectAsState()
+    val authState by sharedViewModel.authStateFlow.collectAsState()
 
     var content by remember { mutableStateOf<List<ContentEntity>>(imagePagerArgs.post.content) }
 
@@ -83,7 +83,7 @@ val ImagePagerScreen by navDestination<ImagePagerArgs> {
             Toast.makeText(context, context.getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show()
             return@LaunchedEffect
         }
-        if (authState == AuthState.NotAuthorized) {
+        if (authState is AuthState.NotAuthorized) {
             Toast.makeText(context, context.getString(R.string.app_is_not_authorized), Toast.LENGTH_SHORT).show()
             return@LaunchedEffect
         }
@@ -235,7 +235,7 @@ val ImagePagerScreen by navDestination<ImagePagerArgs> {
                                     .show()
                                 return@IconButton
                             }
-                            if (authState == AuthState.NotAuthorized) {
+                            if (authState is AuthState.NotAuthorized) {
                                 Toast.makeText(
                                     context,
                                     context.getString(R.string.app_is_not_authorized),

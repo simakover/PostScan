@@ -22,7 +22,7 @@ interface DbDao {
     @Update
     suspend fun updatePost(post: PostEntity)
 
-    @Query("SELECT * FROM posts order by postId desc")
+    @Query("SELECT * FROM posts order by publicationDate")
     fun getAllPosts(): Flow<List<PostEntity>>
 
     // groups

@@ -6,6 +6,7 @@ import ru.nyxsed.postscan.data.models.response.groupsgetbyid.GroupsGetByIdRespon
 import ru.nyxsed.postscan.data.models.response.isliked.IsLikedResponse
 import ru.nyxsed.postscan.data.models.response.likes.LikesCountResponse
 import ru.nyxsed.postscan.data.models.response.newsfeedget.NewsFeedGetResponse
+import ru.nyxsed.postscan.data.models.response.wallgetcomments.WallGetCommentsResponse
 import ru.nyxsed.postscan.util.Constants.VK_API_VERSION
 
 interface ApiService {
@@ -46,4 +47,11 @@ interface ApiService {
         @Query("item_id") itemId: Long,
         @Query("type") type: String,
     ): IsLikedResponse
+
+    @GET("wall.getComments?v=$VK_API_VERSION&count=100&thread_items_count=10&extended=1&fields=photo_50")
+    suspend fun wallGetComments(
+        @Query("access_token") token: String,
+        @Query("owner_id") ownerId: Long,
+        @Query("post_id") postId: Long,
+    ): WallGetCommentsResponse
 }

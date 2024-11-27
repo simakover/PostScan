@@ -2,9 +2,15 @@ package ru.nyxsed.postscan.data.repository
 
 import com.vk.api.sdk.VKKeyValueStorage
 import com.vk.api.sdk.auth.VKAccessToken
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.stateIn
 import ru.nyxsed.postscan.data.mapper.VkMapper
 import ru.nyxsed.postscan.data.network.ApiService
+import ru.nyxsed.postscan.domain.models.CommentEntity
 import ru.nyxsed.postscan.domain.models.ContentEntity
 import ru.nyxsed.postscan.domain.models.GroupEntity
 import ru.nyxsed.postscan.domain.models.PostEntity
@@ -100,6 +106,31 @@ class VkRepository(
             itemId = contentEntity.contentId,
             type = if (contentEntity.type == "album") "photo" else contentEntity.type
         )
-        return response.response.liked == 1
+        return response.response?.liked == 1
+    }
+
+    // comments
+    val scope = CoroutineScope(Dispatchers.Default)
+    fun getCommentsStateFlow(post: PostEntity) =
+        flow {
+            val response = apiService.wallGetComments(
+                token = getAccessToken(),
+                ownerId = post.ownerId,
+                postId = post.postId
+            )
+            emit(mapper.mapWallGetCommentsResponseToComments(response))
+        }.stateIn(
+            scope = scope,
+            started = SharingStarted.Eagerly,
+            initialValue = listOf()
+        )
+
+    suspend fun getComments(post: PostEntity): List<CommentEntity> {
+        val response = apiService.wallGetComments(
+            token = getAccessToken(),
+            ownerId = post.ownerId,
+            postId = post.postId
+        )
+        return mapper.mapWallGetCommentsResponseToComments(response)
     }
 }

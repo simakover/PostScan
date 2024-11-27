@@ -42,4 +42,10 @@ object Constants {
             else -> false
         }
     }
+
+    fun <T> List<T>.findOrFirst(predicate: (T) -> Boolean): T =
+        find(predicate) ?: first()
+
+    fun <T> List<T>.findOrLast(predicate: (T) -> Boolean): T =
+        find(predicate) ?: last()
 }
