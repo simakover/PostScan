@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -18,6 +19,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -25,6 +27,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -35,6 +38,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
@@ -57,7 +61,9 @@ import ru.nyxsed.postscan.presentation.screens.imagepagerscreen.ImagePagerArgs
 import ru.nyxsed.postscan.presentation.screens.imagepagerscreen.ImagePagerScreen
 import ru.nyxsed.postscan.presentation.screens.loginscreen.LoginScreen
 import ru.nyxsed.postscan.util.Constants.isInternetAvailable
+import kotlin.math.absoluteValue
 
+@OptIn(ExperimentalMaterial3Api::class)
 val PostsScreen by navDestination<Unit> {
     val postsScreenViewModel = koinViewModel<PostsScreenViewModel>()
     val postListState = postsScreenViewModel.posts.collectAsState()
@@ -77,6 +83,7 @@ val PostsScreen by navDestination<Unit> {
     val scrollState = rememberSaveable(saver = LazyListState.Saver) {
         LazyListState()
     }
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     Scaffold(
         topBar = {
@@ -103,7 +110,8 @@ val PostsScreen by navDestination<Unit> {
                         AuthState.Authorized -> navController.navigate(GroupsScreen)
                         AuthState.NotAuthorized -> navController.navigate(LoginScreen)
                     }
-                }
+                },
+                scrollBehavior = scrollBehavior
             )
         },
         snackbarHost = {
@@ -112,7 +120,8 @@ val PostsScreen by navDestination<Unit> {
     ) { paddings ->
         Column(
             modifier = Modifier
-                .padding(paddings),
+                .padding(paddings)
+                .fillMaxSize(),
         ) {
             LazyRow(
                 modifier = Modifier
@@ -123,13 +132,15 @@ val PostsScreen by navDestination<Unit> {
                 items(
                     items = groupListState.value,
                     key = { it.groupId!! }
-                ) {
+                ) { groupChip ->
+
                     Chip(
-                        group = it,
-                        isSelected = it.groupId == groupSelected,
+                        group = groupChip,
+                        isSelected = groupChip.groupId == groupSelected,
+                        postCount = postListState.value.filter {it.ownerId.absoluteValue == groupChip.groupId }.size,
                         onClick = {
-                            if (groupSelected != it.groupId!!) {
-                                groupSelected = it.groupId!!
+                            if (groupSelected != groupChip.groupId!!) {
+                                groupSelected = groupChip.groupId!!
                             } else {
                                 groupSelected = 0L
                             }
@@ -143,13 +154,14 @@ val PostsScreen by navDestination<Unit> {
             LazyColumn(
                 state = scrollState,
                 modifier = Modifier
-                    .padding(4.dp),
+                    .padding(4.dp)
+                    .nestedScroll(scrollBehavior.nestedScrollConnection),
                 contentPadding = PaddingValues(4.dp),
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 items(
                     items = postListState.value.filter {
-                        if (groupSelected == 0L) true else it.ownerId == groupSelected * -1
+                        if (groupSelected == 0L) true else it.ownerId.absoluteValue == groupSelected
                     },
                     key = { it.postId }
                 ) {
@@ -224,6 +236,7 @@ val PostsScreen by navDestination<Unit> {
 @Composable
 fun Chip(
     group: GroupEntity,
+    postCount: Int,
     isSelected: Boolean,
     onClick: () -> Unit,
 ) {
@@ -231,11 +244,10 @@ fun Chip(
     val textColor = if (isSelected) MaterialTheme.colorScheme.onSecondary else MaterialTheme.colorScheme.onPrimary
 
     val displayedText = if (group.name.length > 10) {
-        group.name.substring(0, 10) + "..."
+        group.name.substring(0, 10) + "... ($postCount)"
     } else {
-        group.name
+        group.name + " ($postCount)"
     }
-
 
     Box(
         modifier = Modifier
