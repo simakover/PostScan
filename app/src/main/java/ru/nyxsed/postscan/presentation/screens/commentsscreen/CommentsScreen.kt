@@ -10,7 +10,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.startActivity
 import com.composegears.tiamat.navArgs
@@ -28,6 +30,7 @@ val CommentsScreen by navDestination<PostEntity> {
     val comments by commentsScreenViewModel.comments.collectAsState()
 
     val context = LocalContext.current
+    val clipboardManager = LocalClipboardManager.current
 
     Scaffold { paddings ->
         LazyColumn(
@@ -52,7 +55,12 @@ val CommentsScreen by navDestination<PostEntity> {
                             query = it.contentText
                         )
                         startActivity(context, intent, Bundle())
-                    }
+                    },
+                    onTextLongClick = {
+                        clipboardManager.setText(
+                            annotatedString = AnnotatedString(it)
+                        )
+                    },
                 )
             }
         }
