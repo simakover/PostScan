@@ -4,6 +4,8 @@ import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -58,7 +60,7 @@ import ru.nyxsed.postscan.SharedViewModel
 import ru.nyxsed.postscan.domain.models.ContentEntity
 import ru.nyxsed.postscan.domain.models.PostEntity
 import ru.nyxsed.postscan.presentation.screens.postsscreen.AuthState
-import ru.nyxsed.postscan.presentation.ui.theme.likedHeart
+import ru.nyxsed.postscan.presentation.ui.theme.LikedHeart
 import ru.nyxsed.postscan.util.Constants.isInternetAvailable
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -129,12 +131,12 @@ val ImagePagerScreen by navDestination<ImagePagerArgs> {
                     .fillMaxWidth()
                     .zIndex(1f),
                 visible = notFullScreen,
-                enter = fadeIn(),
-                exit = fadeOut(),
+                enter = fadeIn() + slideInVertically(),
+                exit = fadeOut() + slideOutVertically(),
             ) {
                 TopAppBar(
                     colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = Color.Black
+                        containerColor = Color.Black.copy(alpha = 0.6f)
                     ),
                     title = {
                         Text(
@@ -191,8 +193,8 @@ val ImagePagerScreen by navDestination<ImagePagerArgs> {
                 modifier = Modifier
                     .align(Alignment.BottomCenter),
                 visible = notFullScreen,
-                enter = fadeIn(),
-                exit = fadeOut(),
+                enter = fadeIn() + slideInVertically(initialOffsetY = { it / 2 }),
+                exit = fadeOut() + slideOutVertically(targetOffsetY = { it / 2 }),
             ) {
                 Column {
                     LazyRow(
@@ -278,7 +280,7 @@ val ImagePagerScreen by navDestination<ImagePagerArgs> {
                         ) {
                             Icon(
                                 painter = painterResource(R.drawable.ic_like),
-                                tint = if (content[pagerState.currentPage].isLiked) likedHeart else Color.White,
+                                tint = if (content[pagerState.currentPage].isLiked) LikedHeart else Color.White,
                                 contentDescription = null
                             )
                         }
