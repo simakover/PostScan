@@ -32,8 +32,8 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import ru.nyxsed.postscan.R
 import ru.nyxsed.postscan.domain.models.PostEntity
+import ru.nyxsed.postscan.presentation.ui.theme.LikedHeart
 import ru.nyxsed.postscan.presentation.ui.theme.VkBlue
-import ru.nyxsed.postscan.presentation.ui.theme.likedHeart
 import ru.nyxsed.postscan.util.Constants.convertLongToTime
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -214,7 +214,7 @@ fun PostCard(
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.ic_like),
-                        tint = if (post.isLiked) likedHeart else MaterialTheme.colorScheme.onSecondary,
+                        tint = if (post.isLiked) LikedHeart else MaterialTheme.colorScheme.onSecondary,
                         contentDescription = null
                     )
                 }

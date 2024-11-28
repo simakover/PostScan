@@ -11,4 +11,4 @@ val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
 val VkBlue = Color(0xFF0077FF)
-val likedHeart = Color(0xFFEB1616)
+val LikedHeart = Color(0xFFEB1616)
