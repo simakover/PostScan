@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -32,6 +33,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -110,6 +112,32 @@ val ImagePagerScreen by navDestination<ImagePagerArgs> {
 
     Scaffold(
         topBar = {
+        }
+    ) { paddings ->
+        Box(
+            modifier = Modifier
+                .background(Color.Black)
+                .padding(paddings)
+                .fillMaxSize()
+        ) {
+            HorizontalPager(
+                modifier = Modifier
+                    .fillMaxSize(),
+//                    .weight(1f),
+                state = pagerState,
+            ) { index ->
+                AsyncImage(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clickable(onClick = {
+                            notFullScreen = !notFullScreen
+                        }),
+                    model = content[index].urlBig,
+                    contentDescription = null,
+                    placeholder = painterResource(R.drawable.ic_placeholder),
+                    contentScale = ContentScale.Fit
+                )
+            }
             if (notFullScreen) {
                 TopAppBar(
                     colors = TopAppBarDefaults.topAppBarColors(
@@ -137,7 +165,7 @@ val ImagePagerScreen by navDestination<ImagePagerArgs> {
                     actions = {
                         IconButton(
                             onClick = {
-                                imagePagerViewModel.findYandexImage(uriHandler,content[pagerState.currentPage].urlBig)
+                                imagePagerViewModel.findYandexImage(uriHandler, content[pagerState.currentPage].urlBig)
                             }
                         ) {
                             Icon(
@@ -148,120 +176,97 @@ val ImagePagerScreen by navDestination<ImagePagerArgs> {
                         }
                     }
                 )
-            }
-        }
-    ) { paddings ->
-        Column(
-            modifier = Modifier
-                .background(Color.Black)
-                .padding(paddings)
-                .fillMaxSize()
-        ) {
-            HorizontalPager(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                state = pagerState,
-            ) { index ->
-                AsyncImage(
+                Column(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .clickable(onClick = {
-                            notFullScreen = !notFullScreen
-                        }),
-                    model = content[index].urlBig,
-                    contentDescription = null,
-                    placeholder = painterResource(R.drawable.ic_placeholder),
-                    contentScale = ContentScale.Fit
-                )
-            }
-            if (notFullScreen) {
-                LazyRow(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
+                        .align(Alignment.BottomCenter),
                 ) {
-                    items(
-                        items = content,
-                        key = { it.contentId }
-                    ) { item ->
-                        AsyncImage(
-                            modifier = Modifier
-                                .size(if (item.contentId == content[pagerState.currentPage].contentId) 60.dp else 30.dp)
-                                .clickable(onClick = {
-                                    scope.launch {
-                                        val currentIndex = content.indexOf(item)
-                                        pagerState.scrollToPage(page = currentIndex)
-                                    }
-                                }),
-                            model = item.urlSmall,
-                            contentDescription = null,
-                            placeholder = painterResource(R.drawable.ic_placeholder),
-                        )
-                    }
-                }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                ) {
-                    IconButton(
-                        onClick = {
-                            imagePagerViewModel.openPostUri(
-                                uriHandler = uriHandler,
-                                contentEntity = content[index]
+                    LazyRow(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        items(
+                            items = content,
+                            key = { it.contentId }
+                        ) { item ->
+                            AsyncImage(
+                                modifier = Modifier
+                                    .size(if (item.contentId == content[pagerState.currentPage].contentId) 60.dp else 30.dp)
+                                    .clickable(onClick = {
+                                        scope.launch {
+                                            val currentIndex = content.indexOf(item)
+                                            pagerState.scrollToPage(page = currentIndex)
+                                        }
+                                    }),
+                                model = item.urlSmall,
+                                contentDescription = null,
+                                placeholder = painterResource(R.drawable.ic_placeholder),
                             )
                         }
-                    ) {
-                        Image(
-                            modifier = Modifier
-                                .size(24.dp),
-                            painter = painterResource(R.drawable.vk_logo),
-                            contentDescription = null
-                        )
                     }
-                    Spacer(
+                    Row(
                         modifier = Modifier
-                            .weight(1f)
-                    )
-                    IconButton(
-                        onClick = {
-                            if (!isInternetAvailable(context)) {
-                                Toast.makeText(
-                                    context,
-                                    context.getString(R.string.no_internet_connection),
-                                    Toast.LENGTH_SHORT
-                                )
-                                    .show()
-                                return@IconButton
-                            }
-                            if (authState is AuthState.NotAuthorized) {
-                                Toast.makeText(
-                                    context,
-                                    context.getString(R.string.app_is_not_authorized),
-                                    Toast.LENGTH_SHORT
-                                )
-                                    .show()
-                                return@IconButton
-                            }
-
-                            imagePagerViewModel.changeLikeStatus(content[pagerState.currentPage])
-
-                            val updatedContent = content.mapIndexed { index, entity ->
-                                if (index == pagerState.currentPage) {
-                                    entity.copy(isLiked = !entity.isLiked)
-                                } else {
-                                    entity
-                                }
-                            }
-                            content = updatedContent
-                        }
+                            .fillMaxWidth()
+                            .padding(16.dp),
                     ) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_like),
-                            tint = if (content[pagerState.currentPage].isLiked) likedHeart else Color.White,
-                            contentDescription = null
+                        IconButton(
+                            onClick = {
+                                imagePagerViewModel.openPostUri(
+                                    uriHandler = uriHandler,
+                                    contentEntity = content[index]
+                                )
+                            }
+                        ) {
+                            Image(
+                                modifier = Modifier
+                                    .size(24.dp),
+                                painter = painterResource(R.drawable.vk_logo),
+                                contentDescription = null
+                            )
+                        }
+                        Spacer(
+                            modifier = Modifier
+                                .weight(1f)
                         )
+                        IconButton(
+                            onClick = {
+                                if (!isInternetAvailable(context)) {
+                                    Toast.makeText(
+                                        context,
+                                        context.getString(R.string.no_internet_connection),
+                                        Toast.LENGTH_SHORT
+                                    )
+                                        .show()
+                                    return@IconButton
+                                }
+                                if (authState is AuthState.NotAuthorized) {
+                                    Toast.makeText(
+                                        context,
+                                        context.getString(R.string.app_is_not_authorized),
+                                        Toast.LENGTH_SHORT
+                                    )
+                                        .show()
+                                    return@IconButton
+                                }
+
+                                imagePagerViewModel.changeLikeStatus(content[pagerState.currentPage])
+
+                                val updatedContent = content.mapIndexed { index, entity ->
+                                    if (index == pagerState.currentPage) {
+                                        entity.copy(isLiked = !entity.isLiked)
+                                    } else {
+                                        entity
+                                    }
+                                }
+                                content = updatedContent
+                            }
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_like),
+                                tint = if (content[pagerState.currentPage].isLiked) likedHeart else Color.White,
+                                contentDescription = null
+                            )
+                        }
                     }
                 }
             }
