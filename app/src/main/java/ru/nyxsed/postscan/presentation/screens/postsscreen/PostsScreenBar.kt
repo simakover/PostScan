@@ -10,6 +10,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -17,10 +18,12 @@ import androidx.compose.runtime.Composable
 fun PostsScreenBar(
     onRefreshClicked: () -> Unit,
     onNavToGroupsClicked: () -> Unit,
+    scrollBehavior: TopAppBarScrollBehavior,
 ) {
     TopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primary
+            containerColor = MaterialTheme.colorScheme.primary,
+            scrolledContainerColor = MaterialTheme.colorScheme.primary,
         ),
         title = {
             Text(
@@ -28,6 +31,7 @@ fun PostsScreenBar(
                 color = MaterialTheme.colorScheme.onPrimary
             )
         },
+        scrollBehavior = scrollBehavior,
         actions = {
             IconButton(
                 onClick = onRefreshClicked
