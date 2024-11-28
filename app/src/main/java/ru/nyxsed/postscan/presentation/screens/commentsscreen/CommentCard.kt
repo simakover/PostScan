@@ -1,6 +1,8 @@
 package ru.nyxsed.postscan.presentation.screens.commentsscreen
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,11 +28,13 @@ import ru.nyxsed.postscan.domain.models.CommentEntity
 import ru.nyxsed.postscan.presentation.ui.theme.VkBlue
 import ru.nyxsed.postscan.util.Constants.convertLongToTime
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun CommentCard(
     comment: CommentEntity,
     replays: List<CommentEntity>,
     onToMihonClicked: (CommentEntity) -> Unit,
+    onTextLongClick: (String) -> Unit,
 ) {
     Card {
         Column(
@@ -84,6 +88,13 @@ fun CommentCard(
                 }
             }
             Text(
+                modifier = Modifier
+                    .combinedClickable(
+                        onClick = { },
+                        onLongClick = {
+                            onTextLongClick(comment.contentText)
+                        }
+                    ),
                 text = comment.contentText,
                 color = MaterialTheme.colorScheme.onSecondary
             )
@@ -113,7 +124,13 @@ fun CommentCard(
                     Text(
                         modifier = Modifier
                             .padding(4.dp)
-                            .weight(1f),
+                            .weight(1f)
+                            .combinedClickable(
+                                onClick = { },
+                                onLongClick = {
+                                    onTextLongClick(reply.contentText)
+                                }
+                            ),
                         text = reply.contentText,
                         color = MaterialTheme.colorScheme.onSecondary
                     )
