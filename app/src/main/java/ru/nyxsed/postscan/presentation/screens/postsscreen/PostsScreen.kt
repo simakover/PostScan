@@ -9,8 +9,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -161,6 +163,12 @@ val PostsScreen by navDestination<Unit> {
                 contentPadding = PaddingValues(4.dp),
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
+                item {
+                    Spacer(
+                        modifier = Modifier
+                            .height(37.dp),
+                    )
+                }
                 items(
                     items = postListState.value.filter {
                         if (groupSelected == 0L) true else it.ownerId.absoluteValue == groupSelected
@@ -255,7 +263,7 @@ fun Chip(
         modifier = Modifier
             .padding(horizontal = 4.dp, vertical = 4.dp)
             .background(color = backgroundColor, shape = RoundedCornerShape(16.dp))
-            .border(1.dp, color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(16.dp))
+            .border(1.dp, color = textColor, shape = RoundedCornerShape(16.dp))
             .clickable { onClick() }
     ) {
         Row(
