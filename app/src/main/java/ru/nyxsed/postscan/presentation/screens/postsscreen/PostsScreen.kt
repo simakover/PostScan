@@ -3,10 +3,10 @@ package ru.nyxsed.postscan.presentation.screens.postsscreen
 import android.os.Bundle
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -46,6 +46,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.core.content.ContextCompat.startActivity
 import coil3.compose.AsyncImage
 import com.composegears.tiamat.navController
@@ -118,7 +119,7 @@ val PostsScreen by navDestination<Unit> {
             SnackbarHost(snackbarHostState)
         }
     ) { paddings ->
-        Column(
+        Box(
             modifier = Modifier
                 .padding(paddings)
                 .fillMaxSize(),
@@ -126,7 +127,8 @@ val PostsScreen by navDestination<Unit> {
             LazyRow(
                 modifier = Modifier
                     .padding(4.dp)
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .zIndex(1f),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 items(
@@ -137,7 +139,7 @@ val PostsScreen by navDestination<Unit> {
                     Chip(
                         group = groupChip,
                         isSelected = groupChip.groupId == groupSelected,
-                        postCount = postListState.value.filter {it.ownerId.absoluteValue == groupChip.groupId }.size,
+                        postCount = postListState.value.filter { it.ownerId.absoluteValue == groupChip.groupId }.size,
                         onClick = {
                             if (groupSelected != groupChip.groupId!!) {
                                 groupSelected = groupChip.groupId!!
@@ -253,6 +255,7 @@ fun Chip(
         modifier = Modifier
             .padding(horizontal = 4.dp, vertical = 4.dp)
             .background(color = backgroundColor, shape = RoundedCornerShape(16.dp))
+            .border(1.dp, color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(16.dp))
             .clickable { onClick() }
     ) {
         Row(
