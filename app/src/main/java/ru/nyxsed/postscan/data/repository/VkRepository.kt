@@ -1,5 +1,7 @@
 package ru.nyxsed.postscan.data.repository
 
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import com.vk.api.sdk.VKKeyValueStorage
 import com.vk.api.sdk.auth.VKAccessToken
 import kotlinx.coroutines.CoroutineScope
@@ -14,11 +16,14 @@ import ru.nyxsed.postscan.domain.models.CommentEntity
 import ru.nyxsed.postscan.domain.models.ContentEntity
 import ru.nyxsed.postscan.domain.models.GroupEntity
 import ru.nyxsed.postscan.domain.models.PostEntity
+import ru.nyxsed.postscan.util.Constants.NOT_LOAD_LIKED_POSTS
+import ru.nyxsed.postscan.util.Constants.getSettingFromDataStore
 
 class VkRepository(
     private val apiService: ApiService,
     private val mapper: VkMapper,
     private val storage: VKKeyValueStorage,
+    private val dataStore: DataStore<Preferences>,
 ) {
 
     private val token
@@ -32,6 +37,7 @@ class VkRepository(
         var startFrom: String? = ""
         val posts = mutableListOf<PostEntity>()
         val lastFetchDate = groupEntity.lastFetchDate
+        val notLoadLikedPosts = getSettingFromDataStore(dataStore, NOT_LOAD_LIKED_POSTS) == "1"
 
         while (startFrom != null) {
             val response = apiService.newsfeedGet(
@@ -42,9 +48,17 @@ class VkRepository(
             )
 
             val responsePosts = mapper.mapNewsFeedResponseToPosts(response)
-            responsePosts.forEach {
-                posts.add(it)
-            }
+            responsePosts
+                .filter {
+                    if (notLoadLikedPosts) {
+                        it.isLiked == false
+                    } else {
+                        true
+                    }
+                }
+                .forEach {
+                    posts.add(it)
+                }
 
             startFrom = response.content?.nextFrom
             delay(350)

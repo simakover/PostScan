@@ -85,4 +85,8 @@ dependencies {
 
     // pager
     implementation("androidx.compose.foundation:foundation:1.7.5")
+
+    // datastore
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
 }

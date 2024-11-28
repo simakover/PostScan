@@ -33,6 +33,7 @@ import ru.nyxsed.postscan.util.Constants.convertLongToTime
 fun CommentCard(
     comment: CommentEntity,
     replays: List<CommentEntity>,
+    settingUseMihon: Boolean,
     onToMihonClicked: (CommentEntity) -> Unit,
     onTextLongClick: (String) -> Unit,
 ) {
@@ -75,16 +76,18 @@ fun CommentCard(
                         style = MaterialTheme.typography.titleSmall
                     )
                 }
-                IconButton(
-                    onClick = {
-                        onToMihonClicked(comment)
+                if (settingUseMihon) {
+                    IconButton(
+                        onClick = {
+                            onToMihonClicked(comment)
+                        }
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_mihon),
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSecondary
+                        )
                     }
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_mihon),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSecondary
-                    )
                 }
             }
             Text(

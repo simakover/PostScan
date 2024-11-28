@@ -14,6 +14,7 @@ import ru.nyxsed.postscan.presentation.screens.commentsscreen.CommentsScreenView
 import ru.nyxsed.postscan.presentation.screens.groupsscreen.GroupsScreenViewModel
 import ru.nyxsed.postscan.presentation.screens.imagepagerscreen.ImagePagerViewModel
 import ru.nyxsed.postscan.presentation.screens.postsscreen.PostsScreenViewModel
+import ru.nyxsed.postscan.presentation.screens.preferencesscreen.PreferencesScreenViewModel
 
 val appModule = module {
     // repositories
@@ -21,7 +22,8 @@ val appModule = module {
         VkRepository(
             apiService = get(),
             mapper = get(),
-            storage = get()
+            storage = get(),
+            dataStore = get()
         )
     }
 
@@ -47,7 +49,8 @@ val appModule = module {
     viewModel<PostsScreenViewModel> {
         PostsScreenViewModel(
             dbRepository = get(),
-            vkRepository = get()
+            vkRepository = get(),
+            dataStore = get()
         )
     }
 
@@ -73,7 +76,14 @@ val appModule = module {
     viewModel<CommentsScreenViewModel> { (post: PostEntity) ->
         CommentsScreenViewModel(
             vkRepository = get(),
-            post = post
+            post = post,
+            dataStore = get()
+        )
+    }
+
+    viewModel<PreferencesScreenViewModel> {
+        PreferencesScreenViewModel(
+            dataStore = get()
         )
     }
 }

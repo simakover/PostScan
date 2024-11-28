@@ -3,6 +3,11 @@ package ru.nyxsed.postscan.util
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
+import kotlinx.coroutines.flow.first
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -48,4 +53,21 @@ object Constants {
 
     fun <T> List<T>.findOrLast(predicate: (T) -> Boolean): T =
         find(predicate) ?: last()
+
+
+    const val NOT_LOAD_LIKED_POSTS = "NOT_LOAD_LIKED_POSTS"
+    const val USE_MIHON = "USE_MIHON"
+
+    // Функция для сохранения настроек
+    suspend fun saveSettingToDataStore(dataStore: DataStore<Preferences>, key: String, value: String) {
+        dataStore.edit { preferences ->
+            preferences[stringPreferencesKey(key)] = value
+        }
+    }
+
+    // Функция для чтения настроек
+    suspend fun getSettingFromDataStore(dataStore: DataStore<Preferences>, key: String): String {
+        val preferences = dataStore.data.first()
+        return preferences[stringPreferencesKey(key)] ?: "default_value"
+    }
 }
