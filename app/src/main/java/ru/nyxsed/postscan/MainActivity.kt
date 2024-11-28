@@ -13,6 +13,7 @@ import ru.nyxsed.postscan.presentation.screens.groupsscreen.GroupsScreen
 import ru.nyxsed.postscan.presentation.screens.imagepagerscreen.ImagePagerScreen
 import ru.nyxsed.postscan.presentation.screens.loginscreen.LoginScreen
 import ru.nyxsed.postscan.presentation.screens.postsscreen.PostsScreen
+import ru.nyxsed.postscan.presentation.screens.preferencesscreen.PreferencesScreen
 import ru.nyxsed.postscan.presentation.ui.theme.PostScanTheme
 
 class MainActivity : ComponentActivity() {
@@ -28,6 +29,7 @@ class MainActivity : ComponentActivity() {
                     AddGroupScreen,
                     ImagePagerScreen,
                     CommentsScreen,
+                    PreferencesScreen,
                 )
             )
             PostScanTheme {

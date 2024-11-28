@@ -31,9 +31,12 @@ import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -63,6 +66,8 @@ import ru.nyxsed.postscan.presentation.screens.groupsscreen.GroupsScreen
 import ru.nyxsed.postscan.presentation.screens.imagepagerscreen.ImagePagerArgs
 import ru.nyxsed.postscan.presentation.screens.imagepagerscreen.ImagePagerScreen
 import ru.nyxsed.postscan.presentation.screens.loginscreen.LoginScreen
+import ru.nyxsed.postscan.presentation.screens.preferencesscreen.PreferencesScreen
+import ru.nyxsed.postscan.util.Constants.USE_MIHON
 import ru.nyxsed.postscan.util.Constants.isInternetAvailable
 import kotlin.math.absoluteValue
 
@@ -87,6 +92,11 @@ val PostsScreen by navDestination<Unit> {
         LazyListState()
     }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+
+    var settingUseMihon by remember { mutableStateOf(true) }
+    LaunchedEffect(Unit) {
+        settingUseMihon = postsScreenViewModel.getSettingBoolean(USE_MIHON)
+    }
 
     Scaffold(
         topBar = {
@@ -114,6 +124,9 @@ val PostsScreen by navDestination<Unit> {
                         AuthState.NotAuthorized -> navController.navigate(LoginScreen)
                     }
                 },
+                onNavToSettingsClicked = {
+                    navController.navigate(PreferencesScreen)
+                },
                 scrollBehavior = scrollBehavior
             )
         },
@@ -133,26 +146,29 @@ val PostsScreen by navDestination<Unit> {
                     .zIndex(1f),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                items(
-                    items = groupListState.value,
-                    key = { it.groupId!! }
-                ) { groupChip ->
-
-                    Chip(
-                        group = groupChip,
-                        isSelected = groupChip.groupId == groupSelected,
-                        postCount = postListState.value.filter { it.ownerId.absoluteValue == groupChip.groupId }.size,
-                        onClick = {
-                            if (groupSelected != groupChip.groupId!!) {
-                                groupSelected = groupChip.groupId!!
-                            } else {
-                                groupSelected = 0L
-                            }
-                            scope.launch {
-                                scrollState.scrollToItem(0)
-                            }
+                groupListState.value.forEach { group ->
+                    val postCount = postListState.value.filter { it.ownerId.absoluteValue == group.groupId }.size
+                    if (postCount > 0) {
+                        item(
+                            key = group.groupId
+                        ) {
+                            Chip(
+                                group = group,
+                                isSelected = group.groupId == groupSelected,
+                                postCount = postCount,
+                                onChipClicked = {
+                                    if (groupSelected != group.groupId!!) {
+                                        groupSelected = group.groupId!!
+                                    } else {
+                                        groupSelected = 0L
+                                    }
+                                    scope.launch {
+                                        scrollState.scrollToItem(0)
+                                    }
+                                }
+                            )
                         }
-                    )
+                    }
                 }
             }
             LazyColumn(
@@ -181,6 +197,7 @@ val PostsScreen by navDestination<Unit> {
                     ) {
                         PostCard(
                             post = it,
+                            settingUseMihon = settingUseMihon,
                             onPostDeleteClicked = {
                                 postsScreenViewModel.deletePost(it)
                                 scope.launch {
@@ -220,7 +237,6 @@ val PostsScreen by navDestination<Unit> {
                                 navController.navigate(ImagePagerScreen, imagePagerArgs)
                             },
                             onCommentsClicked = {
-
                                 if (!isInternetAvailable(context)) {
                                     Toast.makeText(
                                         context,
@@ -248,7 +264,7 @@ fun Chip(
     group: GroupEntity,
     postCount: Int,
     isSelected: Boolean,
-    onClick: () -> Unit,
+    onChipClicked: () -> Unit,
 ) {
     val backgroundColor = if (isSelected) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.primary
     val textColor = if (isSelected) MaterialTheme.colorScheme.onSecondary else MaterialTheme.colorScheme.onPrimary
@@ -264,7 +280,7 @@ fun Chip(
             .padding(horizontal = 4.dp, vertical = 4.dp)
             .background(color = backgroundColor, shape = RoundedCornerShape(16.dp))
             .border(1.dp, color = textColor, shape = RoundedCornerShape(16.dp))
-            .clickable { onClick() }
+            .clickable { onChipClicked() }
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically

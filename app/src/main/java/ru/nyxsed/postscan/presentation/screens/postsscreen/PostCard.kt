@@ -40,6 +40,7 @@ import ru.nyxsed.postscan.util.Constants.convertLongToTime
 @Composable
 fun PostCard(
     post: PostEntity,
+    settingUseMihon: Boolean,
     onPostDeleteClicked: (PostEntity) -> Unit,
     onLikeClicked: (PostEntity) -> Unit,
     onToVkClicked: (PostEntity) -> Unit,
@@ -146,19 +147,21 @@ fun PostCard(
                                 text = it.title,
                                 color = MaterialTheme.colorScheme.onSecondary,
                             )
-                            IconButton(
-                                modifier = Modifier
-                                    .padding(8.dp)
-                                    .size(24.dp),
-                                onClick = {
-                                    onToMihonClicked(it.title)
+                            if (settingUseMihon) {
+                                IconButton(
+                                    modifier = Modifier
+                                        .padding(8.dp)
+                                        .size(24.dp),
+                                    onClick = {
+                                        onToMihonClicked(it.title)
+                                    }
+                                ) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.ic_mihon),
+                                        tint = MaterialTheme.colorScheme.onSecondary,
+                                        contentDescription = null
+                                    )
                                 }
-                            ) {
-                                Icon(
-                                    painter = painterResource(R.drawable.ic_mihon),
-                                    tint = MaterialTheme.colorScheme.onSecondary,
-                                    contentDescription = null
-                                )
                             }
                         }
                     }
@@ -179,18 +182,20 @@ fun PostCard(
                         contentDescription = null
                     )
                 }
-                IconButton(
-                    onClick = {
-                        onToMihonClicked(post.contentText)
+                if (settingUseMihon) {
+                    IconButton(
+                        onClick = {
+                            onToMihonClicked(post.contentText)
+                        }
+                    ) {
+                        Icon(
+                            modifier = Modifier
+                                .size(24.dp),
+                            painter = painterResource(R.drawable.ic_mihon),
+                            tint = MaterialTheme.colorScheme.onSecondary,
+                            contentDescription = null
+                        )
                     }
-                ) {
-                    Icon(
-                        modifier = Modifier
-                            .size(24.dp),
-                        painter = painterResource(R.drawable.ic_mihon),
-                        tint = MaterialTheme.colorScheme.onSecondary,
-                        contentDescription = null
-                    )
                 }
                 Spacer(
                     modifier = Modifier

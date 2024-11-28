@@ -2,6 +2,7 @@ package ru.nyxsed.postscan.presentation.screens.postsscreen
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
+import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -18,6 +19,7 @@ import androidx.compose.runtime.Composable
 fun PostsScreenBar(
     onRefreshClicked: () -> Unit,
     onNavToGroupsClicked: () -> Unit,
+    onNavToSettingsClicked: () -> Unit,
     scrollBehavior: TopAppBarScrollBehavior,
 ) {
     TopAppBar(
@@ -47,6 +49,15 @@ fun PostsScreenBar(
             ) {
                 Icon(
                     imageVector = Icons.Filled.AccountBox,
+                    tint = MaterialTheme.colorScheme.onPrimary,
+                    contentDescription = null,
+                )
+            }
+            IconButton(
+                onClick = onNavToSettingsClicked
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Build,
                     tint = MaterialTheme.colorScheme.onPrimary,
                     contentDescription = null,
                 )
