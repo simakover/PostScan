@@ -54,6 +54,7 @@ import com.composegears.tiamat.navDestination
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.androidx.compose.koinViewModel
 import ru.nyxsed.postscan.R
 import ru.nyxsed.postscan.SharedViewModel
@@ -88,11 +89,16 @@ val ImagePagerScreen by navDestination<ImagePagerArgs> {
     // Отслеживание смены страницы. если страница уже открывалась - не делать повторный запрос
     LaunchedEffect(pagerState.currentPage) {
         if (!isInternetAvailable(context)) {
-            Toast.makeText(context, context.getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show()
+            withContext(Dispatchers.Main) {
+                Toast.makeText(context, context.getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show()
+            }
+
             return@LaunchedEffect
         }
         if (authState is AuthState.NotAuthorized) {
-            Toast.makeText(context, context.getString(R.string.app_is_not_authorized), Toast.LENGTH_SHORT).show()
+            withContext(Dispatchers.Main) {
+                Toast.makeText(context, context.getString(R.string.app_is_not_authorized), Toast.LENGTH_SHORT).show()
+            }
             return@LaunchedEffect
         }
 
@@ -252,8 +258,7 @@ val ImagePagerScreen by navDestination<ImagePagerArgs> {
                                         context,
                                         context.getString(R.string.no_internet_connection),
                                         Toast.LENGTH_SHORT
-                                    )
-                                        .show()
+                                    ).show()
                                     return@IconButton
                                 }
                                 if (authState is AuthState.NotAuthorized) {
@@ -261,8 +266,7 @@ val ImagePagerScreen by navDestination<ImagePagerArgs> {
                                         context,
                                         context.getString(R.string.app_is_not_authorized),
                                         Toast.LENGTH_SHORT
-                                    )
-                                        .show()
+                                    ).show()
                                     return@IconButton
                                 }
 

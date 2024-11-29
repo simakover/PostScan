@@ -33,6 +33,7 @@ import com.composegears.tiamat.navDestination
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.androidx.compose.koinViewModel
 import ru.nyxsed.postscan.R
 import ru.nyxsed.postscan.domain.models.GroupEntity
@@ -51,6 +52,7 @@ val AddGroupScreen by navDestination<GroupEntity> {
 
     var group by remember { mutableStateOf(GroupEntity()) }
     var lastFetchDate by remember { mutableStateOf(convertLongToTime(System.currentTimeMillis()).replace(".", "")) }
+    var screenName by remember { mutableStateOf("") }
 
     LaunchedEffect(true) {
         groupArg?.let {
@@ -63,6 +65,7 @@ val AddGroupScreen by navDestination<GroupEntity> {
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .padding(paddings)
                 .padding(8.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
@@ -79,9 +82,9 @@ val AddGroupScreen by navDestination<GroupEntity> {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 10.dp),
-                value = group.screenName,
+                value = screenName,
                 onValueChange = {
-                    group = group.copy(screenName = it)
+                    screenName = it
                 },
                 label = {
                     Text(stringResource(R.string.group_name_or_id))
@@ -94,12 +97,22 @@ val AddGroupScreen by navDestination<GroupEntity> {
                 onClick = {
                     scope.launch {
                         if (!isInternetAvailable(context)) {
-                            Toast.makeText(context, context.getString(R.string.no_internet_connection), Toast.LENGTH_SHORT)
-                                .show()
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(
+                                    context,
+                                    context.getString(R.string.no_internet_connection),
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
                             return@launch
                         }
-                        group = addGroupScreenViewModel.groupsGetById(group.screenName)
-
+                        group = addGroupScreenViewModel.groupsGetById(screenName)
+                        if (group.groupId == null || group.groupId == 0L) {
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(context, context.getString(R.string.group_not_found), Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+                        }
                     }
                 }
             ) {
@@ -140,7 +153,8 @@ val AddGroupScreen by navDestination<GroupEntity> {
                 onClick = {
                     addGroupScreenViewModel.addGroup(group, lastFetchDate)
                     navController.back()
-                }
+                },
+                enabled = if (group.groupId != null && group.groupId != 0L) true else false
             ) {
                 Text(text = if (groupArg == null) stringResource(R.string.add_group) else stringResource(R.string.update_group))
             }
