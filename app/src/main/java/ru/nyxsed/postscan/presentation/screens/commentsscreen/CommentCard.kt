@@ -25,8 +25,10 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import ru.nyxsed.postscan.R
 import ru.nyxsed.postscan.domain.models.CommentEntity
+import ru.nyxsed.postscan.domain.models.ContentEntity
 import ru.nyxsed.postscan.presentation.ui.theme.VkBlue
 import ru.nyxsed.postscan.util.Constants.convertLongToTime
+import ru.nyxsed.postscan.util.MultipleImages
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -36,6 +38,7 @@ fun CommentCard(
     settingUseMihon: Boolean,
     onToMihonClicked: (CommentEntity) -> Unit,
     onTextLongClick: (String) -> Unit,
+    onImageClicked: (List<ContentEntity>, Int) -> Unit,
 ) {
     Card {
         Column(
@@ -90,6 +93,12 @@ fun CommentCard(
                     }
                 }
             }
+            MultipleImages(
+                listContent = comment.content,
+                onImageClicked = {
+                    onImageClicked(comment.content, it)
+                }
+            )
             Text(
                 modifier = Modifier
                     .combinedClickable(
@@ -123,6 +132,12 @@ fun CommentCard(
                         model = reply.ownerImageUrl,
                         placeholder = painterResource(R.drawable.ic_placeholder),
                         contentDescription = null,
+                    )
+                    MultipleImages(
+                        listContent = reply.content,
+                        onImageClicked = {
+                            onImageClicked(reply.content, it)
+                        }
                     )
                     Text(
                         modifier = Modifier

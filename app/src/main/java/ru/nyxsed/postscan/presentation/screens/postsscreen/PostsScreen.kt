@@ -217,8 +217,8 @@ val PostsScreen by navDestination<Unit> {
                                     annotatedString = AnnotatedString(it.contentText)
                                 )
                             },
-                            onImageClicked = { post, index ->
-                                val imagePagerArgs = ImagePagerArgs(post, index)
+                            onImageClicked = { content, index ->
+                                val imagePagerArgs = ImagePagerArgs(content, index)
                                 navController.navigate(ImagePagerScreen, imagePagerArgs)
                             },
                             onCommentsClicked = {

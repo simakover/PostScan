@@ -59,7 +59,6 @@ import org.koin.androidx.compose.koinViewModel
 import ru.nyxsed.postscan.R
 import ru.nyxsed.postscan.SharedViewModel
 import ru.nyxsed.postscan.domain.models.ContentEntity
-import ru.nyxsed.postscan.domain.models.PostEntity
 import ru.nyxsed.postscan.presentation.screens.postsscreen.AuthState
 import ru.nyxsed.postscan.presentation.ui.theme.LikedHeart
 import ru.nyxsed.postscan.util.Constants.isInternetAvailable
@@ -76,7 +75,7 @@ val ImagePagerScreen by navDestination<ImagePagerArgs> {
     val sharedViewModel = koinViewModel<SharedViewModel>()
     val authState by sharedViewModel.authStateFlow.collectAsState()
 
-    var content by remember { mutableStateOf<List<ContentEntity>>(imagePagerArgs.post.content) }
+    var content by remember { mutableStateOf<List<ContentEntity>>(imagePagerArgs.listContent) }
 
     val uriHandler = LocalUriHandler.current
     val pagerState = rememberPagerState(
@@ -297,6 +296,6 @@ val ImagePagerScreen by navDestination<ImagePagerArgs> {
 
 
 data class ImagePagerArgs(
-    val post: PostEntity,
+    val listContent: List<ContentEntity>,
     val index: Int,
 )
