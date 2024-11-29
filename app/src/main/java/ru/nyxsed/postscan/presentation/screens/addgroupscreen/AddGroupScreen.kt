@@ -36,7 +36,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.androidx.compose.koinViewModel
 import ru.nyxsed.postscan.R
-import ru.nyxsed.postscan.domain.models.GroupEntity
+import ru.nyxsed.postscan.data.models.entity.GroupEntity
 import ru.nyxsed.postscan.util.Constants.DATE_LENGTH
 import ru.nyxsed.postscan.util.Constants.DATE_MASK
 import ru.nyxsed.postscan.util.Constants.convertLongToTime

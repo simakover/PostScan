@@ -6,8 +6,8 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import ru.nyxsed.postscan.data.database.DbDao
-import ru.nyxsed.postscan.domain.models.GroupEntity
-import ru.nyxsed.postscan.domain.models.PostEntity
+import ru.nyxsed.postscan.data.models.entity.GroupEntity
+import ru.nyxsed.postscan.data.models.entity.PostEntity
 
 class DbRepository(
     private val dbDao: DbDao,

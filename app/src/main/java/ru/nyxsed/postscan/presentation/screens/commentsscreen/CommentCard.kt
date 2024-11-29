@@ -24,8 +24,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import ru.nyxsed.postscan.R
-import ru.nyxsed.postscan.domain.models.CommentEntity
-import ru.nyxsed.postscan.domain.models.ContentEntity
+import ru.nyxsed.postscan.data.models.entity.CommentEntity
+import ru.nyxsed.postscan.data.models.entity.ContentEntity
 import ru.nyxsed.postscan.presentation.ui.theme.VkBlue
 import ru.nyxsed.postscan.util.Constants.convertLongToTime
 import ru.nyxsed.postscan.util.MultipleImages

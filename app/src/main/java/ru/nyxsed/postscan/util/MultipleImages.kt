@@ -27,7 +27,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import ru.nyxsed.postscan.R
-import ru.nyxsed.postscan.domain.models.ContentEntity
+import ru.nyxsed.postscan.data.models.entity.ContentEntity
 
 @Composable
 fun MultipleImages(

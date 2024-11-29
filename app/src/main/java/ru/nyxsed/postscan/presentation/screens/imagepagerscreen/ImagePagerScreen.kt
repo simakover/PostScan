@@ -58,7 +58,7 @@ import kotlinx.coroutines.withContext
 import org.koin.androidx.compose.koinViewModel
 import ru.nyxsed.postscan.R
 import ru.nyxsed.postscan.SharedViewModel
-import ru.nyxsed.postscan.domain.models.ContentEntity
+import ru.nyxsed.postscan.data.models.entity.ContentEntity
 import ru.nyxsed.postscan.presentation.screens.postsscreen.AuthState
 import ru.nyxsed.postscan.presentation.ui.theme.LikedHeart
 import ru.nyxsed.postscan.util.Constants.isInternetAvailable
