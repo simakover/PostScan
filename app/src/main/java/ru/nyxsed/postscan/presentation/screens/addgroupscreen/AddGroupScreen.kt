@@ -53,11 +53,17 @@ val AddGroupScreen by navDestination<GroupEntity> {
     var group by remember { mutableStateOf(GroupEntity()) }
     var lastFetchDate by remember { mutableStateOf(convertLongToTime(System.currentTimeMillis()).replace(".", "")) }
     var screenName by remember { mutableStateOf("") }
+    var groupName by remember { mutableStateOf("") }
+
+    var enableSearch by remember { mutableStateOf(true) }
 
     LaunchedEffect(true) {
         groupArg?.let {
             lastFetchDate = convertLongToTime(it.lastFetchDate).replace(".", "")
             group = it
+            screenName = group.screenName
+            groupName = group.name
+            enableSearch = false
         }
     }
 
@@ -82,9 +88,11 @@ val AddGroupScreen by navDestination<GroupEntity> {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 10.dp),
+                enabled = enableSearch,
                 value = screenName,
                 onValueChange = {
                     screenName = it
+                    group.groupId = 0L
                 },
                 label = {
                     Text(stringResource(R.string.group_name_or_id))
@@ -94,6 +102,7 @@ val AddGroupScreen by navDestination<GroupEntity> {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 10.dp),
+                enabled = enableSearch,
                 onClick = {
                     scope.launch {
                         if (!isInternetAvailable(context)) {
@@ -107,6 +116,7 @@ val AddGroupScreen by navDestination<GroupEntity> {
                             return@launch
                         }
                         group = addGroupScreenViewModel.groupsGetById(screenName)
+                        groupName = group.name
                         if (group.groupId == null || group.groupId == 0L) {
                             withContext(Dispatchers.Main) {
                                 Toast.makeText(context, context.getString(R.string.group_not_found), Toast.LENGTH_SHORT)
@@ -122,9 +132,9 @@ val AddGroupScreen by navDestination<GroupEntity> {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 30.dp),
-                value = group.name,
+                value = groupName,
                 onValueChange = {
-                    group = group.copy(name = it)
+                    groupName = it
                 },
                 label = {
                     Text(stringResource(R.string.group_name))
@@ -151,7 +161,7 @@ val AddGroupScreen by navDestination<GroupEntity> {
                     .fillMaxWidth()
                     .padding(top = 10.dp),
                 onClick = {
-                    addGroupScreenViewModel.addGroup(group, lastFetchDate)
+                    addGroupScreenViewModel.addGroup(group, lastFetchDate, groupName)
                     navController.back()
                 },
                 enabled = if (group.groupId != null && group.groupId != 0L) true else false
