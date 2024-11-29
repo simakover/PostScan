@@ -12,7 +12,7 @@ class AddGroupScreenViewModel(
     private val dbRepository: DbRepository,
     private val vkRepository: VkRepository,
 ) : ViewModel() {
-    fun addGroup(group: GroupEntity, fetchDate: String) {
+    fun addGroup(group: GroupEntity, fetchDate: String, groupName: String) {
         viewModelScope.launch {
 
             val lastFetchDate = if (fetchDate.isEmpty()) {
@@ -23,6 +23,7 @@ class AddGroupScreenViewModel(
             } ?: System.currentTimeMillis()
 
             group.lastFetchDate = lastFetchDate
+            group.name = groupName
 
             val fetchedGroup = dbRepository.getGroupById(group.groupId!!)
             if (fetchedGroup == null) {
