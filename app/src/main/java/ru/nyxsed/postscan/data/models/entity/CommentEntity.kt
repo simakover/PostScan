@@ -1,4 +1,4 @@
-package ru.nyxsed.postscan.domain.models
+package ru.nyxsed.postscan.data.models.entity
 
 data class CommentEntity(
     val commentId: Long,

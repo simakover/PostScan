@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import ru.nyxsed.postscan.R
-import ru.nyxsed.postscan.domain.models.GroupEntity
+import ru.nyxsed.postscan.data.models.entity.GroupEntity
 
 @Composable
 fun GroupChip(

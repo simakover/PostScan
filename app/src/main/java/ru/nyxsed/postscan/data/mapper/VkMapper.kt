@@ -1,15 +1,15 @@
 package ru.nyxsed.postscan.data.mapper
 
+import ru.nyxsed.postscan.data.models.entity.CommentEntity
+import ru.nyxsed.postscan.data.models.entity.ContentEntity
+import ru.nyxsed.postscan.data.models.entity.GroupEntity
+import ru.nyxsed.postscan.data.models.entity.PostEntity
 import ru.nyxsed.postscan.data.models.response.groupsgetbyid.GroupsGetByIdResponse
 import ru.nyxsed.postscan.data.models.response.newsfeedget.AttachmentResponse
 import ru.nyxsed.postscan.data.models.response.newsfeedget.NewsFeedGetResponse
 import ru.nyxsed.postscan.data.models.response.wallgetcomments.ItemResponse
 import ru.nyxsed.postscan.data.models.response.wallgetcomments.ProfilesResponse
 import ru.nyxsed.postscan.data.models.response.wallgetcomments.WallGetCommentsResponse
-import ru.nyxsed.postscan.domain.models.CommentEntity
-import ru.nyxsed.postscan.domain.models.ContentEntity
-import ru.nyxsed.postscan.domain.models.GroupEntity
-import ru.nyxsed.postscan.domain.models.PostEntity
 import ru.nyxsed.postscan.util.Constants.findOrFirst
 import ru.nyxsed.postscan.util.Constants.findOrLast
 import kotlin.math.absoluteValue

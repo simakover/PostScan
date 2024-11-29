@@ -4,8 +4,8 @@ import androidx.compose.ui.platform.UriHandler
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import ru.nyxsed.postscan.data.models.entity.ContentEntity
 import ru.nyxsed.postscan.data.repository.VkRepository
-import ru.nyxsed.postscan.domain.models.ContentEntity
 import ru.nyxsed.postscan.util.Constants.VK_PHOTO_URL
 import ru.nyxsed.postscan.util.Constants.YANDEX_SEARCH_URL
 

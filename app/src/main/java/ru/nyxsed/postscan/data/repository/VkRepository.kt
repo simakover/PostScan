@@ -11,11 +11,11 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import ru.nyxsed.postscan.data.mapper.VkMapper
+import ru.nyxsed.postscan.data.models.entity.CommentEntity
+import ru.nyxsed.postscan.data.models.entity.ContentEntity
+import ru.nyxsed.postscan.data.models.entity.GroupEntity
+import ru.nyxsed.postscan.data.models.entity.PostEntity
 import ru.nyxsed.postscan.data.network.ApiService
-import ru.nyxsed.postscan.domain.models.CommentEntity
-import ru.nyxsed.postscan.domain.models.ContentEntity
-import ru.nyxsed.postscan.domain.models.GroupEntity
-import ru.nyxsed.postscan.domain.models.PostEntity
 import ru.nyxsed.postscan.util.Constants.NOT_LOAD_LIKED_POSTS
 import ru.nyxsed.postscan.util.Constants.getSettingFromDataStore
 

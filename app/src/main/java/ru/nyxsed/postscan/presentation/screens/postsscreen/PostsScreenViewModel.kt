@@ -8,10 +8,10 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import ru.nyxsed.postscan.data.models.entity.GroupEntity
+import ru.nyxsed.postscan.data.models.entity.PostEntity
 import ru.nyxsed.postscan.data.repository.DbRepository
 import ru.nyxsed.postscan.data.repository.VkRepository
-import ru.nyxsed.postscan.domain.models.GroupEntity
-import ru.nyxsed.postscan.domain.models.PostEntity
 import ru.nyxsed.postscan.util.Constants.MANGA_SEARCH_ACTION
 import ru.nyxsed.postscan.util.Constants.VK_URL
 import ru.nyxsed.postscan.util.Constants.VK_WALL_URL

@@ -7,8 +7,8 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
-import ru.nyxsed.postscan.domain.models.GroupEntity
-import ru.nyxsed.postscan.domain.models.PostEntity
+import ru.nyxsed.postscan.data.models.entity.GroupEntity
+import ru.nyxsed.postscan.data.models.entity.PostEntity
 
 @Dao
 interface DbDao {
