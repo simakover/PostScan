@@ -15,6 +15,7 @@ object Constants {
     const val VK_API_VERSION = "5.199"
     const val VK_BASE_URL = "https://api.vk.com/method/"
     const val VK_WALL_URL = "https://vk.com/wall"
+    const val VK_URL = "https://vk.com/"
     const val VK_PHOTO_URL = "https://vk.com/photo"
 
     const val MANGA_SEARCH_ACTION = "eu.kanade.tachiyomi.SEARCH"

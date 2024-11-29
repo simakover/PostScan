@@ -10,8 +10,10 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import ru.nyxsed.postscan.data.repository.DbRepository
 import ru.nyxsed.postscan.data.repository.VkRepository
+import ru.nyxsed.postscan.domain.models.GroupEntity
 import ru.nyxsed.postscan.domain.models.PostEntity
 import ru.nyxsed.postscan.util.Constants.MANGA_SEARCH_ACTION
+import ru.nyxsed.postscan.util.Constants.VK_URL
 import ru.nyxsed.postscan.util.Constants.VK_WALL_URL
 import ru.nyxsed.postscan.util.Constants.getSettingFromDataStore
 import ru.nyxsed.postscan.util.NotificationHelper.completeNotification
@@ -69,6 +71,10 @@ class PostsScreenViewModel(
 
     fun openPostUri(uriHandler: UriHandler, post: PostEntity) {
         uriHandler.openUri("${VK_WALL_URL}${post.ownerId}_${post.postId}")
+    }
+
+    fun openGroupUri(uriHandler: UriHandler, group: GroupEntity) {
+        uriHandler.openUri("${VK_URL}${group.screenName}")
     }
 
     fun mihonIntent(query: String): Intent {

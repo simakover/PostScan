@@ -3,6 +3,7 @@ package ru.nyxsed.postscan.presentation.screens.postsscreen
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -48,6 +49,7 @@ fun PostCard(
     onTextLongClick: (PostEntity) -> Unit,
     onImageClicked: (PostEntity, Int) -> Unit,
     onCommentsClicked: (PostEntity) -> Unit,
+    onGroupClicked: (PostEntity) -> Unit,
 ) {
     Card {
         Column(
@@ -58,7 +60,8 @@ fun PostCard(
         ) {
             PostHeader(
                 post = post,
-                onPostDeleteClicked = onPostDeleteClicked
+                onPostDeleteClicked = onPostDeleteClicked,
+                onGroupClicked = onGroupClicked
             )
             Box(
                 modifier = Modifier
@@ -182,7 +185,7 @@ fun PostCard(
                         contentDescription = null
                     )
                 }
-                if (settingUseMihon) {
+                if (settingUseMihon && post.contentText.isNotEmpty()) {
                     IconButton(
                         onClick = {
                             onToMihonClicked(post.contentText)
@@ -232,6 +235,7 @@ fun PostCard(
 fun PostHeader(
     post: PostEntity,
     onPostDeleteClicked: (PostEntity) -> Unit,
+    onGroupClicked: (PostEntity) -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -242,7 +246,12 @@ fun PostHeader(
         AsyncImage(
             modifier = Modifier
                 .clip(CircleShape)
-                .size(50.dp),
+                .size(50.dp)
+                .clickable(
+                    onClick = {
+                        onGroupClicked(post)
+                    }
+                ),
             model = post.ownerImageUrl,
             placeholder = painterResource(R.drawable.ic_placeholder),
             contentDescription = null,
