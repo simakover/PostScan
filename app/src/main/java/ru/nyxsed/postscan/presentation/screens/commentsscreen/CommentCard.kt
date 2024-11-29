@@ -26,9 +26,9 @@ import coil3.compose.AsyncImage
 import ru.nyxsed.postscan.R
 import ru.nyxsed.postscan.data.models.entity.CommentEntity
 import ru.nyxsed.postscan.data.models.entity.ContentEntity
+import ru.nyxsed.postscan.presentation.elements.MultipleImages
 import ru.nyxsed.postscan.presentation.ui.theme.VkBlue
 import ru.nyxsed.postscan.util.Constants.convertLongToTime
-import ru.nyxsed.postscan.util.MultipleImages
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
