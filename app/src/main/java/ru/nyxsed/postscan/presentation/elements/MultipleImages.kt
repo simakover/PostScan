@@ -1,4 +1,4 @@
-package ru.nyxsed.postscan.util
+package ru.nyxsed.postscan.presentation.elements
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
