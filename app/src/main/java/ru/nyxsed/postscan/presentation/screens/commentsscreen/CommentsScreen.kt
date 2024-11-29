@@ -20,10 +20,13 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.startActivity
 import com.composegears.tiamat.navArgs
+import com.composegears.tiamat.navController
 import com.composegears.tiamat.navDestination
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 import ru.nyxsed.postscan.domain.models.PostEntity
+import ru.nyxsed.postscan.presentation.screens.imagepagerscreen.ImagePagerArgs
+import ru.nyxsed.postscan.presentation.screens.imagepagerscreen.ImagePagerScreen
 import ru.nyxsed.postscan.util.Constants.USE_MIHON
 
 val CommentsScreen by navDestination<PostEntity> {
@@ -32,6 +35,8 @@ val CommentsScreen by navDestination<PostEntity> {
         key = args.postId.toString(),
         parameters = { parametersOf(args) }
     )
+    val navController = navController()
+
     val comments by commentsScreenViewModel.comments.collectAsState()
 
     val context = LocalContext.current
@@ -72,6 +77,10 @@ val CommentsScreen by navDestination<PostEntity> {
                             annotatedString = AnnotatedString(it)
                         )
                     },
+                    onImageClicked = {content, index ->
+                        val imagePagerArgs = ImagePagerArgs(content, index)
+                        navController.navigate(ImagePagerScreen, imagePagerArgs)
+                    }
                 )
             }
         }

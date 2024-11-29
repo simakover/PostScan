@@ -32,10 +32,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import ru.nyxsed.postscan.R
+import ru.nyxsed.postscan.domain.models.ContentEntity
 import ru.nyxsed.postscan.domain.models.PostEntity
 import ru.nyxsed.postscan.presentation.ui.theme.LikedHeart
 import ru.nyxsed.postscan.presentation.ui.theme.VkBlue
 import ru.nyxsed.postscan.util.Constants.convertLongToTime
+import ru.nyxsed.postscan.util.MultipleImages
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -47,7 +49,7 @@ fun PostCard(
     onToVkClicked: (PostEntity) -> Unit,
     onToMihonClicked: (String) -> Unit,
     onTextLongClick: (PostEntity) -> Unit,
-    onImageClicked: (PostEntity, Int) -> Unit,
+    onImageClicked: (List<ContentEntity>, Int) -> Unit,
     onCommentsClicked: (PostEntity) -> Unit,
     onGroupClicked: (PostEntity) -> Unit,
 ) {
@@ -68,10 +70,10 @@ fun PostCard(
                     .padding(top = 8.dp)
                     .fillMaxWidth(),
             ) {
-                PostMultipleImages(
-                    post = post,
+                MultipleImages(
+                    listContent = post.content,
                     onImageClicked = {
-                        onImageClicked(post, it)
+                        onImageClicked(post.content, it)
                     }
                 )
                 if (post.content.size > 10) {
