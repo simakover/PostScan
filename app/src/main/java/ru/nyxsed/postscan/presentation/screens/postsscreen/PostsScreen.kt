@@ -2,35 +2,25 @@ package ru.nyxsed.postscan.presentation.screens.postsscreen
 
 import android.os.Bundle
 import android.widget.Toast
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
-import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -40,27 +30,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.core.content.ContextCompat.startActivity
-import coil3.compose.AsyncImage
 import com.composegears.tiamat.navController
 import com.composegears.tiamat.navDestination
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import ru.nyxsed.postscan.R
 import ru.nyxsed.postscan.SharedViewModel
-import ru.nyxsed.postscan.domain.models.GroupEntity
 import ru.nyxsed.postscan.presentation.screens.commentsscreen.CommentsScreen
 import ru.nyxsed.postscan.presentation.screens.groupsscreen.GroupsScreen
 import ru.nyxsed.postscan.presentation.screens.imagepagerscreen.ImagePagerArgs
@@ -68,6 +52,7 @@ import ru.nyxsed.postscan.presentation.screens.imagepagerscreen.ImagePagerScreen
 import ru.nyxsed.postscan.presentation.screens.loginscreen.LoginScreen
 import ru.nyxsed.postscan.presentation.screens.preferencesscreen.PreferencesScreen
 import ru.nyxsed.postscan.util.Constants.USE_MIHON
+import ru.nyxsed.postscan.util.Constants.findOrFirst
 import ru.nyxsed.postscan.util.Constants.isInternetAvailable
 import kotlin.math.absoluteValue
 
@@ -152,7 +137,7 @@ val PostsScreen by navDestination<Unit> {
                         item(
                             key = group.groupId
                         ) {
-                            Chip(
+                            GroupChip(
                                 group = group,
                                 isSelected = group.groupId == groupSelected,
                                 postCount = postCount,
@@ -250,58 +235,18 @@ val PostsScreen by navDestination<Unit> {
                                     AuthState.Authorized -> navController.navigate(CommentsScreen, it)
                                     AuthState.NotAuthorized -> navController.navigate(LoginScreen)
                                 }
+                            },
+                            onGroupClicked = { post ->
+                                val group = groupListState.value.findOrFirst { it.groupId == post.ownerId.absoluteValue }
+                                postsScreenViewModel.openGroupUri(
+                                    uriHandler = uriHandler,
+                                    group = group
+                                )
                             }
                         )
                     }
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun Chip(
-    group: GroupEntity,
-    postCount: Int,
-    isSelected: Boolean,
-    onChipClicked: () -> Unit,
-) {
-    val backgroundColor = if (isSelected) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.primary
-    val textColor = if (isSelected) MaterialTheme.colorScheme.onSecondary else MaterialTheme.colorScheme.onPrimary
-
-    val displayedText = if (group.name.length > 10) {
-        group.name.substring(0, 10) + "... ($postCount)"
-    } else {
-        group.name + " ($postCount)"
-    }
-
-    Box(
-        modifier = Modifier
-            .padding(horizontal = 4.dp, vertical = 4.dp)
-            .background(color = backgroundColor, shape = RoundedCornerShape(16.dp))
-            .border(1.dp, color = textColor, shape = RoundedCornerShape(16.dp))
-            .clickable { onChipClicked() }
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            AsyncImage(
-                modifier = Modifier
-                    .padding(4.dp)
-                    .clip(CircleShape)
-                    .size(25.dp),
-                model = group.avatarUrl,
-                placeholder = painterResource(R.drawable.ic_placeholder),
-                contentDescription = null,
-            )
-            Text(
-                modifier = Modifier
-                    .padding(4.dp),
-                text = displayedText,
-                color = textColor,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
         }
     }
 }
