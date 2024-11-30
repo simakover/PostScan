@@ -205,7 +205,8 @@ val ImagePagerScreen by navDestination<ImagePagerArgs> {
                     LazyRow(
                         modifier = Modifier
                             .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         items(
                             items = content,
