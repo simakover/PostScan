@@ -21,4 +21,7 @@
     <string name="group_add_dialog_question">Do you want to manually add group or pick it from your group list?</string>
     <string name="manually_add">Manually Add</string>
     <string name="pick_from">Pick From</string>
+    <string name="not_load_liked_posts">Not Load Liked Posts</string>
+    <string name="use_mihon_for_manga_search">Use Mihon for Manga Search</string>
+    <string name="delete_post_after_liking">Delete Post After Liking</string>
 </resources>

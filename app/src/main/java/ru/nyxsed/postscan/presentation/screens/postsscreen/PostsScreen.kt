@@ -1,5 +1,6 @@
 package ru.nyxsed.postscan.presentation.screens.postsscreen
 
+import android.content.Context
 import android.os.Bundle
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
@@ -45,12 +46,14 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import ru.nyxsed.postscan.R
 import ru.nyxsed.postscan.SharedViewModel
+import ru.nyxsed.postscan.data.models.entity.PostEntity
 import ru.nyxsed.postscan.presentation.screens.commentsscreen.CommentsScreen
 import ru.nyxsed.postscan.presentation.screens.groupsscreen.GroupsScreen
 import ru.nyxsed.postscan.presentation.screens.imagepagerscreen.ImagePagerArgs
 import ru.nyxsed.postscan.presentation.screens.imagepagerscreen.ImagePagerScreen
 import ru.nyxsed.postscan.presentation.screens.loginscreen.LoginScreen
 import ru.nyxsed.postscan.presentation.screens.preferencesscreen.PreferencesScreen
+import ru.nyxsed.postscan.util.Constants.DELETE_AFTER_LIKE
 import ru.nyxsed.postscan.util.Constants.USE_MIHON
 import ru.nyxsed.postscan.util.Constants.findOrFirst
 import ru.nyxsed.postscan.util.Constants.isInternetAvailable
@@ -79,8 +82,10 @@ val PostsScreen by navDestination<Unit> {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     var settingUseMihon by remember { mutableStateOf(true) }
+    var settingDeleteAfterLike by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         settingUseMihon = postsScreenViewModel.getSettingBoolean(USE_MIHON)
+        settingDeleteAfterLike = postsScreenViewModel.getSettingBoolean(DELETE_AFTER_LIKE)
     }
 
     Scaffold(
@@ -184,21 +189,27 @@ val PostsScreen by navDestination<Unit> {
                             post = it,
                             settingUseMihon = settingUseMihon,
                             onPostDeleteClicked = {
-                                postsScreenViewModel.deletePost(it)
                                 scope.launch {
-                                    snackbarHostState.currentSnackbarData?.dismiss()
-                                    val snackbarResult = snackbarHostState.showSnackbar(
-                                        message = context.getString(R.string.post_deleted),
-                                        actionLabel = context.getString(R.string.undo),
-                                        duration = SnackbarDuration.Short
+                                    deletePost(
+                                        post = it,
+                                        vm = postsScreenViewModel,
+                                        context = context,
+                                        snackbarHostState = snackbarHostState
                                     )
-                                    if (snackbarResult == SnackbarResult.ActionPerformed) {
-                                        postsScreenViewModel.addPost(it)
-                                    }
                                 }
                             },
                             onLikeClicked = {
-                                postsScreenViewModel.changeLikeStatus(it)
+                                scope.launch {
+                                    val changedPost = postsScreenViewModel.changeLikeStatus(it)
+                                    if (settingDeleteAfterLike) {
+                                        deletePost(
+                                            post = changedPost,
+                                            vm = postsScreenViewModel,
+                                            context = context,
+                                            snackbarHostState = snackbarHostState
+                                        )
+                                    }
+                                }
                             },
                             onToVkClicked = {
                                 postsScreenViewModel.openPostUri(
@@ -248,5 +259,23 @@ val PostsScreen by navDestination<Unit> {
                 }
             }
         }
+    }
+}
+
+suspend fun deletePost(
+    post: PostEntity,
+    vm: PostsScreenViewModel,
+    context: Context,
+    snackbarHostState: SnackbarHostState,
+) {
+    vm.deletePost(post)
+    snackbarHostState.currentSnackbarData?.dismiss()
+    val snackbarResult = snackbarHostState.showSnackbar(
+        message = context.getString(R.string.post_deleted),
+        actionLabel = context.getString(R.string.undo),
+        duration = SnackbarDuration.Short
+    )
+    if (snackbarResult == SnackbarResult.ActionPerformed) {
+        vm.addPost(post)
     }
 }

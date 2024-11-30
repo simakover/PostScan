@@ -58,6 +58,7 @@ object Constants {
 
     const val NOT_LOAD_LIKED_POSTS = "NOT_LOAD_LIKED_POSTS"
     const val USE_MIHON = "USE_MIHON"
+    const val DELETE_AFTER_LIKE = "DELETE_AFTER_LIKE"
 
     // Функция для сохранения настроек
     suspend fun saveSettingToDataStore(dataStore: DataStore<Preferences>, key: String, value: String) {

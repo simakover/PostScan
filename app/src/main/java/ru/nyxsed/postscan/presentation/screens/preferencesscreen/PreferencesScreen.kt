@@ -16,9 +16,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.navDestination
 import org.koin.androidx.compose.koinViewModel
+import ru.nyxsed.postscan.R
+import ru.nyxsed.postscan.util.Constants.DELETE_AFTER_LIKE
 import ru.nyxsed.postscan.util.Constants.NOT_LOAD_LIKED_POSTS
 import ru.nyxsed.postscan.util.Constants.USE_MIHON
 
@@ -27,10 +30,12 @@ val PreferencesScreen by navDestination<Unit> {
 
     var settingNotLoadLikedPosts by remember { mutableStateOf(false) }
     var settingUseMihon by remember { mutableStateOf(false) }
+    var settingDeleteAfterLike by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         settingNotLoadLikedPosts = preferencesViewModel.getSettingBoolean(NOT_LOAD_LIKED_POSTS)
         settingUseMihon = preferencesViewModel.getSettingBoolean(USE_MIHON)
+        settingDeleteAfterLike = preferencesViewModel.getSettingBoolean(DELETE_AFTER_LIKE)
     }
 
     Scaffold { paddings ->
@@ -41,7 +46,7 @@ val PreferencesScreen by navDestination<Unit> {
                 .padding(4.dp)
         ) {
             SettingRow(
-                label = "Not Load Liked Posts",
+                label = stringResource(R.string.not_load_liked_posts),
                 checked = settingNotLoadLikedPosts,
                 onCheckChange = {
                     preferencesViewModel.saveSettingBoolean(NOT_LOAD_LIKED_POSTS, it)
@@ -49,11 +54,19 @@ val PreferencesScreen by navDestination<Unit> {
                 }
             )
             SettingRow(
-                label = "Use Mihon for Manga Search",
+                label = stringResource(R.string.use_mihon_for_manga_search),
                 checked = settingUseMihon,
                 onCheckChange = {
                     preferencesViewModel.saveSettingBoolean(USE_MIHON, it)
                     settingUseMihon = it
+                }
+            )
+            SettingRow(
+                label = stringResource(R.string.delete_post_after_liking),
+                checked = settingDeleteAfterLike,
+                onCheckChange = {
+                    preferencesViewModel.saveSettingBoolean(DELETE_AFTER_LIKE, it)
+                    settingDeleteAfterLike = it
                 }
             )
         }
