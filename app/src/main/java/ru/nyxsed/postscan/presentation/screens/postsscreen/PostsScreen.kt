@@ -134,7 +134,10 @@ val PostsScreen by navDestination<Unit> {
                 groupListState.value.forEach { group ->
                     val postCount = postListState.value.filter { it.ownerId.absoluteValue == group.groupId }.size
                     if (postCount > 0) {
+
                         item(
+
+
                             key = group.groupId
                         ) {
                             GroupChip(
