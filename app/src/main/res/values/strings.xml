@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">PostScan</string>
     <integer name="com_vk_sdk_AppId">7867126</integer>
-    <string name="LogIn">Войти</string>
+    <string name="LogIn">Log In</string>
     <string name="add_group">Add Group</string>
     <string name="update_group">Update Group</string>
     <string name="group_name_or_id">Group Name or Id</string>
@@ -18,4 +18,7 @@
     <string name="loading_progress">Loading Progress</string>
     <string name="loading_completed">Loading Completed</string>
     <string name="albums">Albums:</string>
+    <string name="group_add_dialog_question">Do you want to manually add group or pick it from your group list?</string>
+    <string name="manually_add">Manually Add</string>
+    <string name="pick_from">Pick From</string>
 </resources>

@@ -34,7 +34,7 @@ class AddGroupScreenViewModel(
         }
     }
 
-    suspend fun groupsGetById(groupName: String): GroupEntity {
+    suspend fun groupsGetById(groupName: String): List<GroupEntity> {
         return vkRepository.groupsGetById(groupName)
     }
 }

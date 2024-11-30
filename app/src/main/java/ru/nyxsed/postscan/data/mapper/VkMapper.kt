@@ -1,10 +1,11 @@
 package ru.nyxsed.postscan.data.mapper
 
+import android.util.Log
 import ru.nyxsed.postscan.data.models.entity.CommentEntity
 import ru.nyxsed.postscan.data.models.entity.ContentEntity
 import ru.nyxsed.postscan.data.models.entity.GroupEntity
 import ru.nyxsed.postscan.data.models.entity.PostEntity
-import ru.nyxsed.postscan.data.models.response.groupsgetbyid.GroupsGetByIdResponse
+import ru.nyxsed.postscan.data.models.response.groupsget.GroupsGetResponse
 import ru.nyxsed.postscan.data.models.response.newsfeedget.AttachmentResponse
 import ru.nyxsed.postscan.data.models.response.newsfeedget.NewsFeedGetResponse
 import ru.nyxsed.postscan.data.models.response.wallgetcomments.ItemResponse
@@ -66,16 +67,22 @@ class VkMapper {
         return result
     }
 
-    fun mapGroupsGetByIdResponseToGroup(response: GroupsGetByIdResponse): GroupEntity {
-        val group = response.response?.groups?.first()
+    fun mapGroupsGetResponseToGroup(response: GroupsGetResponse): List<GroupEntity> {
+        val result = mutableListOf<GroupEntity>()
 
-        return GroupEntity(
-            groupId = group?.id ?: 0,
-            name = group?.name ?: "",
-            screenName = group?.screenName ?: "",
-            avatarUrl = group?.photo50 ?: "",
-            lastFetchDate = System.currentTimeMillis()
-        )
+        response.response?.items?.forEach { group ->
+            val groupEntity = GroupEntity(
+                groupId = group.id,
+                name = group.name,
+                screenName = group.screenName,
+                avatarUrl = group.photo50,
+                lastFetchDate = System.currentTimeMillis()
+            )
+            Log.d("pick group", "adding group ${groupEntity.groupId}")
+            result.add(groupEntity)
+        }
+
+        return result
     }
 
     fun mapWallGetCommentsResponseToComments(response: WallGetCommentsResponse): List<CommentEntity> {
