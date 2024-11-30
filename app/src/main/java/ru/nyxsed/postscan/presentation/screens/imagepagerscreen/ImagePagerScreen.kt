@@ -9,6 +9,7 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,6 +33,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -40,7 +42,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
@@ -48,6 +53,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import coil3.compose.AsyncImage
+import coil3.compose.SubcomposeAsyncImage
 import com.composegears.tiamat.navArgs
 import com.composegears.tiamat.navController
 import com.composegears.tiamat.navDestination
@@ -182,17 +188,11 @@ val ImagePagerScreen by navDestination<ImagePagerArgs> {
                     .fillMaxSize(),
                 state = pagerState,
             ) { index ->
-                AsyncImage(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clickable(onClick = {
-                            notFullScreen = !notFullScreen
-                        }),
-                    model = content[index].urlBig,
-                    contentDescription = null,
-                    placeholder = painterResource(R.drawable.ic_placeholder),
-                    contentScale = ContentScale.Fit
-                )
+                ScalableCoilImage(
+                    imageUrl = content[index].urlBig,
+                    onImageClicked = {
+                        notFullScreen = !notFullScreen
+                    })
             }
             AnimatedVisibility(
                 modifier = Modifier
@@ -300,3 +300,40 @@ data class ImagePagerArgs(
     val listContent: List<ContentEntity>,
     val index: Int,
 )
+
+@Composable
+fun ScalableCoilImage(
+    imageUrl: String,
+    onImageClicked: () -> Unit,
+) {
+    var scale by remember { mutableStateOf(1f) }
+    var offset by remember { mutableStateOf(Offset.Zero) }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .pointerInput(Unit) {
+                detectTransformGestures { _, pan, zoom, _ ->
+                    scale = (scale * zoom).coerceIn(1f, 5f) // Ограничение масштаба
+                    offset += pan
+                }
+            }
+            .graphicsLayer(
+                scaleX = scale,
+                scaleY = scale,
+                translationX = offset.x,
+                translationY = offset.y
+            )
+    ) {
+        SubcomposeAsyncImage(
+            modifier = Modifier
+                .fillMaxSize()
+                .clickable(onClick = {
+                    onImageClicked()
+                }),
+            model = imageUrl,
+            contentDescription = null,
+            contentScale = ContentScale.Fit // Масштабируем содержимое по Crop
+        )
+    }
+}
