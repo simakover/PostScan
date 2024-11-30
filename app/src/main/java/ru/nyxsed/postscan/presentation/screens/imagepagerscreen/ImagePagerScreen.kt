@@ -190,6 +190,7 @@ val ImagePagerScreen by navDestination<ImagePagerArgs> {
             ) { index ->
                 ScalableCoilImage(
                     imageUrl = content[index].urlBig,
+                    fullScreen = !notFullScreen,
                     onImageClicked = {
                         notFullScreen = !notFullScreen
                     })
@@ -304,6 +305,7 @@ data class ImagePagerArgs(
 @Composable
 fun ScalableCoilImage(
     imageUrl: String,
+    fullScreen: Boolean,
     onImageClicked: () -> Unit,
 ) {
     var scale by remember { mutableStateOf(1f) }
@@ -312,18 +314,26 @@ fun ScalableCoilImage(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .pointerInput(Unit) {
-                detectTransformGestures { _, pan, zoom, _ ->
-                    scale = (scale * zoom).coerceIn(1f, 5f) // Ограничение масштаба
-                    offset += pan
+            .then(
+                if (fullScreen) {
+                    Modifier.pointerInput(Unit) {
+                        detectTransformGestures { _, pan, zoom, _ ->
+                            scale = (scale * zoom).coerceIn(1f, 5f) // Ограничение масштаба
+                            offset += pan
+                        }
+                    }
+                        .graphicsLayer(
+                            scaleX = scale,
+                            scaleY = scale,
+                            translationX = offset.x,
+                            translationY = offset.y
+                        )
                 }
-            }
-            .graphicsLayer(
-                scaleX = scale,
-                scaleY = scale,
-                translationX = offset.x,
-                translationY = offset.y
+                else {
+                    Modifier
+                }
             )
+
     ) {
         SubcomposeAsyncImage(
             modifier = Modifier
