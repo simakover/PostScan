@@ -2,7 +2,7 @@ package ru.nyxsed.postscan.data.network
 
 import retrofit2.http.GET
 import retrofit2.http.Query
-import ru.nyxsed.postscan.data.models.response.groupsgetbyid.GroupsGetByIdResponse
+import ru.nyxsed.postscan.data.models.response.groupsget.GroupsGetResponse
 import ru.nyxsed.postscan.data.models.response.isliked.IsLikedResponse
 import ru.nyxsed.postscan.data.models.response.likes.LikesCountResponse
 import ru.nyxsed.postscan.data.models.response.newsfeedget.NewsFeedGetResponse
@@ -18,11 +18,16 @@ interface ApiService {
         @Query("start_time") startTime: String,
     ): NewsFeedGetResponse
 
+    @GET("groups.get?v=$VK_API_VERSION&extended=1&count=1000")
+    suspend fun groupsGet(
+        @Query("access_token") token: String,
+    ): GroupsGetResponse
+
     @GET("groups.getById?v=$VK_API_VERSION")
     suspend fun groupsGetById(
         @Query("access_token") token: String,
         @Query("group_id") groupId: String,
-    ): GroupsGetByIdResponse
+    ): GroupsGetResponse
 
     @GET("likes.add?v=$VK_API_VERSION")
     suspend fun addLike(

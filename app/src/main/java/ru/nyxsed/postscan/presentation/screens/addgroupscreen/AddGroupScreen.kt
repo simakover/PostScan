@@ -115,12 +115,16 @@ val AddGroupScreen by navDestination<GroupEntity> {
                             }
                             return@launch
                         }
-                        group = addGroupScreenViewModel.groupsGetById(screenName)
-                        groupName = group.name
-                        if (group.groupId == null || group.groupId == 0L) {
-                            withContext(Dispatchers.Main) {
-                                Toast.makeText(context, context.getString(R.string.group_not_found), Toast.LENGTH_SHORT)
-                                    .show()
+                        addGroupScreenViewModel.groupsGetById(screenName).let {
+                            if (it.isNotEmpty()) {
+                                group = it.first()
+                                groupName = group.name
+                                if (group.groupId == null || group.groupId == 0L) {
+                                    withContext(Dispatchers.Main) {
+                                        Toast.makeText(context, context.getString(R.string.group_not_found), Toast.LENGTH_SHORT)
+                                            .show()
+                                    }
+                                }
                             }
                         }
                     }

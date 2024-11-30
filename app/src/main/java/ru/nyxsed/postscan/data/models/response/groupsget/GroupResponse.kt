@@ -1,4 +1,4 @@
-package ru.nyxsed.postscan.data.models.response.groupsgetbyid
+package ru.nyxsed.postscan.data.models.response.groupsget
 
 
 import com.google.gson.annotations.SerializedName

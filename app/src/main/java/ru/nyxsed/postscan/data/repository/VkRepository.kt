@@ -9,9 +9,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.flow.stateIn
 import ru.nyxsed.postscan.data.mapper.VkMapper
-import ru.nyxsed.postscan.data.models.entity.CommentEntity
 import ru.nyxsed.postscan.data.models.entity.ContentEntity
 import ru.nyxsed.postscan.data.models.entity.GroupEntity
 import ru.nyxsed.postscan.data.models.entity.PostEntity
@@ -25,6 +25,7 @@ class VkRepository(
     private val storage: VKKeyValueStorage,
     private val dataStore: DataStore<Preferences>,
 ) {
+    val scope = CoroutineScope(Dispatchers.Default)
 
     private val token
         get() = VKAccessToken.restore(storage)
@@ -33,6 +34,30 @@ class VkRepository(
         return token?.accessToken ?: throw IllegalStateException("Token is null")
     }
 
+    // groups
+    suspend fun groupsGetById(groupId: String): List<GroupEntity> {
+        val response = apiService.groupsGetById(
+            token = getAccessToken(),
+            groupId = groupId
+        )
+        return mapper.mapGroupsGetResponseToGroup(response)
+    }
+
+    fun getGroupsStateFlow() =
+        flow {
+            val response = apiService.groupsGet(
+                token = getAccessToken()
+            )
+            emit(mapper.mapGroupsGetResponseToGroup(response))
+        }
+            .retry(2)
+            .stateIn(
+                scope = scope,
+                started = SharingStarted.Lazily,
+                initialValue = listOf()
+            )
+
+    // post
     suspend fun getPostsForGroup(groupEntity: GroupEntity): List<PostEntity> {
         var startFrom: String? = ""
         val posts = mutableListOf<PostEntity>()
@@ -66,16 +91,6 @@ class VkRepository(
         return posts.toList()
     }
 
-    suspend fun groupsGetById(groupId: String): GroupEntity {
-        val response = apiService.groupsGetById(
-            token = getAccessToken(),
-            groupId = groupId
-        )
-
-        return mapper.mapGroupsGetByIdResponseToGroup(response)
-    }
-
-    // post
     suspend fun changeLikeStatus(post: PostEntity) {
         if (!post.isLiked) {
             apiService.addLike(
@@ -124,7 +139,6 @@ class VkRepository(
     }
 
     // comments
-    val scope = CoroutineScope(Dispatchers.Default)
     fun getCommentsStateFlow(post: PostEntity) =
         flow {
             val response = apiService.wallGetComments(
@@ -133,18 +147,11 @@ class VkRepository(
                 postId = post.postId
             )
             emit(mapper.mapWallGetCommentsResponseToComments(response))
-        }.stateIn(
-            scope = scope,
-            started = SharingStarted.Eagerly,
-            initialValue = listOf()
-        )
-
-    suspend fun getComments(post: PostEntity): List<CommentEntity> {
-        val response = apiService.wallGetComments(
-            token = getAccessToken(),
-            ownerId = post.ownerId,
-            postId = post.postId
-        )
-        return mapper.mapWallGetCommentsResponseToComments(response)
-    }
+        }
+            .retry(2)
+            .stateIn(
+                scope = scope,
+                started = SharingStarted.Eagerly,
+                initialValue = listOf()
+            )
 }

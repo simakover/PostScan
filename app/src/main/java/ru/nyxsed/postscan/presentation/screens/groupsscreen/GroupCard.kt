@@ -29,6 +29,7 @@ import ru.nyxsed.postscan.util.Constants.convertLongToTime
 @Composable
 fun GroupCard(
     group: GroupEntity,
+    deleteEnabled: Boolean,
     onGroupDeleteClicked: (GroupEntity) -> Unit,
     onGroupClicked: (GroupEntity) -> Unit,
 ) {
@@ -68,22 +69,26 @@ fun GroupCard(
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
-                    Text(
-                        text = convertLongToTime(group.lastFetchDate),
-                        color = MaterialTheme.colorScheme.onSecondary,
-                        style = MaterialTheme.typography.titleSmall
-                    )
-                }
-                IconButton(
-                    onClick = {
-                        onGroupDeleteClicked(group)
+                    if (deleteEnabled) {
+                        Text(
+                            text = convertLongToTime(group.lastFetchDate),
+                            color = MaterialTheme.colorScheme.onSecondary,
+                            style = MaterialTheme.typography.titleSmall
+                        )
                     }
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_close),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSecondary
-                    )
+                }
+                if (deleteEnabled) {
+                    IconButton(
+                        onClick = {
+                            onGroupDeleteClicked(group)
+                        }
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_close),
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSecondary
+                        )
+                    }
                 }
             }
         }
