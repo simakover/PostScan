@@ -159,9 +159,9 @@ class VkMapper {
                     contentId = photo.id
                     ownerId = photo.ownerId
                     type = attachment.type
-                    urlSmall = photo.sizes.findOrFirst { it.type == "s" }?.url ?: ""
-                    urlMedium = photo.sizes.findOrLast { it.type == "x" }?.url ?: ""
-                    urlBig = photo.sizes.findOrLast { it.type == "z" }?.url ?: ""
+                    urlSmall = photo.sizes.findOrFirst { it.type == "s" }.url
+                    urlMedium = photo.sizes.findOrLast { it.type == "x" }.url
+                    urlBig = photo.sizes.findOrLast { it.type == "z" }.url
                     contentId = photo.id
                 }
             }
@@ -172,9 +172,9 @@ class VkMapper {
                     contentId = video.id
                     ownerId = video.ownerId
                     type = attachment.type
-                    urlSmall = video.image.findOrFirst { it.url.takeLast(5) == "vid_s" }?.url ?: ""
-                    urlMedium = video.image.findOrLast { it.url.takeLast(5) == "vid_l" }?.url ?: ""
-                    urlBig = video.image.findOrLast { it.url.takeLast(5) == "vid_x" }?.url ?: ""
+                    urlSmall = video.image.findOrFirst { it.url.takeLast(5) == "vid_s" }.url
+                    urlMedium = video.image.findOrLast { it.url.takeLast(5) == "vid_l" }.url
+                    urlBig = video.image.findOrLast { it.url.takeLast(5) == "vid_x" }.url
                 }
             }
 
@@ -184,9 +184,9 @@ class VkMapper {
                     contentId = album.thumb.id
                     ownerId = album.thumb.ownerId
                     type = attachment.type
-                    urlSmall = album.thumb.sizes.findOrFirst { it.type == "s" }?.url ?: ""
-                    urlMedium = album.thumb.sizes.findOrLast { it.type == "x" }?.url ?: ""
-                    urlBig = album.thumb.sizes.findOrLast { it.type == "z" }?.url ?: ""
+                    urlSmall = album.thumb.sizes.findOrFirst { it.type == "s" }.url
+                    urlMedium = album.thumb.sizes.findOrLast { it.type == "x" }.url
+                    urlBig = album.thumb.sizes.findOrLast { it.type == "z" }.url
                     title = album.title
                 }
             }
