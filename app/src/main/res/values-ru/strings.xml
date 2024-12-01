@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PostScan</string>
+    <string name="LogIn">Войти</string>
+    <string name="add_group">Добавить группу</string>
+    <string name="update_group">Обновить группу</string>
+    <string name="group_name_or_id">Имя группы или ID</string>
+    <string name="search_for_group">Поиск группы</string>
+    <string name="group_name">Имя группы</string>
+    <string name="last_fetch_date">Дата последней загрузки постов</string>
+    <string name="undo">Отмена</string>
+    <string name="post_deleted">Пост удален</string>
+    <string name="group_deleted">Группа удалена</string>
+    <string name="no_internet_connection">Нет соединения</string>
+    <string name="group_not_found">Группа не найдена</string>
+    <string name="app_is_not_authorized">Приложение не авторизовано</string>
+    <string name="loading_posts">Загрузка постов</string>
+    <string name="loading_progress">Прогресс загрузки</string>
+    <string name="loading_completed">Загрузка завершена</string>
+    <string name="albums">Альбомы:</string>
+    <string name="group_add_dialog_question">Вы хотите добавить группу вручную или выбрать из подписок?</string>
+    <string name="manually_add">Добавить вручную</string>
+    <string name="pick_from">Выбрать из подписок</string>
+    <string name="not_load_liked_posts">Не загружать посты с лайками</string>
+    <string name="use_mihon_for_manga_search">Использовать Mihon для поиска манги</string>
+    <string name="delete_post_after_liking">Удалять пост после отметки лайком</string>
+</resources>
