@@ -14,5 +14,5 @@ data class PostEntity(
     val contentText: String,
     val content: List<ContentEntity>,
     var isLiked: Boolean,
-    var haveReposts: Boolean,
+    val haveReposts: Boolean,
 )

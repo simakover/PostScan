@@ -1,5 +1,8 @@
 package ru.nyxsed.postscan.data.models.entity
 
+import androidx.compose.runtime.Stable
+
+@Stable
 data class CommentEntity(
     val commentId: Long,
     val ownerId: Long,

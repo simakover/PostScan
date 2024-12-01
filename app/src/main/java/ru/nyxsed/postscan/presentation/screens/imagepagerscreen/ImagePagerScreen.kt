@@ -206,7 +206,9 @@ val ImagePagerScreen by navDestination<ImagePagerArgs> {
                 Column {
                     LazyRow(
                         modifier = Modifier
-                            .fillMaxWidth(),
+                            .fillMaxWidth()
+                            .background(Color.Black.copy(alpha = 0.6f))
+                            .padding(8.dp),
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -232,7 +234,8 @@ val ImagePagerScreen by navDestination<ImagePagerArgs> {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(16.dp),
+                            .background(Color.Black.copy(alpha = 0.6f))
+                            .padding(8.dp),
                     ) {
                         IconButton(
                             onClick = {
