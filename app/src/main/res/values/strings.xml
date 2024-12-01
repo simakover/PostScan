@@ -3,6 +3,7 @@
     <integer name="com_vk_sdk_AppId">7867126</integer>
     <string name="LogIn">Log In</string>
     <string name="add_group">Add Group</string>
+    <string name="delete_group">Delete Group</string>
     <string name="update_group">Update Group</string>
     <string name="group_name_or_id">Group Name or Id</string>
     <string name="search_for_group">Search for Group</string>
@@ -19,8 +20,11 @@
     <string name="loading_completed">Loading Completed</string>
     <string name="albums">Albums:</string>
     <string name="group_add_dialog_question">Do you want to manually add group or pick it from your group list?</string>
+    <string name="group_delete_dialog_question">Do you want to delete group and all of post of this group?</string>
     <string name="manually_add">Manually Add</string>
     <string name="pick_from">Pick From</string>
+    <string name="cancel">Cancel</string>
+    <string name="confirm">Confirm</string>
     <string name="not_load_liked_posts">Not Load Liked Posts</string>
     <string name="use_mihon_for_manga_search">Use Mihon for Manga Search</string>
     <string name="delete_post_after_liking">Delete Post After Liking</string>

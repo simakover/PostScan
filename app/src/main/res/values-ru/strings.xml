@@ -3,6 +3,7 @@
     <string name="app_name">PostScan</string>
     <string name="LogIn">Войти</string>
     <string name="add_group">Добавить группу</string>
+    <string name="delete_group">Удалить группу</string>
     <string name="update_group">Обновить группу</string>
     <string name="group_name_or_id">Имя группы или ID</string>
     <string name="search_for_group">Поиск группы</string>
@@ -19,9 +20,12 @@
     <string name="loading_completed">Загрузка завершена</string>
     <string name="albums">Альбомы:</string>
     <string name="group_add_dialog_question">Вы хотите добавить группу вручную или выбрать из подписок?</string>
+    <string name="group_delete_dialog_question">Вы хотите удалить группу и все посты этой группы?</string>
     <string name="manually_add">Добавить вручную</string>
     <string name="pick_from">Выбрать из подписок</string>
+    <string name="confirm">Подтверждение</string>
     <string name="not_load_liked_posts">Не загружать посты с лайками</string>
     <string name="use_mihon_for_manga_search">Использовать Mihon для поиска манги</string>
     <string name="delete_post_after_liking">Удалять пост после отметки лайком</string>
+    <string name="cancel">Отмена</string>
 </resources>
