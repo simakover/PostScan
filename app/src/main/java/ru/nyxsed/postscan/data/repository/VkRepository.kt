@@ -1,7 +1,5 @@
 package ru.nyxsed.postscan.data.repository
 
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
 import com.vk.api.sdk.VKKeyValueStorage
 import com.vk.api.sdk.auth.VKAccessToken
 import kotlinx.coroutines.CoroutineScope
@@ -16,14 +14,14 @@ import ru.nyxsed.postscan.data.models.entity.ContentEntity
 import ru.nyxsed.postscan.data.models.entity.GroupEntity
 import ru.nyxsed.postscan.data.models.entity.PostEntity
 import ru.nyxsed.postscan.data.network.ApiService
-import ru.nyxsed.postscan.util.Constants.NOT_LOAD_LIKED_POSTS
-import ru.nyxsed.postscan.util.Constants.getSettingFromDataStore
+import ru.nyxsed.postscan.util.DataStoreInteraction
+import ru.nyxsed.postscan.util.DataStoreInteraction.Companion.NOT_LOAD_LIKED_POSTS
 
 class VkRepository(
     private val apiService: ApiService,
     private val mapper: VkMapper,
     private val storage: VKKeyValueStorage,
-    private val dataStore: DataStore<Preferences>,
+    private val dataStoreInteraction: DataStoreInteraction,
 ) {
     val scope = CoroutineScope(Dispatchers.Default)
 
@@ -62,7 +60,7 @@ class VkRepository(
         var startFrom: String? = ""
         val posts = mutableListOf<PostEntity>()
         val lastFetchDate = groupEntity.lastFetchDate
-        val notLoadLikedPosts = getSettingFromDataStore(dataStore, NOT_LOAD_LIKED_POSTS) == "1"
+        val notLoadLikedPosts = dataStoreInteraction.getSettingBooleanFromDataStore(NOT_LOAD_LIKED_POSTS)
 
         while (startFrom != null) {
             val response = apiService.newsfeedGet(

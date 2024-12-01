@@ -21,9 +21,9 @@ import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.navDestination
 import org.koin.androidx.compose.koinViewModel
 import ru.nyxsed.postscan.R
-import ru.nyxsed.postscan.util.Constants.DELETE_AFTER_LIKE
-import ru.nyxsed.postscan.util.Constants.NOT_LOAD_LIKED_POSTS
-import ru.nyxsed.postscan.util.Constants.USE_MIHON
+import ru.nyxsed.postscan.util.DataStoreInteraction.Companion.DELETE_AFTER_LIKE
+import ru.nyxsed.postscan.util.DataStoreInteraction.Companion.NOT_LOAD_LIKED_POSTS
+import ru.nyxsed.postscan.util.DataStoreInteraction.Companion.USE_MIHON
 
 val PreferencesScreen by navDestination<Unit> {
     val preferencesViewModel = koinViewModel<PreferencesScreenViewModel>()

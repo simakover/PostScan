@@ -3,8 +3,6 @@ package ru.nyxsed.postscan.presentation.screens.postsscreen
 import android.content.Context
 import android.content.Intent
 import androidx.compose.ui.platform.UriHandler
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
@@ -15,7 +13,7 @@ import ru.nyxsed.postscan.data.repository.VkRepository
 import ru.nyxsed.postscan.util.Constants.MANGA_SEARCH_ACTION
 import ru.nyxsed.postscan.util.Constants.VK_URL
 import ru.nyxsed.postscan.util.Constants.VK_WALL_URL
-import ru.nyxsed.postscan.util.Constants.getSettingFromDataStore
+import ru.nyxsed.postscan.util.DataStoreInteraction
 import ru.nyxsed.postscan.util.NotificationHelper.completeNotification
 import ru.nyxsed.postscan.util.NotificationHelper.initNotification
 import ru.nyxsed.postscan.util.NotificationHelper.updateProgress
@@ -23,7 +21,7 @@ import ru.nyxsed.postscan.util.NotificationHelper.updateProgress
 class PostsScreenViewModel(
     private val dbRepository: DbRepository,
     private val vkRepository: VkRepository,
-    private val dataStore: DataStore<Preferences>,
+    private val dataStoreInteraction: DataStoreInteraction,
 ) : ViewModel() {
     val posts = dbRepository.getAllPosts()
     val groups = dbRepository.getAllGroups()
@@ -61,7 +59,7 @@ class PostsScreenViewModel(
         }
     }
 
-    suspend fun changeLikeStatus(post: PostEntity) : PostEntity {
+    suspend fun changeLikeStatus(post: PostEntity): PostEntity {
         vkRepository.changeLikeStatus(post)
         val changedPost = post.copy(isLiked = !post.isLiked)
         dbRepository.updatePost(changedPost)
@@ -84,6 +82,6 @@ class PostsScreenViewModel(
     }
 
     suspend fun getSettingBoolean(key: String): Boolean {
-        return getSettingFromDataStore(dataStore, key) == "1"
+        return dataStoreInteraction.getSettingBooleanFromDataStore(key)
     }
 }

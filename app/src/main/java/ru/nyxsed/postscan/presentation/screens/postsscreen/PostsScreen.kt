@@ -53,10 +53,10 @@ import ru.nyxsed.postscan.presentation.screens.imagepagerscreen.ImagePagerArgs
 import ru.nyxsed.postscan.presentation.screens.imagepagerscreen.ImagePagerScreen
 import ru.nyxsed.postscan.presentation.screens.loginscreen.LoginScreen
 import ru.nyxsed.postscan.presentation.screens.preferencesscreen.PreferencesScreen
-import ru.nyxsed.postscan.util.Constants.DELETE_AFTER_LIKE
-import ru.nyxsed.postscan.util.Constants.USE_MIHON
 import ru.nyxsed.postscan.util.Constants.findOrFirst
 import ru.nyxsed.postscan.util.Constants.isInternetAvailable
+import ru.nyxsed.postscan.util.DataStoreInteraction.Companion.DELETE_AFTER_LIKE
+import ru.nyxsed.postscan.util.DataStoreInteraction.Companion.USE_MIHON
 import kotlin.math.absoluteValue
 
 @OptIn(ExperimentalMaterial3Api::class)
