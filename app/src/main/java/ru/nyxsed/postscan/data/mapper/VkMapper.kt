@@ -197,7 +197,7 @@ class VkMapper {
                 contentId = contentId,
                 ownerId = ownerId,
                 type = type,
-                isLiked = isLiked,
+                isLiked = false,
                 urlSmall = urlSmall,
                 urlMedium = urlMedium,
                 urlBig = urlBig,

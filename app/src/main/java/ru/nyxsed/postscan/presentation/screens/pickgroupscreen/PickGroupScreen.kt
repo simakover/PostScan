@@ -25,8 +25,7 @@ val PickGroupScreen by navDestination<Unit> {
         group.groupId != foundedGroup?.groupId
     }
 
-    Scaffold(
-    ) { paddings ->
+    Scaffold { paddings ->
         LazyColumn(
             modifier = Modifier
                 .padding(paddings),

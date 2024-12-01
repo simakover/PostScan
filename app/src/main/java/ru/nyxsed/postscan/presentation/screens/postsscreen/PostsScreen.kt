@@ -147,10 +147,10 @@ val PostsScreen by navDestination<Unit> {
                                 isSelected = group.groupId == groupSelected,
                                 postCount = postCount,
                                 onChipClicked = {
-                                    if (groupSelected != group.groupId!!) {
-                                        groupSelected = group.groupId!!
+                                    groupSelected = if (groupSelected != group.groupId!!) {
+                                        group.groupId!!
                                     } else {
-                                        groupSelected = 0L
+                                        0L
                                     }
                                     scope.launch {
                                         scrollState.scrollToItem(0)

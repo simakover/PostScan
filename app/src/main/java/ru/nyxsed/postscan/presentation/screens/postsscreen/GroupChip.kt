@@ -74,6 +74,7 @@ fun GroupChip(
                     text = postCount.toString(),
                     fontWeight = FontWeight.Bold,
                     fontSize = 13.sp,
+                    color = textColor,
                     style = TextStyle.Default.copy(
                         shadow = Shadow(
                             color = Color.Black,
