@@ -38,7 +38,7 @@ class VkRepository(
             token = getAccessToken(),
             groupId = groupId
         )
-        return mapper.mapGroupsGetResponseToGroup(response)
+        return mapper.mapGroupsGetResponseToGroups(response)
     }
 
     fun getGroupsStateFlow() =
@@ -46,7 +46,7 @@ class VkRepository(
             val response = apiService.groupsGet(
                 token = getAccessToken()
             )
-            emit(mapper.mapGroupsGetResponseToGroup(response))
+            emit(mapper.mapGroupsGetResponseToGroups(response))
         }
             .retry(2)
             .stateIn(

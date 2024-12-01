@@ -67,7 +67,7 @@ class VkMapper {
         return result
     }
 
-    fun mapGroupsGetResponseToGroup(response: GroupsGetResponse): List<GroupEntity> {
+    fun mapGroupsGetResponseToGroups(response: GroupsGetResponse): List<GroupEntity> {
         val result = mutableListOf<GroupEntity>()
 
         response.response?.items?.forEach { group ->
