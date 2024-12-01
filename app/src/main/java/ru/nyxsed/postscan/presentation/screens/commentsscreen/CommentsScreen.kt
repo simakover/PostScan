@@ -1,6 +1,5 @@
 package ru.nyxsed.postscan.presentation.screens.commentsscreen
 
-import android.os.Bundle
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
@@ -18,7 +17,6 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat.startActivity
 import com.composegears.tiamat.navArgs
 import com.composegears.tiamat.navController
 import com.composegears.tiamat.navDestination
@@ -70,14 +68,14 @@ val CommentsScreen by navDestination<PostEntity> {
                         val intent = commentsScreenViewModel.mihonIntent(
                             query = it.contentText
                         )
-                        startActivity(context, intent, Bundle())
+                        context.startActivity(intent)
                     },
                     onTextLongClick = {
                         clipboardManager.setText(
                             annotatedString = AnnotatedString(it)
                         )
                     },
-                    onImageClicked = {content, index ->
+                    onImageClicked = { content, index ->
                         val imagePagerArgs = ImagePagerArgs(content, index)
                         navController.navigate(ImagePagerScreen, imagePagerArgs)
                     }

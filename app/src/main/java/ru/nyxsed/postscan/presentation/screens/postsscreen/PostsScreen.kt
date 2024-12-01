@@ -1,7 +1,6 @@
 package ru.nyxsed.postscan.presentation.screens.postsscreen
 
 import android.content.Context
-import android.os.Bundle
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -39,7 +38,6 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import androidx.core.content.ContextCompat.startActivity
 import com.composegears.tiamat.navController
 import com.composegears.tiamat.navDestination
 import kotlinx.coroutines.launch
@@ -147,8 +145,8 @@ val PostsScreen by navDestination<Unit> {
                                 isSelected = group.groupId == groupSelected,
                                 postCount = postCount,
                                 onChipClicked = {
-                                    groupSelected = if (groupSelected != group.groupId!!) {
-                                        group.groupId!!
+                                    groupSelected = if (groupSelected != group.groupId) {
+                                        group.groupId
                                     } else {
                                         0L
                                     }
@@ -221,7 +219,7 @@ val PostsScreen by navDestination<Unit> {
                                 val intent = postsScreenViewModel.mihonIntent(
                                     query = it
                                 )
-                                startActivity(context, intent, Bundle())
+                                context.startActivity(intent)
                             },
                             onTextLongClick = {
                                 clipboardManager.setText(

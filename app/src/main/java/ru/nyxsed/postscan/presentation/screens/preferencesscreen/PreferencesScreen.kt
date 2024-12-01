@@ -81,7 +81,7 @@ fun SettingRow(
 ) {
     Row(
         modifier = Modifier
-            .padding(4.dp),
+            .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
@@ -91,8 +91,6 @@ fun SettingRow(
             text = label
         )
         Checkbox(
-            modifier = Modifier
-                .padding(4.dp),
             checked = checked,
             onCheckedChange = {
                 onCheckChange(it)
