@@ -18,7 +18,7 @@ object Constants {
     const val YANDEX_SEARCH_URL = "https://yandex.ru/images/search?rpt=imageview&url="
 
     const val DATE_MASK = "##.##.####"
-    const val DATE_LENGTH = 8 // Equals to "##.##.####".count { it == '#' }
+    const val DATE_LENGTH = 8
 
     const val PROGRESS_CHANNEL_ID = "progress_channel"
     const val PROGRESS_CHANNEL_NAME = "Progress Notifications"
