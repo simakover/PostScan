@@ -46,6 +46,7 @@ val LoginScreen by navDestination<Unit> {
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .padding(paddings)
                 .padding(vertical = 200.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceAround
