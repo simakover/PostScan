@@ -23,7 +23,7 @@ val appModule = module {
             apiService = get(),
             mapper = get(),
             storage = get(),
-            dataStore = get()
+            dataStoreInteraction = get()
         )
     }
 
@@ -50,7 +50,7 @@ val appModule = module {
         PostsScreenViewModel(
             dbRepository = get(),
             vkRepository = get(),
-            dataStore = get()
+            dataStoreInteraction = get()
         )
     }
 
@@ -78,13 +78,13 @@ val appModule = module {
         CommentsScreenViewModel(
             vkRepository = get(),
             post = post,
-            dataStore = get()
+            dataStoreInteraction = get()
         )
     }
 
     viewModel<PreferencesScreenViewModel> {
         PreferencesScreenViewModel(
-            dataStore = get()
+            dataStoreInteraction = get()
         )
     }
 }

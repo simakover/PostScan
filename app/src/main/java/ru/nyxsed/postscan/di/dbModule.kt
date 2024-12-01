@@ -8,6 +8,7 @@ import androidx.room.Room
 import org.koin.dsl.module
 import ru.nyxsed.postscan.data.database.AppDatabase
 import ru.nyxsed.postscan.data.mapper.VkMapper
+import ru.nyxsed.postscan.util.DataStoreInteraction
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
@@ -30,4 +31,10 @@ val dbModule = module {
 
     // Datastore
     single<DataStore<Preferences>> { get<Context>().dataStore }
+
+    single<DataStoreInteraction> {
+        DataStoreInteraction(
+            dataStore = get()
+        )
+    }
 }
