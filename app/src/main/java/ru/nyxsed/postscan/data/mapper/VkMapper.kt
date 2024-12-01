@@ -1,6 +1,5 @@
 package ru.nyxsed.postscan.data.mapper
 
-import android.util.Log
 import ru.nyxsed.postscan.data.models.entity.CommentEntity
 import ru.nyxsed.postscan.data.models.entity.ContentEntity
 import ru.nyxsed.postscan.data.models.entity.GroupEntity
@@ -70,7 +69,10 @@ class VkMapper {
     fun mapGroupsGetResponseToGroups(response: GroupsGetResponse): List<GroupEntity> {
         val result = mutableListOf<GroupEntity>()
 
-        response.response?.items?.forEach { group ->
+        val items = response.response?.items
+        val groups = response.response?.groups
+
+        items?.forEach { group ->
             val groupEntity = GroupEntity(
                 groupId = group.id,
                 name = group.name,
@@ -78,7 +80,17 @@ class VkMapper {
                 avatarUrl = group.photo50,
                 lastFetchDate = System.currentTimeMillis()
             )
-            Log.d("pick group", "adding group ${groupEntity.groupId}")
+            result.add(groupEntity)
+        }
+
+        groups?.forEach { group ->
+            val groupEntity = GroupEntity(
+                groupId = group.id,
+                name = group.name,
+                screenName = group.screenName,
+                avatarUrl = group.photo50,
+                lastFetchDate = System.currentTimeMillis()
+            )
             result.add(groupEntity)
         }
 
