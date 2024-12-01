@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -50,19 +51,25 @@ val AddGroupScreen by navDestination<GroupEntity> {
     val scope = CoroutineScope(Dispatchers.Default)
     val context = LocalContext.current
 
-    var group by remember { mutableStateOf(GroupEntity()) }
-    var lastFetchDate by remember { mutableStateOf(convertLongToTime(System.currentTimeMillis()).replace(".", "")) }
-    var screenName by remember { mutableStateOf("") }
-    var groupName by remember { mutableStateOf("") }
+    val regex = Regex("^([0-2][0-9]|3[01])(0[1-9]|1[0-2])[0-9]{4}$")
 
+    var groupId by remember { mutableLongStateOf(0) }
+    var groupName by remember { mutableStateOf("") }
+    var screenName by remember { mutableStateOf("") }
+    var avatarUrl by remember { mutableStateOf("") }
+    var lastFetchDate by remember { mutableStateOf(convertLongToTime(System.currentTimeMillis()).replace(".", "")) }
+
+    var groupFound by remember { mutableStateOf(false) }
     var enableSearch by remember { mutableStateOf(true) }
 
-    LaunchedEffect(true) {
+    LaunchedEffect(Unit) {
         groupArg?.let {
             lastFetchDate = convertLongToTime(it.lastFetchDate).replace(".", "")
-            group = it
-            screenName = group.screenName
-            groupName = group.name
+            groupFound = true
+            groupId = it.groupId
+            screenName = it.screenName
+            groupName = it.name
+            avatarUrl = it.avatarUrl
             enableSearch = false
         }
     }
@@ -80,7 +87,7 @@ val AddGroupScreen by navDestination<GroupEntity> {
                 modifier = Modifier
                     .clip(CircleShape)
                     .size(50.dp),
-                model = group.avatarUrl,
+                model = avatarUrl,
                 placeholder = painterResource(R.drawable.ic_placeholder),
                 contentDescription = null,
             )
@@ -92,7 +99,7 @@ val AddGroupScreen by navDestination<GroupEntity> {
                 value = screenName,
                 onValueChange = {
                     screenName = it
-                    group.groupId = 0L
+                    groupFound = false
                 },
                 label = {
                     Text(stringResource(R.string.group_name_or_id))
@@ -117,13 +124,17 @@ val AddGroupScreen by navDestination<GroupEntity> {
                         }
                         addGroupScreenViewModel.groupsGetById(screenName).let {
                             if (it.isNotEmpty()) {
-                                group = it.first()
-                                groupName = group.name
-                                if (group.groupId == null || group.groupId == 0L) {
-                                    withContext(Dispatchers.Main) {
-                                        Toast.makeText(context, context.getString(R.string.group_not_found), Toast.LENGTH_SHORT)
-                                            .show()
-                                    }
+                                groupFound = true
+                                it.first().let { group ->
+                                    groupId = group.groupId
+                                    groupName = group.name
+                                    screenName = group.screenName
+                                    avatarUrl = group.avatarUrl
+                                }
+                            } else {
+                                withContext(Dispatchers.Main) {
+                                    Toast.makeText(context, context.getString(R.string.group_not_found), Toast.LENGTH_SHORT)
+                                        .show()
                                 }
                             }
                         }
@@ -165,10 +176,10 @@ val AddGroupScreen by navDestination<GroupEntity> {
                     .fillMaxWidth()
                     .padding(top = 10.dp),
                 onClick = {
-                    addGroupScreenViewModel.addGroup(group, lastFetchDate, groupName)
+                    addGroupScreenViewModel.addGroup(groupId, groupName, screenName, avatarUrl, lastFetchDate)
                     navController.back()
                 },
-                enabled = if (group.groupId != null && group.groupId != 0L) true else false
+                enabled = groupFound && regex.matches(lastFetchDate) && groupName.isNotEmpty()
             ) {
                 Text(text = if (groupArg == null) stringResource(R.string.add_group) else stringResource(R.string.update_group))
             }
