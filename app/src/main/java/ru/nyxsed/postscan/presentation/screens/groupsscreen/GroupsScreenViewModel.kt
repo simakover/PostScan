@@ -25,4 +25,10 @@ class GroupsScreenViewModel(
             dbRepository.deleteGroup(group)
         }
     }
+
+    fun deleteAllPostsForGroup(group: GroupEntity) {
+        viewModelScope.launch {
+            dbRepository.deleteAllPostsForGroup(group)
+        }
+    }
 }

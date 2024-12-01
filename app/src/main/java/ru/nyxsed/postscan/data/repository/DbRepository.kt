@@ -32,6 +32,10 @@ class DbRepository(
         dbDao.deletePost(post)
     }
 
+    suspend fun deleteAllPostsForGroup(group: GroupEntity) {
+        dbDao.deleteAllPostsForGroup(group.groupId)
+    }
+
     suspend fun updatePost(post: PostEntity) {
         dbDao.updatePost(post)
     }

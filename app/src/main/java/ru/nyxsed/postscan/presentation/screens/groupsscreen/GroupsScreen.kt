@@ -98,6 +98,8 @@ val GroupsScreen by navDestination<Unit> {
                                 )
                                 if (snackbarResult == SnackbarResult.ActionPerformed) {
                                     groupScreenViewModel.addGroup(it)
+                                } else {
+                                    groupScreenViewModel.deleteAllPostsForGroup(it)
                                 }
                             }
                         },

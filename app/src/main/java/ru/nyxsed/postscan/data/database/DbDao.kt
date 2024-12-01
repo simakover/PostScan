@@ -25,6 +25,9 @@ interface DbDao {
     @Query("SELECT * FROM posts order by publicationDate desc")
     fun getAllPosts(): Flow<List<PostEntity>>
 
+    @Query("DELETE FROM posts where ABS(ownerId) = :groupId")
+    suspend fun deleteAllPostsForGroup(groupId : Long)
+
     // groups
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertGroup(group: GroupEntity)
