@@ -49,11 +49,22 @@ class VkRepository(
 
     fun searchGroupsStateFlow(searchQuery : String) =
         flow {
-            val response = apiService.groupsSearch(
+
+            val result = mutableListOf<GroupEntity>()
+
+            val responseById = apiService.groupsGetById(
+                token = getAccessToken(),
+                groupId = searchQuery
+            )
+            result.addAll(mapper.mapGroupsGetResponseToGroups(responseById))
+
+            val responseSearch = apiService.groupsSearch(
                 token = getAccessToken(),
                 searchQuery = searchQuery
             )
-            emit(mapper.mapGroupsGetResponseToGroups(response))
+            result.addAll(mapper.mapGroupsGetResponseToGroups(responseSearch))
+
+            emit(result)
         }
             .retry(2)
             .stateIn(
