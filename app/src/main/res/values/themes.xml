@@ -2,7 +2,7 @@
 <resources>
 
     <style name="Theme.Splash" parent="android:Theme.Material.Light.NoActionBar">
-        <item name="android:windowBackground">@color/splash_pink_color</item>
+        <item name="android:windowBackground">@color/splash_purple_color</item>
         <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
         <item name="windowSplashScreenIconBackgroundColor">@null</item>
     </style>
