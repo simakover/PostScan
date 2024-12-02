@@ -1,18 +1,16 @@
-package ru.nyxsed.postscan.presentation.screens.addgroupscreen
+package ru.nyxsed.postscan.presentation.screens.changegroupscreen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import ru.nyxsed.postscan.data.models.entity.GroupEntity
 import ru.nyxsed.postscan.data.repository.DbRepository
-import ru.nyxsed.postscan.data.repository.VkRepository
 import java.text.SimpleDateFormat
 
-class AddGroupScreenViewModel(
+class ChangeGroupScreenViewModel(
     private val dbRepository: DbRepository,
-    private val vkRepository: VkRepository,
 ) : ViewModel() {
-    fun addGroup(
+    fun updateGroup(
         groupId : Long,
         groupName: String,
         screenName: String,
@@ -20,7 +18,6 @@ class AddGroupScreenViewModel(
         lastFetchDate : String
     ) {
         viewModelScope.launch {
-
             val fetchDate = if (lastFetchDate.isEmpty()) {
                 System.currentTimeMillis()
             } else {
@@ -36,16 +33,7 @@ class AddGroupScreenViewModel(
                 lastFetchDate = fetchDate
             )
 
-            val fetchedGroup = dbRepository.getGroupById(group.groupId)
-            if (fetchedGroup == null) {
-                dbRepository.addGroup(group)
-            } else {
-                dbRepository.updateGroup(group)
-            }
+            dbRepository.updateGroup(group)
         }
-    }
-
-    suspend fun groupsGetById(groupName: String): List<GroupEntity> {
-        return vkRepository.groupsGetById(groupName)
     }
 }

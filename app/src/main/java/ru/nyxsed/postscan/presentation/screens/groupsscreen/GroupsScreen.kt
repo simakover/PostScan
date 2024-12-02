@@ -36,7 +36,7 @@ import com.composegears.tiamat.navDestination
 import org.koin.androidx.compose.koinViewModel
 import ru.nyxsed.postscan.R
 import ru.nyxsed.postscan.data.models.entity.GroupEntity
-import ru.nyxsed.postscan.presentation.screens.addgroupscreen.AddGroupScreen
+import ru.nyxsed.postscan.presentation.screens.changegroupscreen.ChangeGroupScreen
 import ru.nyxsed.postscan.presentation.screens.pickgroupscreen.PickGroupScreen
 
 val GroupsScreen by navDestination<Unit> {
@@ -88,7 +88,7 @@ val GroupsScreen by navDestination<Unit> {
                             showDeleteDialog = true
                         },
                         onGroupClicked = {
-                            navController.navigate(AddGroupScreen, it)
+                            navController.navigate(ChangeGroupScreen, it)
                         },
                         deleteEnabled = true
                     )
@@ -102,11 +102,11 @@ val GroupsScreen by navDestination<Unit> {
             },
             onManuallyAddClicked = {
                 showAddDialog = false
-                navController.navigate(AddGroupScreen)
+                navController.navigate(PickGroupScreen, "SEARCH")
             },
             onPickClicked = {
                 showAddDialog = false
-                navController.navigate(PickGroupScreen)
+                navController.navigate(PickGroupScreen, "USER_GROUPS")
             }
         )
         ShowDeleteModalDialog(
@@ -212,7 +212,7 @@ fun ShowAddModalDialog(
                         }
                     ) {
                         Text(
-                            text = stringResource(R.string.manually_add)
+                            text = stringResource(R.string.search_for)
                         )
                     }
                     TextButton(
