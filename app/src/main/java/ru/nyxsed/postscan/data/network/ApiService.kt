@@ -22,6 +22,12 @@ interface ApiService {
         @Query("access_token") token: String,
     ): GroupsGetResponse
 
+    @GET("groups.getById?v=$VK_API_VERSION")
+    suspend fun groupsGetById(
+        @Query("access_token") token: String,
+        @Query("group_id") groupId: String,
+    ): GroupsGetResponse
+
     @GET("groups.search?v=$VK_API_VERSION&count=1000")
     suspend fun groupsSearch(
         @Query("access_token") token: String,
