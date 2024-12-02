@@ -15,8 +15,6 @@ interface ApiService {
         @Query("access_token") token: String,
         @Query("owner_id") ownerId: String,
         @Query("offset") offset: Int,
-//        @Query("start_from") startFrom: String,
-//        @Query("start_time") startTime: String,
     ): WallGetResponse
 
     @GET("groups.get?v=$VK_API_VERSION&extended=1&count=1000")
