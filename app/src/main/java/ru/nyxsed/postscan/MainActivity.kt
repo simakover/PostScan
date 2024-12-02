@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.composegears.tiamat.Navigation
 import com.composegears.tiamat.rememberNavController
 import ru.nyxsed.postscan.presentation.screens.changegroupscreen.ChangeGroupScreen
@@ -19,6 +20,7 @@ import ru.nyxsed.postscan.presentation.ui.theme.PostScanTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
         setContent {
             val navController = rememberNavController(

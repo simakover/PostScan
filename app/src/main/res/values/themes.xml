@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.PostScan" parent="android:Theme.Material.Light.NoActionBar">
+    <style name="Theme.Splash" parent="android:Theme.Material.Light.NoActionBar">
         <item name="android:windowBackground">@color/splash_pink_color</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <item name="windowSplashScreenIconBackgroundColor">@null</item>
     </style>
 </resources>

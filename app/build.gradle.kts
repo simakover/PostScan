@@ -89,4 +89,7 @@ dependencies {
     // datastore
     implementation("androidx.datastore:datastore-preferences:1.1.1")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
+
+    // Splash screen API
+    implementation("androidx.core:core-splashscreen:1.0.1")
 }
