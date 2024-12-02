@@ -6,7 +6,7 @@ import ru.nyxsed.postscan.data.models.entity.GroupEntity
 import ru.nyxsed.postscan.data.models.entity.PostEntity
 import ru.nyxsed.postscan.data.models.response.groupsget.GroupsGetResponse
 import ru.nyxsed.postscan.data.models.response.newsfeedget.AttachmentResponse
-import ru.nyxsed.postscan.data.models.response.newsfeedget.NewsFeedGetResponse
+import ru.nyxsed.postscan.data.models.response.newsfeedget.WallGetResponse
 import ru.nyxsed.postscan.data.models.response.wallgetcomments.ItemResponse
 import ru.nyxsed.postscan.data.models.response.wallgetcomments.ProfilesResponse
 import ru.nyxsed.postscan.data.models.response.wallgetcomments.WallGetCommentsResponse
@@ -15,7 +15,7 @@ import ru.nyxsed.postscan.util.Constants.findOrLast
 import kotlin.math.absoluteValue
 
 class VkMapper {
-    fun mapNewsFeedResponseToPosts(response: NewsFeedGetResponse): List<PostEntity> {
+    fun mapWallGetResponseToPosts(response: WallGetResponse): List<PostEntity> {
         val result = mutableListOf<PostEntity>()
 
         val posts = response.content?.items

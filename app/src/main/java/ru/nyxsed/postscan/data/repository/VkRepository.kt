@@ -57,21 +57,25 @@ class VkRepository(
 
     // post
     suspend fun getPostsForGroup(groupEntity: GroupEntity): List<PostEntity> {
-        var startFrom: String? = ""
+        var offset : Int = 0
         val posts = mutableListOf<PostEntity>()
         val lastFetchDate = groupEntity.lastFetchDate
         val notLoadLikedPosts = dataStoreInteraction.getSettingBooleanFromDataStore(NOT_LOAD_LIKED_POSTS)
 
-        while (startFrom != null) {
-            val response = apiService.newsfeedGet(
+        while (true) {
+            val response = apiService.wallGet(
                 token = getAccessToken(),
-                sourceId = (groupEntity.groupId?.times(-1)).toString(),
-                startFrom = startFrom,
-                startTime = (lastFetchDate / 1000).toString()
+                ownerId = (groupEntity.groupId.times(-1)).toString(),
+                offset = offset
             )
 
-            val responsePosts = mapper.mapNewsFeedResponseToPosts(response)
+            if (response.content == null || response.content.items.isNullOrEmpty()) break
+
+            val responsePosts = mapper.mapWallGetResponseToPosts(response)
             responsePosts
+                .filter {
+                    it.publicationDate > lastFetchDate
+                }
                 .filter {
                     if (notLoadLikedPosts) {
                         it.isLiked == false
@@ -83,7 +87,9 @@ class VkRepository(
                     posts.add(it)
                 }
 
-            startFrom = response.content?.nextFrom
+            if (responsePosts.last().publicationDate <= lastFetchDate) break
+
+            offset += 100
             delay(350)
         }
         return posts.toList()
