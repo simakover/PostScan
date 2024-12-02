@@ -3,7 +3,7 @@ package ru.nyxsed.postscan.data.models.response.newsfeedget
 
 import com.google.gson.annotations.SerializedName
 
-data class NewsFeedGetResponse(
+data class WallGetResponse(
     @SerializedName("response")
-    val content: NewsfeedGetContentResponse?,
+    val content: WallGetContentResponse?,
 )

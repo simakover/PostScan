@@ -5,18 +5,19 @@ import retrofit2.http.Query
 import ru.nyxsed.postscan.data.models.response.groupsget.GroupsGetResponse
 import ru.nyxsed.postscan.data.models.response.isliked.IsLikedResponse
 import ru.nyxsed.postscan.data.models.response.likes.LikesCountResponse
-import ru.nyxsed.postscan.data.models.response.newsfeedget.NewsFeedGetResponse
+import ru.nyxsed.postscan.data.models.response.newsfeedget.WallGetResponse
 import ru.nyxsed.postscan.data.models.response.wallgetcomments.WallGetCommentsResponse
 import ru.nyxsed.postscan.util.Constants.VK_API_VERSION
 
 interface ApiService {
-    @GET("newsfeed.get?v=$VK_API_VERSION&filters=post")
-    suspend fun newsfeedGet(
+    @GET("wall.get?v=$VK_API_VERSION&count=100&extended=1")
+    suspend fun wallGet(
         @Query("access_token") token: String,
-        @Query("source_ids") sourceId: String,
-        @Query("start_from") startFrom: String,
-        @Query("start_time") startTime: String,
-    ): NewsFeedGetResponse
+        @Query("owner_id") ownerId: String,
+        @Query("offset") offset: Int,
+//        @Query("start_from") startFrom: String,
+//        @Query("start_time") startTime: String,
+    ): WallGetResponse
 
     @GET("groups.get?v=$VK_API_VERSION&extended=1&count=1000")
     suspend fun groupsGet(
