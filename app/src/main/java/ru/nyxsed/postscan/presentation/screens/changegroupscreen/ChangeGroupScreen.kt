@@ -1,5 +1,6 @@
 package ru.nyxsed.postscan.presentation.screens.changegroupscreen
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,12 +22,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import com.composegears.tiamat.navArgsOrNull
+import com.composegears.tiamat.navArgs
 import com.composegears.tiamat.navController
 import com.composegears.tiamat.navDestination
 import org.koin.androidx.compose.koinViewModel
@@ -38,9 +40,10 @@ import ru.nyxsed.postscan.util.Constants.convertLongToTime
 import ru.nyxsed.postscan.util.MaskVisualTransformation
 
 val ChangeGroupScreen by navDestination<GroupEntity> {
-    val groupArg = navArgsOrNull()
+    val groupArg = navArgs()
     val changeGroupScreenViewModel = koinViewModel<ChangeGroupScreenViewModel>()
     val navController = navController()
+    val uriHandler = LocalUriHandler.current
 
     val regex = Regex("^([0-2][0-9]|3[01])(0[1-9]|1[0-2])[0-9]{4}$")
 
@@ -54,7 +57,7 @@ val ChangeGroupScreen by navDestination<GroupEntity> {
     var enableSearch by remember { mutableStateOf(true) }
 
     LaunchedEffect(Unit) {
-        groupArg?.let {
+        groupArg.let {
             lastFetchDate = convertLongToTime(it.lastFetchDate).replace(".", "")
             groupFound = true
             groupId = it.groupId
@@ -77,7 +80,15 @@ val ChangeGroupScreen by navDestination<GroupEntity> {
             AsyncImage(
                 modifier = Modifier
                     .clip(CircleShape)
-                    .size(50.dp),
+                    .size(50.dp)
+                    .clickable(
+                        onClick = {
+                            changeGroupScreenViewModel.openGroupUri(
+                                uriHandler = uriHandler,
+                                group = groupArg
+                            )
+                        }
+                    ),
                 model = avatarUrl,
                 placeholder = painterResource(R.drawable.ic_placeholder),
                 contentDescription = null,
