@@ -62,7 +62,6 @@ fun PostCard(
         ) {
             PostHeader(
                 post = post,
-                onPostDeleteClicked = onPostDeleteClicked,
                 onGroupClicked = onGroupClicked
             )
             Box(
@@ -208,6 +207,17 @@ fun PostCard(
                 )
                 IconButton(
                     onClick = {
+                        onPostDeleteClicked(post)
+                    }
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_delete),
+                        tint = MaterialTheme.colorScheme.onSecondary,
+                        contentDescription = null
+                    )
+                }
+                IconButton(
+                    onClick = {
                         onCommentsClicked(post)
                     }
                 ) {
@@ -236,7 +246,6 @@ fun PostCard(
 @Composable
 fun PostHeader(
     post: PostEntity,
-    onPostDeleteClicked: (PostEntity) -> Unit,
     onGroupClicked: (PostEntity) -> Unit
 ) {
     Row(
@@ -284,17 +293,6 @@ fun PostHeader(
                 text = convertLongToTime(post.publicationDate),
                 color = MaterialTheme.colorScheme.onSecondary,
                 style = MaterialTheme.typography.titleSmall
-            )
-        }
-        IconButton(
-            onClick = {
-                onPostDeleteClicked(post)
-            }
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.ic_close),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSecondary
             )
         }
     }
