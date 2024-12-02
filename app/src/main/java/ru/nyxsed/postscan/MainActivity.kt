@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
 import com.composegears.tiamat.Navigation
 import com.composegears.tiamat.rememberNavController
-import ru.nyxsed.postscan.presentation.screens.addgroupscreen.AddGroupScreen
+import ru.nyxsed.postscan.presentation.screens.changegroupscreen.ChangeGroupScreen
 import ru.nyxsed.postscan.presentation.screens.commentsscreen.CommentsScreen
 import ru.nyxsed.postscan.presentation.screens.groupsscreen.GroupsScreen
 import ru.nyxsed.postscan.presentation.screens.imagepagerscreen.ImagePagerScreen
@@ -27,7 +27,7 @@ class MainActivity : ComponentActivity() {
                     PostsScreen,
                     LoginScreen,
                     GroupsScreen,
-                    AddGroupScreen,
+                    ChangeGroupScreen,
                     PickGroupScreen,
                     ImagePagerScreen,
                     CommentsScreen,

@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import ru.nyxsed.postscan.R
 import ru.nyxsed.postscan.data.models.entity.GroupEntity
+import ru.nyxsed.postscan.presentation.ui.theme.VkBlue
 
 @Composable
 fun GroupChip(
@@ -36,8 +37,8 @@ fun GroupChip(
     isSelected: Boolean,
     onChipClicked: () -> Unit,
 ) {
-    val backgroundColor = if (isSelected) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.primary
-    val textColor = if (isSelected) MaterialTheme.colorScheme.onSecondary else MaterialTheme.colorScheme.onPrimary
+    val backgroundColor = if (isSelected) VkBlue else MaterialTheme.colorScheme.primary
+    val textColor = MaterialTheme.colorScheme.onPrimary
 
     val displayedText = if (group.name.length > 10) {
         group.name.substring(0, 10) + "..."

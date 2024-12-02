@@ -5,7 +5,7 @@
     <string name="add_group">Add Group</string>
     <string name="delete_group">Delete Group</string>
     <string name="update_group">Update Group</string>
-    <string name="group_name_or_id">Group Name or Id</string>
+    <string name="search_query">Search Query</string>
     <string name="search_for_group">Search for Group</string>
     <string name="group_name">Group Name</string>
     <string name="last_fetch_date">Last Fetch Date</string>
@@ -19,9 +19,9 @@
     <string name="loading_progress">Loading Progress</string>
     <string name="loading_completed">Loading Completed</string>
     <string name="albums">Albums:</string>
-    <string name="group_add_dialog_question">Do you want to manually add group or pick it from your group list?</string>
+    <string name="group_add_dialog_question">Do you want to search for group or pick it from your group list?</string>
     <string name="group_delete_dialog_question">Do you want to delete group and all of post of this group?</string>
-    <string name="manually_add">Manually Add</string>
+    <string name="search_for">Search</string>
     <string name="pick_from">Pick From</string>
     <string name="cancel">Cancel</string>
     <string name="confirm">Confirm</string>

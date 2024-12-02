@@ -5,7 +5,7 @@
     <string name="add_group">Добавить группу</string>
     <string name="delete_group">Удалить группу</string>
     <string name="update_group">Обновить группу</string>
-    <string name="group_name_or_id">Имя группы или ID</string>
+    <string name="search_query">Строка поиска</string>
     <string name="search_for_group">Поиск группы</string>
     <string name="group_name">Имя группы</string>
     <string name="last_fetch_date">Дата последней загрузки постов</string>
@@ -19,9 +19,9 @@
     <string name="loading_progress">Прогресс загрузки</string>
     <string name="loading_completed">Загрузка завершена</string>
     <string name="albums">Альбомы:</string>
-    <string name="group_add_dialog_question">Вы хотите добавить группу вручную или выбрать из подписок?</string>
+    <string name="group_add_dialog_question">Вы хотите найти группу или выбрать из подписок?</string>
     <string name="group_delete_dialog_question">Вы хотите удалить группу и все посты этой группы?</string>
-    <string name="manually_add">Добавить вручную</string>
+    <string name="search_for">Найти</string>
     <string name="pick_from">Выбрать из подписок</string>
     <string name="confirm">Подтверждение</string>
     <string name="not_load_liked_posts">Не загружать посты с лайками</string>

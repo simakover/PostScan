@@ -33,18 +33,25 @@ class VkRepository(
     }
 
     // groups
-    suspend fun groupsGetById(groupId: String): List<GroupEntity> {
-        val response = apiService.groupsGetById(
-            token = getAccessToken(),
-            groupId = groupId
-        )
-        return mapper.mapGroupsGetResponseToGroups(response)
-    }
-
     fun getGroupsStateFlow() =
         flow {
             val response = apiService.groupsGet(
                 token = getAccessToken()
+            )
+            emit(mapper.mapGroupsGetResponseToGroups(response))
+        }
+            .retry(2)
+            .stateIn(
+                scope = scope,
+                started = SharingStarted.Lazily,
+                initialValue = listOf()
+            )
+
+    fun searchGroupsStateFlow(searchQuery : String) =
+        flow {
+            val response = apiService.groupsSearch(
+                token = getAccessToken(),
+                searchQuery = searchQuery
             )
             emit(mapper.mapGroupsGetResponseToGroups(response))
         }
