@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -20,11 +21,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.composegears.tiamat.navArgsOrNull
+import com.composegears.tiamat.navArgs
 import com.composegears.tiamat.navDestination
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -32,34 +34,21 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.androidx.compose.koinViewModel
 import ru.nyxsed.postscan.R
-import ru.nyxsed.postscan.data.models.entity.GroupEntity
 import ru.nyxsed.postscan.presentation.screens.groupsscreen.GroupCard
-import ru.nyxsed.postscan.presentation.screens.groupsscreen.GroupsScreenViewModel
 import ru.nyxsed.postscan.util.Constants.isInternetAvailable
 
 val PickGroupScreen by navDestination<String> {
-    val mode = navArgsOrNull()
-    val groupScreenViewModel = koinViewModel<GroupsScreenViewModel>()
+    val mode = navArgs()
+    val pickGroupScreenViewModel = koinViewModel<PickGroupScreenViewModel>()
     val scope = CoroutineScope(Dispatchers.Default)
     val context = LocalContext.current
 
-    val dbGroupsState by groupScreenViewModel.dbGroups.collectAsState()
-    var fetchedGroupsState by remember { mutableStateOf(emptyList<GroupEntity>()) }
+    val screenState by pickGroupScreenViewModel.screenStateFlow.collectAsState()
+    var searchQuery by remember { mutableStateOf("") }
 
     LaunchedEffect(mode) {
-        if (mode == "USER_GROUPS") {
-            groupScreenViewModel.userGroups.collect { groups ->
-                fetchedGroupsState = groups
-            }
-        }
+        pickGroupScreenViewModel.setMode(mode)
     }
-
-    val groupDifference = fetchedGroupsState.filter { group ->
-        val foundedGroup = dbGroupsState.find { it.groupId == group.groupId }
-        group.groupId != foundedGroup?.groupId
-    }
-
-    var searchQuery by remember { mutableStateOf("") }
 
     Scaffold { paddings ->
         Column(
@@ -68,7 +57,7 @@ val PickGroupScreen by navDestination<String> {
                 .padding(paddings)
                 .padding(8.dp),
         ) {
-            if (mode == "SEARCH") {
+            if (screenState is PickGroupState.Search || screenState is PickGroupState.Loading) {
                 TextField(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -97,35 +86,50 @@ val PickGroupScreen by navDestination<String> {
                                 }
                                 return@launch
                             }
-                            groupScreenViewModel.fetchedGroups(searchQuery).collect { groups ->
-                                fetchedGroupsState = groups
-                            }
+                            pickGroupScreenViewModel.fetchedGroups(searchQuery)
                         }
                     }
                 ) {
                     Text(stringResource(R.string.search_for_group))
                 }
             }
-            LazyColumn(
-                contentPadding = PaddingValues(4.dp),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                items(
-                    items = groupDifference,
-                    key = { it.groupId }
+            if (screenState is PickGroupState.Loading) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .animateItem()
+                    CircularProgressIndicator()
+                }
+            } else {
+
+                val groups = if (screenState is PickGroupState.Search) {
+                    (screenState as PickGroupState.Search).groups
+                } else {
+                    (screenState as PickGroupState.User).groups
+                }
+
+                LazyColumn(
+                    contentPadding = PaddingValues(4.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    items(
+                        items = groups,
+                        key = { it.groupId }
                     ) {
-                        GroupCard(
-                            group = it,
-                            onGroupDeleteClicked = { },
-                            onGroupClicked = {
-                                groupScreenViewModel.addGroup(it)
-                            },
-                            deleteEnabled = false
-                        )
+                        Box(
+                            modifier = Modifier
+                                .animateItem()
+                        ) {
+                            GroupCard(
+                                group = it,
+                                onGroupDeleteClicked = { },
+                                onGroupClicked = {
+                                    pickGroupScreenViewModel.addGroup(it)
+                                },
+                                deleteEnabled = false
+                            )
+                        }
                     }
                 }
             }

@@ -47,35 +47,27 @@ class VkRepository(
                 initialValue = listOf()
             )
 
-    fun searchGroupsStateFlow(searchQuery : String) =
-        flow {
+    suspend fun searchGroupsStateFlow(searchQuery: String) : List<GroupEntity> {
+        val result = mutableListOf<GroupEntity>()
 
-            val result = mutableListOf<GroupEntity>()
+        val responseById = apiService.groupsGetById(
+            token = getAccessToken(),
+            groupId = searchQuery
+        )
+        result.addAll(mapper.mapGroupsGetResponseToGroups(responseById))
 
-            val responseById = apiService.groupsGetById(
-                token = getAccessToken(),
-                groupId = searchQuery
-            )
-            result.addAll(mapper.mapGroupsGetResponseToGroups(responseById))
+        val responseSearch = apiService.groupsSearch(
+            token = getAccessToken(),
+            searchQuery = searchQuery
+        )
+        result.addAll(mapper.mapGroupsGetResponseToGroups(responseSearch))
 
-            val responseSearch = apiService.groupsSearch(
-                token = getAccessToken(),
-                searchQuery = searchQuery
-            )
-            result.addAll(mapper.mapGroupsGetResponseToGroups(responseSearch))
-
-            emit(result)
-        }
-            .retry(2)
-            .stateIn(
-                scope = scope,
-                started = SharingStarted.Lazily,
-                initialValue = listOf()
-            )
+        return result
+    }
 
     // post
     suspend fun getPostsForGroup(groupEntity: GroupEntity): List<PostEntity> {
-        var offset : Int = 0
+        var offset: Int = 0
         val posts = mutableListOf<PostEntity>()
         val lastFetchDate = groupEntity.lastFetchDate
         val notLoadLikedPosts = dataStoreInteraction.getSettingBooleanFromDataStore(NOT_LOAD_LIKED_POSTS)
