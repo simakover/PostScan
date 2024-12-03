@@ -266,25 +266,30 @@ val ImagePagerScreen by navDestination<ImagePagerArgs> {
                                     ).show()
                                     return@IconButton
                                 }
-                                if (authState is AuthState.NotAuthorized) {
-                                    Toast.makeText(
-                                        context,
-                                        context.getString(R.string.app_is_not_authorized),
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                    return@IconButton
-                                }
 
-                                imagePagerViewModel.changeLikeStatus(content[pagerState.currentPage])
+                                when (authState) {
+                                    AuthState.NotAuthorized -> {
+                                        Toast.makeText(
+                                            context,
+                                            context.getString(R.string.app_is_not_authorized),
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                        return@IconButton
+                                    }
 
-                                val updatedContent = content.mapIndexed { index, entity ->
-                                    if (index == pagerState.currentPage) {
-                                        entity.copy(isLiked = !entity.isLiked)
-                                    } else {
-                                        entity
+                                    AuthState.Authorized -> {
+                                        imagePagerViewModel.changeLikeStatus(content[pagerState.currentPage])
+
+                                        val updatedContent = content.mapIndexed { index, entity ->
+                                            if (index == pagerState.currentPage) {
+                                                entity.copy(isLiked = !entity.isLiked)
+                                            } else {
+                                                entity
+                                            }
+                                        }
+                                        content = updatedContent
                                     }
                                 }
-                                content = updatedContent
                             }
                         ) {
                             Icon(
