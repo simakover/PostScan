@@ -13,6 +13,7 @@ import ru.nyxsed.postscan.presentation.screens.changegroupscreen.ChangeGroupScre
 import ru.nyxsed.postscan.presentation.screens.commentsscreen.CommentsScreenViewModel
 import ru.nyxsed.postscan.presentation.screens.groupsscreen.GroupsScreenViewModel
 import ru.nyxsed.postscan.presentation.screens.imagepagerscreen.ImagePagerViewModel
+import ru.nyxsed.postscan.presentation.screens.pickgroupscreen.PickGroupScreenViewModel
 import ru.nyxsed.postscan.presentation.screens.postsscreen.PostsScreenViewModel
 import ru.nyxsed.postscan.presentation.screens.preferencesscreen.PreferencesScreenViewModel
 
@@ -56,6 +57,12 @@ val appModule = module {
 
     viewModel<GroupsScreenViewModel> {
         GroupsScreenViewModel(
+            dbRepository = get()
+        )
+    }
+
+    viewModel<PickGroupScreenViewModel> {
+        PickGroupScreenViewModel(
             dbRepository = get(),
             vkRepository = get(),
         )
