@@ -40,7 +40,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.composegears.tiamat.navController
 import com.composegears.tiamat.navDestination
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.androidx.compose.koinViewModel
 import ru.nyxsed.postscan.R
 import ru.nyxsed.postscan.SharedViewModel
@@ -198,15 +200,33 @@ val PostsScreen by navDestination<Unit> {
                             },
                             onLikeClicked = {
                                 scope.launch {
-                                    val changedPost = postsScreenViewModel.changeLikeStatus(it)
-                                    if (settingDeleteAfterLike) {
-                                        deletePost(
-                                            post = changedPost,
-                                            vm = postsScreenViewModel,
-                                            context = context,
-                                            snackbarHostState = snackbarHostState
-                                        )
+                                    if (!isInternetAvailable(context)) {
+                                        withContext(Dispatchers.Main) {
+                                            Toast.makeText(
+                                                context,
+                                                context.getString(R.string.no_internet_connection),
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
+                                        return@launch
                                     }
+                                    when (authState.value) {
+                                        AuthState.Authorized -> {
+                                            val changedPost = postsScreenViewModel.changeLikeStatus(it)
+                                            if (settingDeleteAfterLike) {
+                                                deletePost(
+                                                    post = changedPost,
+                                                    vm = postsScreenViewModel,
+                                                    context = context,
+                                                    snackbarHostState = snackbarHostState
+                                                )
+                                            }
+                                        }
+
+                                        AuthState.NotAuthorized -> navController.navigate(LoginScreen)
+                                    }
+
+
                                 }
                             },
                             onToVkClicked = {
