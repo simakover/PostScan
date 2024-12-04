@@ -17,6 +17,9 @@ object NotificationHelper {
         val notificationManager =
             GlobalContext.get().get<NotificationManager> { parametersOf(context, PROGRESS_CHANNEL_ID, PROGRESS_CHANNEL_NAME) }
         val builder: NotificationCompat.Builder = GlobalContext.get().get { parametersOf(context, PROGRESS_CHANNEL_ID) }
+        builder
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setVibrate(longArrayOf(100))
 
         ContextCompat.checkSelfPermission(
             context,
@@ -29,7 +32,10 @@ object NotificationHelper {
         val notificationManager =
             GlobalContext.get().get<NotificationManager> { parametersOf(context, PROGRESS_CHANNEL_ID, PROGRESS_CHANNEL_NAME) }
         val builder: NotificationCompat.Builder = GlobalContext.get().get { parametersOf(context, PROGRESS_CHANNEL_ID) }
-        builder.setProgress(100, progress, false)
+        builder
+            .setProgress(100, progress, false)
+            .setPriority(NotificationCompat.PRIORITY_LOW)
+            .setVibrate(longArrayOf(0))
 
         ContextCompat.checkSelfPermission(
             context,
@@ -46,7 +52,9 @@ object NotificationHelper {
         builder
             .setContentText(context.getString(R.string.loading_completed))
             .setSmallIcon(R.drawable.ic_checkmark)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setProgress(0, 0, false)
+            .setVibrate(longArrayOf(100))
 
         ContextCompat.checkSelfPermission(
             context,

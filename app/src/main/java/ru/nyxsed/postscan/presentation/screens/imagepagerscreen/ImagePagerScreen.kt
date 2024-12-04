@@ -77,7 +77,7 @@ val ImagePagerScreen by navDestination<ImagePagerArgs> {
     val imagePagerViewModel = koinViewModel<ImagePagerViewModel>()
     val context = LocalContext.current
     val navController = navController()
-    val scope = CoroutineScope(Dispatchers.IO)
+    val scope = CoroutineScope(Dispatchers.Main)
 
     val sharedViewModel = koinViewModel<SharedViewModel>()
     val authState by sharedViewModel.authStateFlow.collectAsState()
