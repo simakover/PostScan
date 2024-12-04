@@ -6,7 +6,7 @@ import org.koin.core.context.startKoin
 import ru.nyxsed.postscan.di.appModule
 import ru.nyxsed.postscan.di.dbModule
 import ru.nyxsed.postscan.di.networkModule
-import ru.nyxsed.postscan.di.notificationModule
+import ru.nyxsed.postscan.di.utilModule
 
 class App : Application() {
     override fun onCreate() {
@@ -14,7 +14,7 @@ class App : Application() {
 
         startKoin {
             androidContext(this@App)
-            modules(appModule, dbModule, networkModule, notificationModule)
+            modules(appModule, dbModule, networkModule, utilModule)
         }
     }
 }

@@ -6,8 +6,9 @@ import android.content.Context
 import androidx.core.app.NotificationCompat
 import org.koin.dsl.module
 import ru.nyxsed.postscan.R
+import ru.nyxsed.postscan.util.InternetChecker
 
-val notificationModule = module {
+val utilModule = module {
     single<NotificationManager> { (context: Context, channelId: String, channelName: String) ->
         val channel = NotificationChannel(
             channelId,
@@ -21,7 +22,6 @@ val notificationModule = module {
         notificationManager
     }
 
-    // Регистрация NotificationCompat.Builder
     factory { (context: Context, channelId: String) ->
         NotificationCompat.Builder(context, channelId)
             .setSmallIcon(R.drawable.ic_placeholder)
@@ -29,5 +29,11 @@ val notificationModule = module {
             .setContentTitle(context.getString(R.string.loading_posts))
             .setContentText(context.getString(R.string.loading_progress))
             .setProgress(100, 0, false)
+    }
+
+    single<InternetChecker> {
+        InternetChecker(
+            context = get()
+        )
     }
 }
