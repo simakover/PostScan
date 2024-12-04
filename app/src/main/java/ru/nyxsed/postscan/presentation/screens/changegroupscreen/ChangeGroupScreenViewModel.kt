@@ -1,31 +1,36 @@
 package ru.nyxsed.postscan.presentation.screens.changegroupscreen
 
-import androidx.compose.ui.platform.UriHandler
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import ru.nyxsed.postscan.R
 import ru.nyxsed.postscan.data.models.entity.GroupEntity
 import ru.nyxsed.postscan.data.repository.DbRepository
 import ru.nyxsed.postscan.util.Constants.VK_URL
+import ru.nyxsed.postscan.util.InternetChecker
+import ru.nyxsed.postscan.util.UiEvent
 import java.text.SimpleDateFormat
 
 class ChangeGroupScreenViewModel(
     private val dbRepository: DbRepository,
+    private val internetChecker: InternetChecker,
 ) : ViewModel() {
+    private val _uiEventFlow = MutableSharedFlow<UiEvent>()
+    val uiEventFlow: SharedFlow<UiEvent> = _uiEventFlow.asSharedFlow()
+
     fun updateGroup(
-        groupId : Long,
+        groupId: Long,
         groupName: String,
         screenName: String,
         avatarUrl: String,
-        lastFetchDate : String
+        lastFetchDate: String,
     ) {
         viewModelScope.launch {
-            val fetchDate = if (lastFetchDate.isEmpty()) {
-                System.currentTimeMillis()
-            } else {
-                val format = SimpleDateFormat("ddMMyyyy")
-                format.parse(lastFetchDate)?.time
-            } ?: System.currentTimeMillis()
+            val format = SimpleDateFormat("ddMMyyyy")
+            val fetchDate = format.parse(lastFetchDate)?.time ?: System.currentTimeMillis()
 
             val group = GroupEntity(
                 groupId = groupId,
@@ -39,7 +44,14 @@ class ChangeGroupScreenViewModel(
         }
     }
 
-    fun openGroupUri(uriHandler: UriHandler, group: GroupEntity) {
-        uriHandler.openUri("${VK_URL}${group.screenName}")
+    fun openGroupUri(group: GroupEntity) {
+        viewModelScope.launch {
+            if (!internetChecker.isInternetAvailable()) {
+                _uiEventFlow.emit(UiEvent.ShowToast(R.string.no_internet_connection))
+                return@launch
+            }
+
+            _uiEventFlow.emit(UiEvent.OpenUrl(url = "${VK_URL}${group.screenName}"))
+        }
     }
 }

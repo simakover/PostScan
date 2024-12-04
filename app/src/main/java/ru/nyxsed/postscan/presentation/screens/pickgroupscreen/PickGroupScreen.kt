@@ -53,8 +53,7 @@ val PickGroupScreen by navDestination<String> {
                         context.getString(event.messageResId),
                         Toast.LENGTH_SHORT
                     ).show()
-
-                is UiEvent.LaunchActivity -> {}
+                else -> {}
             }
         }
     }
