@@ -47,7 +47,7 @@ class VkRepository(
                 initialValue = listOf()
             )
 
-    suspend fun searchGroupsStateFlow(searchQuery: String) : List<GroupEntity> {
+    suspend fun searchGroups(searchQuery: String) : List<GroupEntity> {
         val result = mutableListOf<GroupEntity>()
 
         val responseById = apiService.groupsGetById(
@@ -62,7 +62,7 @@ class VkRepository(
         )
         result.addAll(mapper.mapGroupsGetResponseToGroups(responseSearch))
 
-        return result
+        return result.distinct()
     }
 
     // post

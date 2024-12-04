@@ -3,13 +3,13 @@ package ru.nyxsed.postscan.presentation.screens.pickgroupscreen
 import ru.nyxsed.postscan.data.models.entity.GroupEntity
 
 sealed class PickGroupState {
-    class Search(
+    data class Search(
         val groups: List<GroupEntity> = emptyList(),
     ) : PickGroupState()
 
-    class User(
+    data class User(
         val groups: List<GroupEntity> = emptyList(),
     ) : PickGroupState()
 
-    class Loading() : PickGroupState()
+    object Loading : PickGroupState()
 }

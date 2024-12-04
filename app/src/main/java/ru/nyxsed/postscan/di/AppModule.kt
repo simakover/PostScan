@@ -65,6 +65,7 @@ val appModule = module {
         PickGroupScreenViewModel(
             dbRepository = get(),
             vkRepository = get(),
+            internetChecker = get()
         )
     }
 

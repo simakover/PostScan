@@ -15,7 +15,9 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,28 +30,44 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.navArgs
 import com.composegears.tiamat.navDestination
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.koin.androidx.compose.koinViewModel
 import ru.nyxsed.postscan.R
+import ru.nyxsed.postscan.data.models.entity.GroupEntity
 import ru.nyxsed.postscan.presentation.screens.groupsscreen.GroupCard
-import ru.nyxsed.postscan.util.Constants.isInternetAvailable
+import ru.nyxsed.postscan.util.UiEvent
 
 val PickGroupScreen by navDestination<String> {
     val mode = navArgs()
     val pickGroupScreenViewModel = koinViewModel<PickGroupScreenViewModel>()
-    val scope = CoroutineScope(Dispatchers.Default)
     val context = LocalContext.current
 
-    val screenState by pickGroupScreenViewModel.screenStateFlow.collectAsState()
-    var searchQuery by remember { mutableStateOf("") }
+    val screenState = pickGroupScreenViewModel.screenStateFlow.collectAsState()
 
     LaunchedEffect(mode) {
         pickGroupScreenViewModel.setMode(mode)
+        pickGroupScreenViewModel.uiEventFlow.collect { event ->
+            when (event) {
+                is UiEvent.ShowToast ->
+                    Toast.makeText(
+                        context,
+                        context.getString(event.messageResId),
+                        Toast.LENGTH_SHORT
+                    ).show()
+            }
+        }
     }
 
+    PickGroupContent(
+        pickGroupScreenViewModel = pickGroupScreenViewModel,
+        screenState = screenState
+    )
+}
+
+@Composable
+fun PickGroupContent(
+    pickGroupScreenViewModel: PickGroupScreenViewModel,
+    screenState: State<PickGroupState>,
+) {
     Scaffold { paddings ->
         Column(
             modifier = Modifier
@@ -57,84 +75,106 @@ val PickGroupScreen by navDestination<String> {
                 .padding(paddings)
                 .padding(8.dp),
         ) {
-            if (screenState is PickGroupState.Search || screenState is PickGroupState.Loading) {
-                TextField(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 10.dp),
-                    value = searchQuery,
-                    onValueChange = {
-                        searchQuery = it
-                    },
-                    label = {
-                        Text(stringResource(R.string.search_query))
-                    }
-                )
-                Button(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 10.dp),
-                    onClick = {
-                        scope.launch {
-                            if (!isInternetAvailable(context)) {
-                                withContext(Dispatchers.Main) {
-                                    Toast.makeText(
-                                        context,
-                                        context.getString(R.string.no_internet_connection),
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-                                return@launch
-                            }
-                            pickGroupScreenViewModel.fetchedGroups(searchQuery)
+            val currentState = screenState.value
+            when (currentState) {
+                is PickGroupState.Loading -> {
+                    SearchView(
+                        onSearchClicked = {
+                            pickGroupScreenViewModel.fetchedGroups(it)
                         }
-                    }
-                ) {
-                    Text(stringResource(R.string.search_for_group))
-                }
-            }
-            if (screenState is PickGroupState.Loading) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
-            } else {
-
-                val groups = if (screenState is PickGroupState.Search) {
-                    (screenState as PickGroupState.Search).groups
-                } else {
-                    (screenState as PickGroupState.User).groups
-                }
-
-                LazyColumn(
-                    contentPadding = PaddingValues(4.dp),
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    items(
-                        items = groups,
-                        key = { it.groupId }
+                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        contentAlignment = Alignment.Center
                     ) {
-                        Box(
-                            modifier = Modifier
-                                .animateItem()
-                        ) {
-                            GroupCard(
-                                group = it,
-                                onGroupDeleteClicked = { },
-                                onGroupClicked = {
-                                    pickGroupScreenViewModel.addGroup(it)
-                                },
-                                deleteEnabled = false
-                            )
-                        }
+                        CircularProgressIndicator()
                     }
+                }
+
+                is PickGroupState.Search -> {
+                    SearchView(
+                        onSearchClicked = {
+                            pickGroupScreenViewModel.fetchedGroups(it)
+                        }
+                    )
+                    GroupsLazyColum(
+                        groups = currentState.groups,
+                        onGroupCardClicked = {
+                            pickGroupScreenViewModel.addGroup(it)
+                        }
+                    )
+                }
+
+                is PickGroupState.User -> {
+                    GroupsLazyColum(
+                        groups = currentState.groups,
+                        onGroupCardClicked = {
+                            pickGroupScreenViewModel.addGroup(it)
+                        }
+                    )
                 }
             }
         }
     }
 }
 
+@Composable
+fun SearchView(
+    onSearchClicked: (String) -> Unit,
+) {
+    var searchQuery by remember { mutableStateOf("") }
 
+    TextField(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 10.dp),
+        value = searchQuery,
+        onValueChange = {
+            searchQuery = it
+        },
+        label = {
+            Text(stringResource(R.string.search_query))
+        }
+    )
+    Button(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 10.dp),
+        onClick = {
+            onSearchClicked(searchQuery)
+        }
+    ) {
+        Text(stringResource(R.string.search_for_group))
+    }
+}
+
+@Composable
+fun GroupsLazyColum(
+    groups: List<GroupEntity>,
+    onGroupCardClicked: (GroupEntity) -> Unit,
+) {
+    LazyColumn(
+        contentPadding = PaddingValues(4.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        items(
+            items = groups,
+            key = { it.groupId }
+        ) {
+            Box(
+                modifier = Modifier
+                    .animateItem()
+            ) {
+                GroupCard(
+                    group = it,
+                    onGroupDeleteClicked = { },
+                    onGroupClicked = {
+                        onGroupCardClicked(it)
+                    },
+                    deleteEnabled = false
+                )
+            }
+        }
+    }
+}
