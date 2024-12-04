@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -19,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.navDestination
+import com.vk.api.sdk.VK
 import org.koin.androidx.compose.koinViewModel
 import ru.nyxsed.postscan.R
 import ru.nyxsed.postscan.util.DataStoreInteraction.Companion.DELETE_AFTER_LIKE
@@ -69,6 +71,12 @@ val PreferencesScreen by navDestination<Unit> {
                     settingDeleteAfterLike = it
                 }
             )
+            SettingButton(
+                label = stringResource(R.string.vk_logout),
+                onClick = {
+                    VK.logout()
+                }
+            )
         }
     }
 }
@@ -96,5 +104,27 @@ fun SettingRow(
                 onCheckChange(it)
             }
         )
+    }
+}
+
+@Composable
+fun SettingButton(
+    label: String,
+    onClick: () -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .padding(8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Button(
+            modifier = Modifier
+                .fillMaxWidth(),
+            onClick = {
+                onClick()
+            }
+        ) {
+            Text(text = label)
+        }
     }
 }

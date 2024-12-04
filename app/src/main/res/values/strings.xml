@@ -28,4 +28,5 @@
     <string name="not_load_liked_posts">Not Load Liked Posts</string>
     <string name="use_mihon_for_manga_search">Use Mihon for Manga Search</string>
     <string name="delete_post_after_liking">Delete Post After Liking</string>
+    <string name="vk_logout">VK Logout</string>
 </resources>

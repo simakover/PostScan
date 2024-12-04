@@ -12,6 +12,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,11 +28,12 @@ import org.koin.androidx.compose.koinViewModel
 import ru.nyxsed.postscan.R
 import ru.nyxsed.postscan.SharedViewModel
 import ru.nyxsed.postscan.presentation.ui.theme.VkBlue
-import ru.nyxsed.postscan.util.Constants.isInternetAvailable
+import ru.nyxsed.postscan.util.UiEvent
 
 val LoginScreen by navDestination<Unit> {
 
     val context = LocalContext.current
+    // TODO убрать шаред модель, перенести в инкапсулированный класс
     val sharedViewModel = koinViewModel<SharedViewModel>()
 
     val navController = navController()
@@ -40,6 +42,24 @@ val LoginScreen by navDestination<Unit> {
     ) {
         sharedViewModel.checkState()
         navController.back()
+    }
+
+    val loginViewModel = koinViewModel<LoginViewModel>()
+    LaunchedEffect(Unit) {
+        loginViewModel.uiEventFlow.collect { event ->
+            when (event) {
+                is UiEvent.ShowToast ->
+                    Toast.makeText(
+                        context,
+                        context.getString(event.messageResId),
+                        Toast.LENGTH_SHORT
+                    ).show()
+
+                is UiEvent.LaunchActivity -> {
+                    launcher.launch(listOf(VKScope.WALL, VKScope.FRIENDS))
+                }
+            }
+        }
     }
 
     Scaffold { paddings ->
@@ -63,12 +83,7 @@ val LoginScreen by navDestination<Unit> {
                     contentColor = Color.White
                 ),
                 onClick = {
-                    if (!isInternetAvailable(context)) {
-                        Toast.makeText(context, context.getString(R.string.no_internet_connection), Toast.LENGTH_SHORT)
-                            .show()
-                        return@Button
-                    }
-                    launcher.launch(listOf(VKScope.WALL, VKScope.FRIENDS))
+                    loginViewModel.launchActivity()
                 }
             ) {
                 Text(text = stringResource(R.string.LogIn))
