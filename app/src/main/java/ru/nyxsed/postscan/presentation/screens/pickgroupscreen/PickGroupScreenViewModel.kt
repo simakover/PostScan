@@ -86,7 +86,7 @@ class PickGroupScreenViewModel(
             when (currentState) {
                 is PickGroupState.Search -> _screenStateFlow.value = PickGroupState.Search(groups = filteredGroupsState.value)
                 is PickGroupState.User -> _screenStateFlow.value = PickGroupState.User(groups = filteredGroupsState.value)
-                is PickGroupState.Loading -> {}
+                else -> {}
             }
         }
     }

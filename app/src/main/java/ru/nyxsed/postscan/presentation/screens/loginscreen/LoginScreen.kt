@@ -58,6 +58,8 @@ val LoginScreen by navDestination<Unit> {
                 is UiEvent.LaunchActivity -> {
                     launcher.launch(listOf(VKScope.WALL, VKScope.FRIENDS))
                 }
+
+                else -> {}
             }
         }
     }

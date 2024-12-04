@@ -72,7 +72,8 @@ val appModule = module {
 
     viewModel<ChangeGroupScreenViewModel> {
         ChangeGroupScreenViewModel(
-            dbRepository = get()
+            dbRepository = get(),
+            internetChecker = get()
         )
     }
 

@@ -1,5 +1,6 @@
 package ru.nyxsed.postscan.presentation.screens.changegroupscreen
 
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,6 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -38,12 +40,14 @@ import ru.nyxsed.postscan.util.Constants.DATE_LENGTH
 import ru.nyxsed.postscan.util.Constants.DATE_MASK
 import ru.nyxsed.postscan.util.Constants.convertLongToTime
 import ru.nyxsed.postscan.util.MaskVisualTransformation
+import ru.nyxsed.postscan.util.UiEvent
 
 val ChangeGroupScreen by navDestination<GroupEntity> {
-    val groupArg = navArgs()
+    val group = navArgs()
     val changeGroupScreenViewModel = koinViewModel<ChangeGroupScreenViewModel>()
     val navController = navController()
     val uriHandler = LocalUriHandler.current
+    val context = LocalContext.current
 
     val regex = Regex("^([0-2][0-9]|3[01])(0[1-9]|1[0-2])[0-9]{4}$")
 
@@ -51,20 +55,29 @@ val ChangeGroupScreen by navDestination<GroupEntity> {
     var groupName by remember { mutableStateOf("") }
     var screenName by remember { mutableStateOf("") }
     var avatarUrl by remember { mutableStateOf("") }
-    var lastFetchDate by remember { mutableStateOf(convertLongToTime(System.currentTimeMillis()).replace(".", "")) }
-
-    var groupFound by remember { mutableStateOf(false) }
-    var enableSearch by remember { mutableStateOf(true) }
+    var lastFetchDate by remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
-        groupArg.let {
-            lastFetchDate = convertLongToTime(it.lastFetchDate).replace(".", "")
-            groupFound = true
+        group.let {
             groupId = it.groupId
-            screenName = it.screenName
             groupName = it.name
+            screenName = it.screenName
             avatarUrl = it.avatarUrl
-            enableSearch = false
+            lastFetchDate = convertLongToTime(it.lastFetchDate).replace(".", "")
+        }
+        changeGroupScreenViewModel.uiEventFlow.collect { event ->
+            when (event) {
+                is UiEvent.ShowToast ->
+                    Toast.makeText(
+                        context,
+                        context.getString(event.messageResId),
+                        Toast.LENGTH_SHORT
+                    ).show()
+
+                is UiEvent.OpenUrl -> uriHandler.openUri(event.url)
+
+                else -> {}
+            }
         }
     }
 
@@ -83,10 +96,7 @@ val ChangeGroupScreen by navDestination<GroupEntity> {
                     .size(50.dp)
                     .clickable(
                         onClick = {
-                            changeGroupScreenViewModel.openGroupUri(
-                                uriHandler = uriHandler,
-                                group = groupArg
-                            )
+                            changeGroupScreenViewModel.openGroupUri(group)
                         }
                     ),
                 model = avatarUrl,

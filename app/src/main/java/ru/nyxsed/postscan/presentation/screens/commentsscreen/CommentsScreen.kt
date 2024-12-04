@@ -34,13 +34,13 @@ val CommentsScreen by navDestination<PostEntity> {
         parameters = { parametersOf(args) }
     )
     val navController = navController()
-
-    val comments by commentsScreenViewModel.comments.collectAsState()
-
     val context = LocalContext.current
     val clipboardManager = LocalClipboardManager.current
 
+    val comments by commentsScreenViewModel.comments.collectAsState()
+
     var settingUseMihon by remember { mutableStateOf(true) }
+
     LaunchedEffect(Unit) {
         settingUseMihon = commentsScreenViewModel.getSettingBoolean(USE_MIHON)
     }
