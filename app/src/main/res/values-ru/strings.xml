@@ -28,4 +28,5 @@
     <string name="use_mihon_for_manga_search">Использовать Mihon для поиска манги</string>
     <string name="delete_post_after_liking">Удалять пост после отметки лайком</string>
     <string name="cancel">Отмена</string>
+    <string name="vk_logout">Выйти из VK</string>
 </resources>

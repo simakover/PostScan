@@ -10,7 +10,7 @@ import ru.nyxsed.postscan.presentation.screens.postsscreen.AuthState
 
 class SharedViewModel(
     private val storage: VKKeyValueStorage,
-): ViewModel() {
+) : ViewModel() {
 
     private val _authStateFlow = MutableStateFlow<AuthState>(AuthState.NotAuthorized)
     val authStateFlow: StateFlow<AuthState> = _authStateFlow.asStateFlow()
