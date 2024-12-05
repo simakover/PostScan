@@ -212,14 +212,16 @@ val PostsScreen by navDestination<Unit> {
                                     }
                                     when (authState.value) {
                                         AuthState.Authorized -> {
-                                            val changedPost = postsScreenViewModel.changeLikeStatus(it)
+                                            postsScreenViewModel.changeLikeStatusVK(it)
                                             if (settingDeleteAfterLike) {
                                                 deletePost(
-                                                    post = changedPost,
+                                                    post = it,
                                                     vm = postsScreenViewModel,
                                                     context = context,
                                                     snackbarHostState = snackbarHostState
                                                 )
+                                            } else {
+                                                postsScreenViewModel.changeLikeStatusDb(it)
                                             }
                                         }
 

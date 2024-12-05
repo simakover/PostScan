@@ -59,11 +59,12 @@ class PostsScreenViewModel(
         }
     }
 
-    suspend fun changeLikeStatus(post: PostEntity): PostEntity {
+    suspend fun changeLikeStatusVK(post: PostEntity) {
         vkRepository.changeLikeStatus(post)
-        val changedPost = post.copy(isLiked = !post.isLiked)
-        dbRepository.updatePost(changedPost)
-        return changedPost
+    }
+
+    suspend fun changeLikeStatusDb(post: PostEntity) {
+        dbRepository.updatePost(post.copy(isLiked = !post.isLiked))
     }
 
     fun openPostUri(uriHandler: UriHandler, post: PostEntity) {
