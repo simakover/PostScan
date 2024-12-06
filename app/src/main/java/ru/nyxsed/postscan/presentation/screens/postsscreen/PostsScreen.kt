@@ -1,6 +1,5 @@
 package ru.nyxsed.postscan.presentation.screens.postsscreen
 
-import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,10 +15,8 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -40,23 +37,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.composegears.tiamat.navController
 import com.composegears.tiamat.navDestination
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.koin.androidx.compose.koinViewModel
-import ru.nyxsed.postscan.R
-import ru.nyxsed.postscan.SharedViewModel
-import ru.nyxsed.postscan.data.models.entity.PostEntity
-import ru.nyxsed.postscan.presentation.screens.commentsscreen.CommentsScreen
 import ru.nyxsed.postscan.presentation.screens.groupsscreen.GroupsScreen
 import ru.nyxsed.postscan.presentation.screens.imagepagerscreen.ImagePagerArgs
 import ru.nyxsed.postscan.presentation.screens.imagepagerscreen.ImagePagerScreen
-import ru.nyxsed.postscan.presentation.screens.loginscreen.LoginScreen
 import ru.nyxsed.postscan.presentation.screens.preferencesscreen.PreferencesScreen
 import ru.nyxsed.postscan.util.Constants.findOrFirst
-import ru.nyxsed.postscan.util.Constants.isInternetAvailable
 import ru.nyxsed.postscan.util.DataStoreInteraction.Companion.DELETE_AFTER_LIKE
 import ru.nyxsed.postscan.util.DataStoreInteraction.Companion.USE_MIHON
+import ru.nyxsed.postscan.util.UiEvent
 import kotlin.math.absoluteValue
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -64,9 +54,6 @@ val PostsScreen by navDestination<Unit> {
     val postsScreenViewModel = koinViewModel<PostsScreenViewModel>()
     val postListState = postsScreenViewModel.posts.collectAsState()
     val groupListState = postsScreenViewModel.groups.collectAsState()
-
-    val sharedViewModel = koinViewModel<SharedViewModel>()
-    val authState = sharedViewModel.authStateFlow.collectAsState()
 
     val navController = navController()
     val uriHandler = LocalUriHandler.current
@@ -83,36 +70,35 @@ val PostsScreen by navDestination<Unit> {
 
     var settingUseMihon by remember { mutableStateOf(true) }
     var settingDeleteAfterLike by remember { mutableStateOf(false) }
+
     LaunchedEffect(Unit) {
         settingUseMihon = postsScreenViewModel.getSettingBoolean(USE_MIHON)
         settingDeleteAfterLike = postsScreenViewModel.getSettingBoolean(DELETE_AFTER_LIKE)
+
+        postsScreenViewModel.uiEventFlow.collect { event ->
+            when (event) {
+                is UiEvent.ShowToast ->
+                    Toast.makeText(context, context.getString(event.messageResId), Toast.LENGTH_SHORT).show()
+
+                is UiEvent.Navigate ->
+                    navController.navigate(event.destination)
+
+                is UiEvent.Scroll ->
+                    scrollState.scrollToItem(0)
+
+                else -> {}
+            }
+        }
     }
 
     Scaffold(
         topBar = {
             PostsScreenBar(
                 onRefreshClicked = {
-                    if (!isInternetAvailable(context)) {
-                        Toast.makeText(context, context.getString(R.string.no_internet_connection), Toast.LENGTH_SHORT)
-                            .show()
-                        return@PostsScreenBar
-                    }
-                    when (authState.value) {
-                        AuthState.Authorized -> {
-                            postsScreenViewModel.loadPosts(context)
-                            scope.launch {
-                                scrollState.scrollToItem(0)
-                            }
-                        }
-
-                        AuthState.NotAuthorized -> navController.navigate(LoginScreen)
-                    }
+                    postsScreenViewModel.refreshPosts(context)
                 },
                 onNavToGroupsClicked = {
-                    when (authState.value) {
-                        AuthState.Authorized -> navController.navigate(GroupsScreen)
-                        AuthState.NotAuthorized -> navController.navigate(LoginScreen)
-                    }
+                    navController.navigate(GroupsScreen)
                 },
                 onNavToSettingsClicked = {
                     navController.navigate(PreferencesScreen)
@@ -189,47 +175,19 @@ val PostsScreen by navDestination<Unit> {
                             post = it,
                             settingUseMihon = settingUseMihon,
                             onPostDeleteClicked = {
-                                scope.launch {
-                                    deletePost(
-                                        post = it,
-                                        vm = postsScreenViewModel,
-                                        context = context,
-                                        snackbarHostState = snackbarHostState
-                                    )
-                                }
+                                postsScreenViewModel.deletePost(
+                                    post = it,
+                                    context = context,
+                                    snackbarHostState = snackbarHostState
+                                )
                             },
                             onLikeClicked = {
-                                scope.launch {
-                                    if (!isInternetAvailable(context)) {
-                                        withContext(Dispatchers.Main) {
-                                            Toast.makeText(
-                                                context,
-                                                context.getString(R.string.no_internet_connection),
-                                                Toast.LENGTH_SHORT
-                                            ).show()
-                                        }
-                                        return@launch
-                                    }
-                                    when (authState.value) {
-                                        AuthState.Authorized -> {
-                                            postsScreenViewModel.changeLikeStatusVK(it)
-                                            if (settingDeleteAfterLike) {
-                                                deletePost(
-                                                    post = it,
-                                                    vm = postsScreenViewModel,
-                                                    context = context,
-                                                    snackbarHostState = snackbarHostState
-                                                )
-                                            } else {
-                                                postsScreenViewModel.changeLikeStatusDb(it)
-                                            }
-                                        }
-
-                                        AuthState.NotAuthorized -> navController.navigate(LoginScreen)
-                                    }
-
-
-                                }
+                                postsScreenViewModel.changeLikeStatus(
+                                    post = it,
+                                    settingDeleteAfterLike = settingDeleteAfterLike,
+                                    context = context,
+                                    snackbarHostState = snackbarHostState
+                                )
                             },
                             onToVkClicked = {
                                 postsScreenViewModel.openPostUri(
@@ -253,19 +211,7 @@ val PostsScreen by navDestination<Unit> {
                                 navController.navigate(ImagePagerScreen, imagePagerArgs)
                             },
                             onCommentsClicked = {
-                                if (!isInternetAvailable(context)) {
-                                    Toast.makeText(
-                                        context,
-                                        context.getString(R.string.no_internet_connection),
-                                        Toast.LENGTH_SHORT
-                                    )
-                                        .show()
-                                    return@PostCard
-                                }
-                                when (authState.value) {
-                                    AuthState.Authorized -> navController.navigate(CommentsScreen, it)
-                                    AuthState.NotAuthorized -> navController.navigate(LoginScreen)
-                                }
+                                postsScreenViewModel.toComments(it)
                             },
                             onGroupClicked = { post ->
                                 val group = groupListState.value.findOrFirst { it.groupId == post.ownerId.absoluteValue }
@@ -279,23 +225,5 @@ val PostsScreen by navDestination<Unit> {
                 }
             }
         }
-    }
-}
-
-suspend fun deletePost(
-    post: PostEntity,
-    vm: PostsScreenViewModel,
-    context: Context,
-    snackbarHostState: SnackbarHostState,
-) {
-    vm.deletePost(post)
-    snackbarHostState.currentSnackbarData?.dismiss()
-    val snackbarResult = snackbarHostState.showSnackbar(
-        message = context.getString(R.string.post_deleted),
-        actionLabel = context.getString(R.string.undo),
-        duration = SnackbarDuration.Short
-    )
-    if (snackbarResult == SnackbarResult.ActionPerformed) {
-        vm.addPost(post)
     }
 }

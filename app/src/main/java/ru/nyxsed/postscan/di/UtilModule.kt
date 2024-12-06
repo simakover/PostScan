@@ -6,7 +6,7 @@ import android.content.Context
 import androidx.core.app.NotificationCompat
 import org.koin.dsl.module
 import ru.nyxsed.postscan.R
-import ru.nyxsed.postscan.util.InternetChecker
+import ru.nyxsed.postscan.util.ConnectionChecker
 
 val utilModule = module {
     single<NotificationManager> { (context: Context, channelId: String, channelName: String) ->
@@ -31,9 +31,10 @@ val utilModule = module {
             .setProgress(100, 0, false)
     }
 
-    single<InternetChecker> {
-        InternetChecker(
-            context = get()
+    single<ConnectionChecker> {
+        ConnectionChecker(
+            context = get(),
+            storage = get(),
         )
     }
 }

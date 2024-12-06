@@ -16,15 +16,16 @@ import ru.nyxsed.postscan.R
 import ru.nyxsed.postscan.data.models.entity.GroupEntity
 import ru.nyxsed.postscan.data.repository.DbRepository
 import ru.nyxsed.postscan.data.repository.VkRepository
+import ru.nyxsed.postscan.presentation.screens.loginscreen.LoginScreen
 import ru.nyxsed.postscan.presentation.screens.pickgroupscreen.PickGroupState.*
-import ru.nyxsed.postscan.util.InternetChecker
+import ru.nyxsed.postscan.util.ConnectionChecker
 import ru.nyxsed.postscan.util.UiEvent
 import kotlin.collections.filter
 
 class PickGroupScreenViewModel(
     private val dbRepository: DbRepository,
     private val vkRepository: VkRepository,
-    private val internetChecker: InternetChecker,
+    private val connectionChecker: ConnectionChecker,
 ) : ViewModel() {
     private val _uiEventFlow = MutableSharedFlow<UiEvent>()
     val uiEventFlow : SharedFlow<UiEvent> = _uiEventFlow.asSharedFlow()
@@ -65,8 +66,13 @@ class PickGroupScreenViewModel(
 
     fun fetchedGroups(searchQuery: String) {
         viewModelScope.launch {
-            if (!internetChecker.isInternetAvailable()) {
+            if (!connectionChecker.isInternetAvailable()) {
                 _uiEventFlow.emit(UiEvent.ShowToast(R.string.no_internet_connection))
+                return@launch
+            }
+
+            if (!connectionChecker.isTokenValid()) {
+                _uiEventFlow.emit(UiEvent.Navigate(LoginScreen))
                 return@launch
             }
 

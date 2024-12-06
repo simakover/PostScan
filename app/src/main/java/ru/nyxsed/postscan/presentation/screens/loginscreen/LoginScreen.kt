@@ -26,21 +26,17 @@ import com.vk.api.sdk.VK
 import com.vk.api.sdk.auth.VKScope
 import org.koin.androidx.compose.koinViewModel
 import ru.nyxsed.postscan.R
-import ru.nyxsed.postscan.SharedViewModel
 import ru.nyxsed.postscan.presentation.ui.theme.VkBlue
 import ru.nyxsed.postscan.util.UiEvent
 
 val LoginScreen by navDestination<Unit> {
 
     val context = LocalContext.current
-    // TODO убрать шаред модель, перенести в инкапсулированный класс
-    val sharedViewModel = koinViewModel<SharedViewModel>()
 
     val navController = navController()
     val launcher = rememberLauncherForActivityResult(
         contract = VK.getVKAuthActivityResultContract()
     ) {
-        sharedViewModel.checkState()
         navController.back()
     }
 
@@ -49,15 +45,10 @@ val LoginScreen by navDestination<Unit> {
         loginViewModel.uiEventFlow.collect { event ->
             when (event) {
                 is UiEvent.ShowToast ->
-                    Toast.makeText(
-                        context,
-                        context.getString(event.messageResId),
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    Toast.makeText(context, context.getString(event.messageResId), Toast.LENGTH_SHORT).show()
 
-                is UiEvent.LaunchActivity -> {
+                is UiEvent.LaunchActivity ->
                     launcher.launch(listOf(VKScope.WALL, VKScope.FRIENDS))
-                }
 
                 else -> {}
             }
