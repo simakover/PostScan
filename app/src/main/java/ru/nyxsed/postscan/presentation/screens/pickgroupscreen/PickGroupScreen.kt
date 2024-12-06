@@ -28,7 +28,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.composegears.tiamat.navArgs
+import com.composegears.tiamat.navController
 import com.composegears.tiamat.navDestination
 import org.koin.androidx.compose.koinViewModel
 import ru.nyxsed.postscan.R
@@ -38,9 +40,10 @@ import ru.nyxsed.postscan.util.UiEvent
 
 val PickGroupScreen by navDestination<String> {
     val mode = navArgs()
-    val pickGroupScreenViewModel = koinViewModel<PickGroupScreenViewModel>()
     val context = LocalContext.current
+    val navController = navController()
 
+    val pickGroupScreenViewModel = koinViewModel<PickGroupScreenViewModel>()
     val screenState = pickGroupScreenViewModel.screenStateFlow.collectAsState()
 
     LaunchedEffect(mode) {
@@ -48,11 +51,11 @@ val PickGroupScreen by navDestination<String> {
         pickGroupScreenViewModel.uiEventFlow.collect { event ->
             when (event) {
                 is UiEvent.ShowToast ->
-                    Toast.makeText(
-                        context,
-                        context.getString(event.messageResId),
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    Toast.makeText(context, context.getString(event.messageResId), Toast.LENGTH_SHORT).show()
+
+                is UiEvent.Navigate ->
+                    navController.navigate(event.destination)
+
                 else -> {}
             }
         }
@@ -155,26 +158,38 @@ fun GroupsLazyColum(
     groups: List<GroupEntity>,
     onGroupCardClicked: (GroupEntity) -> Unit,
 ) {
-    LazyColumn(
-        contentPadding = PaddingValues(4.dp),
-        verticalArrangement = Arrangement.spacedBy(4.dp)
-    ) {
-        items(
-            items = groups,
-            key = { it.groupId }
+    if (groups.isEmpty()) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
         ) {
-            Box(
-                modifier = Modifier
-                    .animateItem()
+            Text(
+                text = stringResource(R.string.no_data_found),
+                fontSize = 20.sp,
+            )
+        }
+    } else {
+        LazyColumn(
+            contentPadding = PaddingValues(4.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            items(
+                items = groups,
+                key = { it.groupId }
             ) {
-                GroupCard(
-                    group = it,
-                    onGroupDeleteClicked = { },
-                    onGroupClicked = {
-                        onGroupCardClicked(it)
-                    },
-                    deleteEnabled = false
-                )
+                Box(
+                    modifier = Modifier
+                        .animateItem()
+                ) {
+                    GroupCard(
+                        group = it,
+                        onGroupDeleteClicked = { },
+                        onGroupClicked = {
+                            onGroupCardClicked(it)
+                        },
+                        deleteEnabled = false
+                    )
+                }
             }
         }
     }

@@ -9,14 +9,14 @@ import kotlinx.coroutines.launch
 import ru.nyxsed.postscan.R
 import ru.nyxsed.postscan.data.models.entity.GroupEntity
 import ru.nyxsed.postscan.data.repository.DbRepository
+import ru.nyxsed.postscan.util.ConnectionChecker
 import ru.nyxsed.postscan.util.Constants.VK_URL
-import ru.nyxsed.postscan.util.InternetChecker
 import ru.nyxsed.postscan.util.UiEvent
 import java.text.SimpleDateFormat
 
 class ChangeGroupScreenViewModel(
     private val dbRepository: DbRepository,
-    private val internetChecker: InternetChecker,
+    private val connectionChecker: ConnectionChecker,
 ) : ViewModel() {
     private val _uiEventFlow = MutableSharedFlow<UiEvent>()
     val uiEventFlow: SharedFlow<UiEvent> = _uiEventFlow.asSharedFlow()
@@ -46,7 +46,7 @@ class ChangeGroupScreenViewModel(
 
     fun openGroupUri(group: GroupEntity) {
         viewModelScope.launch {
-            if (!internetChecker.isInternetAvailable()) {
+            if (!connectionChecker.isInternetAvailable()) {
                 _uiEventFlow.emit(UiEvent.ShowToast(R.string.no_internet_connection))
                 return@launch
             }

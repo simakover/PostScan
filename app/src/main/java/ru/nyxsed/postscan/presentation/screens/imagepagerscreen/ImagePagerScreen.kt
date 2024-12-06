@@ -35,7 +35,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -61,14 +60,11 @@ import com.composegears.tiamat.navDestination
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.koin.androidx.compose.koinViewModel
 import ru.nyxsed.postscan.R
-import ru.nyxsed.postscan.SharedViewModel
 import ru.nyxsed.postscan.data.models.entity.ContentEntity
-import ru.nyxsed.postscan.presentation.screens.postsscreen.AuthState
 import ru.nyxsed.postscan.presentation.ui.theme.LikedHeart
-import ru.nyxsed.postscan.util.Constants.isInternetAvailable
+import ru.nyxsed.postscan.util.UiEvent
 
 @OptIn(ExperimentalMaterial3Api::class)
 val ImagePagerScreen by navDestination<ImagePagerArgs> {
@@ -78,9 +74,6 @@ val ImagePagerScreen by navDestination<ImagePagerArgs> {
     val context = LocalContext.current
     val navController = navController()
     val scope = CoroutineScope(Dispatchers.Main)
-
-    val sharedViewModel = koinViewModel<SharedViewModel>()
-    val authState by sharedViewModel.authStateFlow.collectAsState()
 
     var content by remember { mutableStateOf<List<ContentEntity>>(imagePagerArgs.listContent) }
 
@@ -92,21 +85,23 @@ val ImagePagerScreen by navDestination<ImagePagerArgs> {
 
     var pageData by remember { mutableStateOf<Map<Int, Boolean>>(emptyMap()) }
 
-    // Отслеживание смены страницы. если страница уже открывалась - не делать повторный запрос
-    LaunchedEffect(pagerState.currentPage) {
-        if (!isInternetAvailable(context)) {
-            withContext(Dispatchers.Main) {
-                Toast.makeText(context, context.getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show()
-            }
+    LaunchedEffect(Unit) {
+        imagePagerViewModel.uiEventFlow.collect { event ->
+            when (event) {
+                is UiEvent.ShowToast ->
+                    Toast.makeText(context, context.getString(event.messageResId), Toast.LENGTH_SHORT).show()
 
-            return@LaunchedEffect
-        }
-        if (authState is AuthState.NotAuthorized) {
-            withContext(Dispatchers.Main) {
-                Toast.makeText(context, context.getString(R.string.app_is_not_authorized), Toast.LENGTH_SHORT).show()
+                is UiEvent.Navigate ->
+                    navController.navigate(event.destination)
+
+                else -> {}
             }
-            return@LaunchedEffect
         }
+    }
+
+    LaunchedEffect(pagerState.currentPage) {
+        val connect = imagePagerViewModel.checkConnect()
+        if (!connect) return@LaunchedEffect
 
         val currentPage = pagerState.currentPage
         if (!pageData.containsKey(currentPage)) {
@@ -258,37 +253,20 @@ val ImagePagerScreen by navDestination<ImagePagerArgs> {
                         )
                         IconButton(
                             onClick = {
-                                if (!isInternetAvailable(context)) {
-                                    Toast.makeText(
-                                        context,
-                                        context.getString(R.string.no_internet_connection),
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                    return@IconButton
-                                }
+                                scope.launch {
+                                    val connect = imagePagerViewModel.checkConnect()
+                                    if (!connect) return@launch
 
-                                when (authState) {
-                                    AuthState.NotAuthorized -> {
-                                        Toast.makeText(
-                                            context,
-                                            context.getString(R.string.app_is_not_authorized),
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                        return@IconButton
-                                    }
+                                    imagePagerViewModel.changeLikeStatus(content[pagerState.currentPage])
 
-                                    AuthState.Authorized -> {
-                                        imagePagerViewModel.changeLikeStatus(content[pagerState.currentPage])
-
-                                        val updatedContent = content.mapIndexed { index, entity ->
-                                            if (index == pagerState.currentPage) {
-                                                entity.copy(isLiked = !entity.isLiked)
-                                            } else {
-                                                entity
-                                            }
+                                    val updatedContent = content.mapIndexed { index, entity ->
+                                        if (index == pagerState.currentPage) {
+                                            entity.copy(isLiked = !entity.isLiked)
+                                        } else {
+                                            entity
                                         }
-                                        content = updatedContent
                                     }
+                                    content = updatedContent
                                 }
                             }
                         ) {
@@ -337,8 +315,7 @@ fun ScalableCoilImage(
                             translationX = offset.x,
                             translationY = offset.y
                         )
-                }
-                else {
+                } else {
                     Modifier
                 }
             )

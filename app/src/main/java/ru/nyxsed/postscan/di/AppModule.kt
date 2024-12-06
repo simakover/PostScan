@@ -5,7 +5,6 @@ import com.vk.api.sdk.VKKeyValueStorage
 import com.vk.api.sdk.VKPreferencesKeyValueStorage
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
-import ru.nyxsed.postscan.SharedViewModel
 import ru.nyxsed.postscan.data.models.entity.PostEntity
 import ru.nyxsed.postscan.data.repository.DbRepository
 import ru.nyxsed.postscan.data.repository.VkRepository
@@ -42,17 +41,12 @@ val appModule = module {
     }
 
     // viewmodels
-    single<SharedViewModel> {
-        SharedViewModel(
-            storage = get()
-        )
-    }
-
     viewModel<PostsScreenViewModel> {
         PostsScreenViewModel(
             dbRepository = get(),
             vkRepository = get(),
-            dataStoreInteraction = get()
+            dataStoreInteraction = get(),
+            connectionChecker = get(),
         )
     }
 
@@ -66,20 +60,21 @@ val appModule = module {
         PickGroupScreenViewModel(
             dbRepository = get(),
             vkRepository = get(),
-            internetChecker = get()
+            connectionChecker = get()
         )
     }
 
     viewModel<ChangeGroupScreenViewModel> {
         ChangeGroupScreenViewModel(
             dbRepository = get(),
-            internetChecker = get()
+            connectionChecker = get()
         )
     }
 
     viewModel<ImagePagerViewModel> {
         ImagePagerViewModel(
-            vkRepository = get()
+            vkRepository = get(),
+            connectionChecker = get()
         )
     }
 
@@ -99,7 +94,7 @@ val appModule = module {
 
     viewModel<LoginViewModel> {
         LoginViewModel(
-            internetChecker = get()
+            connectionChecker = get()
         )
     }
 }
