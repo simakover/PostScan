@@ -83,6 +83,9 @@ val PostsScreen by navDestination<Unit> {
                 is UiEvent.Navigate ->
                     navController.navigate(event.destination)
 
+                is UiEvent.NavigateToPost ->
+                    navController.navigate(event.destination, event.navArgs)
+
                 is UiEvent.Scroll ->
                     scrollState.scrollToItem(0)
 
