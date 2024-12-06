@@ -52,7 +52,8 @@ val appModule = module {
 
     viewModel<GroupsScreenViewModel> {
         GroupsScreenViewModel(
-            dbRepository = get()
+            dbRepository = get(),
+            connectionChecker = get()
         )
     }
 

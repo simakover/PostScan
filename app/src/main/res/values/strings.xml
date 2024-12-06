@@ -20,7 +20,7 @@
     <string name="loading_progress">Loading Progress</string>
     <string name="loading_completed">Loading Completed</string>
     <string name="albums">Albums:</string>
-    <string name="group_add_dialog_question">Do you want to search for group or pick it from your group list?</string>
+    <string name="group_search_dialog_question">Do you want to search for group or pick it from your group list?</string>
     <string name="group_delete_dialog_question">Do you want to delete group and all of post of this group?</string>
     <string name="search_for">Search</string>
     <string name="pick_from">Pick From</string>

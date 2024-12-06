@@ -20,7 +20,7 @@
     <string name="loading_progress">Прогресс загрузки</string>
     <string name="loading_completed">Загрузка завершена</string>
     <string name="albums">Альбомы:</string>
-    <string name="group_add_dialog_question">Вы хотите найти группу или выбрать из подписок?</string>
+    <string name="group_search_dialog_question">Вы хотите найти группу или выбрать из подписок?</string>
     <string name="group_delete_dialog_question">Вы хотите удалить группу и все посты этой группы?</string>
     <string name="search_for">Найти</string>
     <string name="pick_from">Выбрать из подписок</string>
