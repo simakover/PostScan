@@ -8,6 +8,6 @@ sealed class UiEvent {
     class LaunchActivity() : UiEvent()
     class OpenUrl(val url: String) : UiEvent()
     class Navigate(val destination: NavDestination<Unit>) : UiEvent()
-    class NavigateToPost(val destination: NavDestination<PostEntity>, navArgs: PostEntity? = null) : UiEvent()
+    class NavigateToPost(val destination: NavDestination<PostEntity>, val navArgs: PostEntity? = null) : UiEvent()
     class Scroll() : UiEvent()
 }
