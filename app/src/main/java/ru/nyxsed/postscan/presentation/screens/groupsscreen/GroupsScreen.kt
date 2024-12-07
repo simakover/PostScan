@@ -24,10 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -38,22 +35,19 @@ import com.composegears.tiamat.navDestination
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import ru.nyxsed.postscan.R
-import ru.nyxsed.postscan.data.models.entity.GroupEntity
 import ru.nyxsed.postscan.presentation.screens.changegroupscreen.ChangeGroupScreen
-import ru.nyxsed.postscan.presentation.screens.pickgroupscreen.PickGroupScreen
 import ru.nyxsed.postscan.util.UiEvent
 
 val GroupsScreen by navDestination<Unit> {
-    val groupScreenViewModel = koinViewModel<GroupsScreenViewModel>()
-    val groupsState = groupScreenViewModel.dbGroups.collectAsState()
-
     val navController = navController()
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
-    var showAddDialog by remember { mutableStateOf(false) }
-    var showDeleteDialog by remember { mutableStateOf(false) }
-    lateinit var groupToDelete: GroupEntity
+    val groupScreenViewModel = koinViewModel<GroupsScreenViewModel>()
+
+    val groupsState = groupScreenViewModel.dbGroups.collectAsState()
+    val showAddDialog by groupScreenViewModel.showAddDialog.collectAsState()
+    val showDeleteDialog by groupScreenViewModel.showDeleteDialog.collectAsState()
 
     LaunchedEffect(Unit) {
         groupScreenViewModel.uiEventFlow.collect { event ->
@@ -64,6 +58,9 @@ val GroupsScreen by navDestination<Unit> {
                 is UiEvent.Navigate ->
                     navController.navigate(event.destination)
 
+                is UiEvent.NavigateToPicker ->
+                    navController.navigate(event.destination, event.navArgs)
+
                 else -> {}
             }
         }
@@ -73,7 +70,7 @@ val GroupsScreen by navDestination<Unit> {
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    showAddDialog = true
+                    groupScreenViewModel.toggleAddDialog()
                 }
             ) {
                 Icon(
@@ -100,8 +97,7 @@ val GroupsScreen by navDestination<Unit> {
                     GroupCard(
                         group = it,
                         onGroupDeleteClicked = {
-                            groupToDelete = it
-                            showDeleteDialog = true
+                            groupScreenViewModel.toggleDeleteDialog(it)
                         },
                         onGroupClicked = {
                             navController.navigate(ChangeGroupScreen, it)
@@ -114,36 +110,26 @@ val GroupsScreen by navDestination<Unit> {
         ShowAddModalDialog(
             showDialog = showAddDialog,
             onDismiss = {
-                showAddDialog = false
+                groupScreenViewModel.toggleAddDialog()
             },
             onSearchClicked = {
                 scope.launch {
-                    val connect = groupScreenViewModel.checkConnect()
-                    if (!connect) return@launch
-
-                    showAddDialog = false
-                    navController.navigate(PickGroupScreen, "SEARCH")
+                    groupScreenViewModel.navigateToPickScreen("SEARCH")
                 }
             },
             onPickClicked = {
                 scope.launch {
-                    val connect = groupScreenViewModel.checkConnect()
-                    if (!connect) return@launch
-
-                    showAddDialog = false
-                    navController.navigate(PickGroupScreen, "USER_GROUPS")
+                    groupScreenViewModel.navigateToPickScreen("USER_GROUPS")
                 }
             }
         )
         ShowDeleteModalDialog(
             showDialog = showDeleteDialog,
             onDismiss = {
-                showDeleteDialog = false
+                groupScreenViewModel.toggleDeleteDialog()
             },
             onConfirmClicked = {
-                showDeleteDialog = false
-                groupScreenViewModel.deleteGroup(groupToDelete)
-                groupScreenViewModel.deleteAllPostsForGroup(groupToDelete)
+                groupScreenViewModel.deleteGroupWithPosts()
             }
         )
     }

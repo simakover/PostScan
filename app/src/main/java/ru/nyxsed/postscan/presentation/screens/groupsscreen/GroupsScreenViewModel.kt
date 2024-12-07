@@ -3,13 +3,17 @@ package ru.nyxsed.postscan.presentation.screens.groupsscreen
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import ru.nyxsed.postscan.R
 import ru.nyxsed.postscan.data.models.entity.GroupEntity
 import ru.nyxsed.postscan.data.repository.DbRepository
 import ru.nyxsed.postscan.presentation.screens.loginscreen.LoginScreen
+import ru.nyxsed.postscan.presentation.screens.pickgroupscreen.PickGroupScreen
 import ru.nyxsed.postscan.util.ConnectionChecker
 import ru.nyxsed.postscan.util.UiEvent
 
@@ -21,28 +25,45 @@ class GroupsScreenViewModel(
     private val _uiEventFlow = MutableSharedFlow<UiEvent>()
     val uiEventFlow: SharedFlow<UiEvent> = _uiEventFlow.asSharedFlow()
 
-    fun deleteGroup(group: GroupEntity) {
+    private val _showAddDialog = MutableStateFlow(false)
+    val showAddDialog: StateFlow<Boolean> = _showAddDialog.asStateFlow()
+
+    private val _showDeleteDialog = MutableStateFlow(false)
+    val showDeleteDialog: StateFlow<Boolean> = _showDeleteDialog.asStateFlow()
+
+    private var groupToDelete: GroupEntity? = null
+
+    fun deleteGroupWithPosts() {
         viewModelScope.launch {
-            dbRepository.deleteGroup(group)
+            dbRepository.deleteGroup(groupToDelete!!)
+            dbRepository.deleteAllPostsForGroup(groupToDelete!!)
+            toggleDeleteDialog()
         }
     }
 
-    fun deleteAllPostsForGroup(group: GroupEntity) {
+    fun navigateToPickScreen(param: String) {
         viewModelScope.launch {
-            dbRepository.deleteAllPostsForGroup(group)
+            if (!connectionChecker.isInternetAvailable()) {
+                _uiEventFlow.emit(UiEvent.ShowToast(R.string.no_internet_connection))
+                return@launch
+            }
+
+            if (!connectionChecker.isTokenValid()) {
+                _uiEventFlow.emit(UiEvent.Navigate(LoginScreen))
+                return@launch
+            }
+
+            _uiEventFlow.emit(UiEvent.NavigateToPicker(PickGroupScreen, param))
+            toggleAddDialog()
         }
     }
 
-    suspend fun checkConnect(): Boolean {
-        if (!connectionChecker.isInternetAvailable()) {
-            _uiEventFlow.emit(UiEvent.ShowToast(R.string.no_internet_connection))
-            return false
-        }
+    fun toggleAddDialog() {
+        _showAddDialog.value = !_showAddDialog.value
+    }
 
-        if (!connectionChecker.isTokenValid()) {
-            _uiEventFlow.emit(UiEvent.Navigate(LoginScreen))
-            return false
-        }
-        return true
+    fun toggleDeleteDialog(group: GroupEntity? = null) {
+        _showDeleteDialog.value = !_showDeleteDialog.value
+        groupToDelete = group
     }
 }

@@ -193,12 +193,17 @@ class VkMapper {
             "album" -> {
                 val attachmentAlbum = attachment.album
                 attachmentAlbum?.let { album ->
+
+                    val sizes = album.thumb.sizes.let {
+                        if (it.isNotEmpty()) {
+                            urlSmall = album.thumb.sizes.findOrFirst { it.type == "s" }.url
+                            urlMedium = album.thumb.sizes.findOrLast { it.type == "x" }.url
+                            urlBig = album.thumb.sizes.findOrLast { it.type == "z" }.url
+                        }
+                    }
                     contentId = album.thumb.id
                     ownerId = album.thumb.ownerId
                     type = attachment.type
-                    urlSmall = album.thumb.sizes.findOrFirst { it.type == "s" }.url
-                    urlMedium = album.thumb.sizes.findOrLast { it.type == "x" }.url
-                    urlBig = album.thumb.sizes.findOrLast { it.type == "z" }.url
                     title = album.title
                 }
             }
