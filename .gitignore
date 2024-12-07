@@ -87,4 +87,5 @@ out/
 /captures
 .externalNativeBuild
 ~/
-/app/release/baselineProfiles/0/app-release.dm
+/app/release/baselineProfiles/
+/app/release/output-metadata.json
