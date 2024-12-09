@@ -26,6 +26,8 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -64,6 +66,12 @@ import org.koin.androidx.compose.koinViewModel
 import ru.nyxsed.postscan.R
 import ru.nyxsed.postscan.data.models.entity.ContentEntity
 import ru.nyxsed.postscan.presentation.ui.theme.LikedHeart
+import ru.nyxsed.postscan.util.Constants.BING_SEARCH_URL
+import ru.nyxsed.postscan.util.Constants.IQDB_SEARCH_URL
+import ru.nyxsed.postscan.util.Constants.SAUCENAO_SEARCH_URL
+import ru.nyxsed.postscan.util.Constants.TINEYE_SEARCH_URL
+import ru.nyxsed.postscan.util.Constants.TRACE_SEARCH_URL
+import ru.nyxsed.postscan.util.Constants.YANDEX_SEARCH_URL
 import ru.nyxsed.postscan.util.UiEvent
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -127,6 +135,9 @@ val ImagePagerScreen by navDestination<ImagePagerArgs> {
         topBar = {
         }
     ) { paddings ->
+
+        var menuExpanded by remember { mutableStateOf(false) }
+
         Box(
             modifier = Modifier
                 .background(Color.Black)
@@ -167,13 +178,98 @@ val ImagePagerScreen by navDestination<ImagePagerArgs> {
                     actions = {
                         IconButton(
                             onClick = {
-                                imagePagerViewModel.findYandexImage(uriHandler, content[pagerState.currentPage].urlBig)
+                                menuExpanded = true
                             }
                         ) {
                             Icon(
                                 imageVector = Icons.Filled.Search,
                                 contentDescription = null,
                                 tint = Color.White
+                            )
+                        }
+                        DropdownMenu(
+                            expanded = menuExpanded,
+                            onDismissRequest = {
+                                menuExpanded = false
+                            }
+                        ) {
+                            DropdownMenuItem(
+                                text = {
+                                    Text("SauceNAO")
+                                },
+                                onClick = {
+                                    imagePagerViewModel.findImage(
+                                        uriHandler,
+                                        content[pagerState.currentPage].urlBig,
+                                        SAUCENAO_SEARCH_URL
+                                    )
+                                    menuExpanded = false
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = {
+                                    Text("Yandex")
+                                },
+                                onClick = {
+                                    imagePagerViewModel.findImage(
+                                        uriHandler,
+                                        content[pagerState.currentPage].urlBig,
+                                        YANDEX_SEARCH_URL
+                                    )
+                                    menuExpanded = false
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = {
+                                    Text("TraceMoe")
+                                },
+                                onClick = {
+                                    imagePagerViewModel.findImage(
+                                        uriHandler,
+                                        content[pagerState.currentPage].urlBig,
+                                        TRACE_SEARCH_URL
+                                    )
+                                    menuExpanded = false
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = {
+                                    Text("IQDB")
+                                },
+                                onClick = {
+                                    imagePagerViewModel.findImage(
+                                        uriHandler,
+                                        content[pagerState.currentPage].urlBig,
+                                        IQDB_SEARCH_URL
+                                    )
+                                    menuExpanded = false
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = {
+                                    Text("Tineye")
+                                },
+                                onClick = {
+                                    imagePagerViewModel.findImage(
+                                        uriHandler,
+                                        content[pagerState.currentPage].urlBig,
+                                        TINEYE_SEARCH_URL
+                                    )
+                                    menuExpanded = false
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = {
+                                    Text("Bing")
+                                },
+                                onClick = {
+                                    imagePagerViewModel.findImage(
+                                        uriHandler,
+                                        content[pagerState.currentPage].urlBig,
+                                        BING_SEARCH_URL
+                                    )
+                                    menuExpanded = false
+                                }
                             )
                         }
                     }
