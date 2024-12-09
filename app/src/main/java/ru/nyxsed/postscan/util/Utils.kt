@@ -16,6 +16,12 @@ object Constants {
     const val MANGA_SEARCH_ACTION = "eu.kanade.tachiyomi.SEARCH"
 
     const val YANDEX_SEARCH_URL = "https://yandex.ru/images/search?rpt=imageview&url="
+    const val BING_SEARCH_URL = "https://www.bing.com/images/searchbyimage?FORM=IRSBIQ&cbir=sbi&imgurl="
+    const val SAUCENAO_SEARCH_URL = "https://saucenao.com/search.php?url="
+    const val TINEYE_SEARCH_URL = "https://www.tineye.com/search?url="
+    const val IQDB_SEARCH_URL = "https://iqdb.org/?url="
+    const val TRACE_SEARCH_URL = "https://trace.moe/?url="
+
 
     const val DATE_MASK = "##.##.####"
     const val DATE_LENGTH = 8

@@ -12,7 +12,6 @@ import ru.nyxsed.postscan.data.models.entity.ContentEntity
 import ru.nyxsed.postscan.data.repository.VkRepository
 import ru.nyxsed.postscan.util.ConnectionChecker
 import ru.nyxsed.postscan.util.Constants.VK_PHOTO_URL
-import ru.nyxsed.postscan.util.Constants.YANDEX_SEARCH_URL
 import ru.nyxsed.postscan.util.UiEvent
 
 class ImagePagerViewModel(
@@ -36,9 +35,9 @@ class ImagePagerViewModel(
         uriHandler.openUri("${VK_PHOTO_URL}${contentEntity.ownerId}_${contentEntity.contentId}")
     }
 
-    fun findYandexImage(uriHandler: UriHandler, link: String) {
+    fun findImage(uriHandler: UriHandler, link: String, source: String) {
         val endLink = java.net.URLEncoder.encode(link, "utf-8")
-        uriHandler.openUri("$YANDEX_SEARCH_URL$endLink")
+        uriHandler.openUri("$source$endLink")
     }
 
     suspend fun checkConnect(): Boolean {
