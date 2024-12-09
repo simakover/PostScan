@@ -128,7 +128,10 @@ class PostsScreenViewModel(
     fun mihonIntent(query: String): Intent {
         return Intent().apply {
             action = MANGA_SEARCH_ACTION
-            putExtra("query", query)
+            val cleanedText = query
+                .replace(Regex("[\\n\\r]"), "") // Удаляем переносы строк
+                .replace(Regex("[\\p{So}\\p{Sk}\\uD83C-\\uDBFF\\uDC00-\\uDFFF]"), "") // Удаляем смайлы
+            putExtra("query", cleanedText)
         }
     }
 
