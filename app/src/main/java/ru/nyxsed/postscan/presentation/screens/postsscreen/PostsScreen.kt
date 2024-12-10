@@ -44,6 +44,7 @@ import ru.nyxsed.postscan.presentation.screens.imagepagerscreen.ImagePagerArgs
 import ru.nyxsed.postscan.presentation.screens.imagepagerscreen.ImagePagerScreen
 import ru.nyxsed.postscan.presentation.screens.preferencesscreen.PreferencesScreen
 import ru.nyxsed.postscan.util.Constants.findOrFirst
+import ru.nyxsed.postscan.util.Constants.mihonIntent
 import ru.nyxsed.postscan.util.DataStoreInteraction.Companion.DELETE_AFTER_LIKE
 import ru.nyxsed.postscan.util.DataStoreInteraction.Companion.USE_MIHON
 import ru.nyxsed.postscan.util.UiEvent
@@ -199,7 +200,7 @@ val PostsScreen by navDestination<Unit> {
                                 )
                             },
                             onToMihonClicked = {
-                                val intent = postsScreenViewModel.mihonIntent(
+                                val intent = mihonIntent(
                                     query = it
                                 )
                                 context.startActivity(intent)

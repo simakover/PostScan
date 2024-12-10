@@ -1,8 +1,6 @@
 package ru.nyxsed.postscan.util
 
-import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
+import android.content.Intent
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -22,7 +20,6 @@ object Constants {
     const val IQDB_SEARCH_URL = "https://iqdb.org/?url="
     const val TRACE_SEARCH_URL = "https://trace.moe/?url="
 
-
     const val DATE_MASK = "##.##.####"
     const val DATE_LENGTH = 8
 
@@ -36,17 +33,13 @@ object Constants {
         return format.format(date)
     }
 
-    // Функция для проверки подключения
-    fun isInternetAvailable(context: Context): Boolean {
-        val connectivityManager =
-            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val network = connectivityManager.activeNetwork ?: return false
-        val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
-        return when {
-            activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
-            activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
-            activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
-            else -> false
+    fun mihonIntent(query: String): Intent {
+        return Intent().apply {
+            action = MANGA_SEARCH_ACTION
+            val cleanedText = query
+                .replace(Regex("\\r?\\n"), " ")
+                .replace(Regex("[\\p{So}\\p{Cn}]|[\\uD800-\\uDBFF][\\uDC00-\\uDFFF]"), "")
+            putExtra("query", cleanedText)
         }
     }
 
