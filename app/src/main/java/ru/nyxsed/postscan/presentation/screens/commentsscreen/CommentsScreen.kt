@@ -25,6 +25,7 @@ import org.koin.core.parameter.parametersOf
 import ru.nyxsed.postscan.data.models.entity.PostEntity
 import ru.nyxsed.postscan.presentation.screens.imagepagerscreen.ImagePagerArgs
 import ru.nyxsed.postscan.presentation.screens.imagepagerscreen.ImagePagerScreen
+import ru.nyxsed.postscan.util.Constants.mihonIntent
 import ru.nyxsed.postscan.util.DataStoreInteraction.Companion.USE_MIHON
 
 val CommentsScreen by navDestination<PostEntity> {
@@ -65,7 +66,7 @@ val CommentsScreen by navDestination<PostEntity> {
                         .filter { it.contentText.isNotEmpty() || it.content.isNotEmpty() },
                     settingUseMihon = settingUseMihon,
                     onToMihonClicked = {
-                        val intent = commentsScreenViewModel.mihonIntent(
+                        val intent = mihonIntent(
                             query = it.contentText
                         )
                         context.startActivity(intent)

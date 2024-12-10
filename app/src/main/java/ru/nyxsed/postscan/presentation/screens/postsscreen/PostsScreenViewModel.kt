@@ -1,7 +1,6 @@
 package ru.nyxsed.postscan.presentation.screens.postsscreen
 
 import android.content.Context
-import android.content.Intent
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
@@ -20,7 +19,6 @@ import ru.nyxsed.postscan.data.repository.VkRepository
 import ru.nyxsed.postscan.presentation.screens.commentsscreen.CommentsScreen
 import ru.nyxsed.postscan.presentation.screens.loginscreen.LoginScreen
 import ru.nyxsed.postscan.util.ConnectionChecker
-import ru.nyxsed.postscan.util.Constants.MANGA_SEARCH_ACTION
 import ru.nyxsed.postscan.util.Constants.VK_URL
 import ru.nyxsed.postscan.util.Constants.VK_WALL_URL
 import ru.nyxsed.postscan.util.DataStoreInteraction
@@ -123,16 +121,6 @@ class PostsScreenViewModel(
 
     fun openGroupUri(uriHandler: UriHandler, group: GroupEntity) {
         uriHandler.openUri("${VK_URL}${group.screenName}")
-    }
-
-    fun mihonIntent(query: String): Intent {
-        return Intent().apply {
-            action = MANGA_SEARCH_ACTION
-            val cleanedText = query
-                .replace(Regex("\\r?\\n"), " ")
-                .replace(Regex("[\\p{So}\\p{Cn}]|[\\uD800-\\uDBFF][\\uDC00-\\uDFFF]"), "")
-            putExtra("query", cleanedText)
-        }
     }
 
     suspend fun getSettingBoolean(key: String): Boolean {
