@@ -18,8 +18,8 @@ class CommentsScreenViewModel(
         return Intent().apply {
             action = MANGA_SEARCH_ACTION
             val cleanedText = query
-                .replace(Regex("[\\n\\r]"), "") // Удаляем переносы строк
-                .replace(Regex("[\\p{So}\\p{Sk}\\uD83C-\\uDBFF\\uDC00-\\uDFFF]"), "") // Удаляем смайлы
+                .replace(Regex("\\r?\\n"), " ")
+                .replace(Regex("[\\p{So}\\p{Cn}]|[\\uD800-\\uDBFF][\\uDC00-\\uDFFF]"), "")
             putExtra("query", cleanedText)
         }
     }
