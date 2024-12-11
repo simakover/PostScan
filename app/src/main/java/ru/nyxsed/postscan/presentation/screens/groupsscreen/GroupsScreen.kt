@@ -107,7 +107,7 @@ val GroupsScreen by navDestination<Unit> {
                 }
             }
         }
-        ShowAddModalDialog(
+        AddModalDialog(
             showDialog = showAddDialog,
             onDismiss = {
                 groupScreenViewModel.toggleAddDialog()
@@ -123,7 +123,7 @@ val GroupsScreen by navDestination<Unit> {
                 }
             }
         )
-        ShowDeleteModalDialog(
+        DeleteModalDialog(
             showDialog = showDeleteDialog,
             onDismiss = {
                 groupScreenViewModel.toggleDeleteDialog()
@@ -136,7 +136,7 @@ val GroupsScreen by navDestination<Unit> {
 }
 
 @Composable
-fun ShowDeleteModalDialog(
+fun DeleteModalDialog(
     showDialog: Boolean,
     onDismiss: () -> Unit,
     onConfirmClicked: () -> Unit,
@@ -165,6 +165,8 @@ fun ShowDeleteModalDialog(
                         text = stringResource(R.string.group_delete_dialog_question)
                     )
                     TextButton(
+                        modifier = Modifier
+                            .fillMaxWidth(),
                         onClick = {
                             onConfirmClicked()
                         }
@@ -174,6 +176,8 @@ fun ShowDeleteModalDialog(
                         )
                     }
                     TextButton(
+                        modifier = Modifier
+                            .fillMaxWidth(),
                         onClick = {
                             onDismiss()
                         }
@@ -189,7 +193,7 @@ fun ShowDeleteModalDialog(
 }
 
 @Composable
-fun ShowAddModalDialog(
+fun AddModalDialog(
     showDialog: Boolean,
     onDismiss: () -> Unit,
     onSearchClicked: () -> Unit,
@@ -219,6 +223,8 @@ fun ShowAddModalDialog(
                         text = stringResource(R.string.group_search_dialog_question)
                     )
                     TextButton(
+                        modifier = Modifier
+                            .fillMaxWidth(),
                         onClick = {
                             onSearchClicked()
                         }
@@ -228,6 +234,8 @@ fun ShowAddModalDialog(
                         )
                     }
                     TextButton(
+                        modifier = Modifier
+                            .fillMaxWidth(),
                         onClick = {
                             onPickClicked()
                         }

@@ -1,5 +1,6 @@
 package ru.nyxsed.postscan.data.repository
 
+import android.util.Log
 import com.vk.api.sdk.VKKeyValueStorage
 import com.vk.api.sdk.auth.VKAccessToken
 import kotlinx.coroutines.CoroutineScope
@@ -113,6 +114,51 @@ class VkRepository(
                 }
 
             if (responsePosts.last().publicationDate <= lastFetchDate) break
+
+            offset += 100
+            delay(350)
+        }
+        return posts.toList()
+    }
+
+    // post
+    suspend fun getPostsForGroupDateInterval(groupEntity: GroupEntity, startDate: Long, endDate: Long): List<PostEntity> {
+        var offset: Int = 0
+        val posts = mutableListOf<PostEntity>()
+        val notLoadLikedPosts = dataStoreInteraction.getSettingBooleanFromDataStore(NOT_LOAD_LIKED_POSTS)
+
+        while (true) {
+            val response = apiService.wallGet(
+                token = getAccessToken(),
+                ownerId = (groupEntity.groupId.times(-1)).toString(),
+                offset = offset
+            )
+            val error = response.error?.errorMsg
+            if (error != null) {
+                throw Exception(error)
+            }
+
+            if (response.content == null || response.content.items.isNullOrEmpty()) break
+
+            val responsePosts = mapper.mapWallGetResponseToPosts(response)
+
+            responsePosts
+                .filter {
+                     startDate <= it.publicationDate && it.publicationDate <= endDate
+                }
+                .filter {
+                    if (notLoadLikedPosts) {
+                        it.isLiked == false
+                    } else {
+                        true
+                    }
+                }
+                .forEach {
+                    Log.d("loadPosts", "add post = ${it.postId}")
+                    posts.add(it)
+                }
+
+            if (responsePosts.last().publicationDate < startDate) break
 
             offset += 100
             delay(350)

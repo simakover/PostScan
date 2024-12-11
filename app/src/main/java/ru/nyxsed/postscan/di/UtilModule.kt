@@ -26,7 +26,7 @@ val utilModule = module {
 
     factory { (context: Context, channelId: String) ->
         NotificationCompat.Builder(context, channelId)
-            .setSmallIcon(R.drawable.ic_placeholder)
+            .setSmallIcon(R.drawable.ic_download)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentTitle(context.getString(R.string.loading_posts))
             .setContentText(context.getString(R.string.loading_progress))

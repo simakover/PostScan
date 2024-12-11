@@ -48,4 +48,9 @@ object Constants {
 
     fun <T> List<T>.findOrLast(predicate: (T) -> Boolean): T =
         find(predicate) ?: last()
+
+    fun String.dateToUnixDate() : Long {
+        val format = SimpleDateFormat("ddMMyyyy")
+        return format.parse(this)?.time ?: System.currentTimeMillis()
+    }
 }
