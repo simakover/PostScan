@@ -36,4 +36,6 @@
     <string name="start_date">Start Date</string>
     <string name="end_date">End Date</string>
     <string name="download">Download</string>
+    <string name="do_you_want_to_delete_all_posts_for_this_group">Do you want to delete all posts for this group?</string>
+    <string name="delete_posts">Delete Posts</string>
 </resources>

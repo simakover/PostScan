@@ -71,7 +71,8 @@ val ChangeGroupScreen by navDestination<GroupEntity> {
     var avatarUrl by remember { mutableStateOf("") }
     var lastFetchDate by remember { mutableStateOf("") }
 
-    var showDialog by remember { mutableStateOf(false) }
+    var showDownloadDialog by remember { mutableStateOf(false) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         group.let {
@@ -172,7 +173,7 @@ val ChangeGroupScreen by navDestination<GroupEntity> {
                 ) {
                     IconButton(
                         onClick = {
-                            showDialog = true
+                            showDownloadDialog = true
                         }
                     ) {
                         Icon(
@@ -182,12 +183,31 @@ val ChangeGroupScreen by navDestination<GroupEntity> {
                         )
                     }
                 }
+                Box(
+                    modifier = Modifier
+                        .padding(4.dp)
+                        .clip(CircleShape)
+                        .size(40.dp)
+                        .background(MaterialTheme.colorScheme.primary),
+                ) {
+                    IconButton(
+                        onClick = {
+                            showDeleteDialog = true
+                        }
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_delete),
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onPrimary,
+                        )
+                    }
+                }
             }
         }
-        DownloadModalDialog(
-            showDialog = showDialog,
+        DownloadPostsModalDialog(
+            showDialog = showDownloadDialog,
             onDismiss = {
-                showDialog = false
+                showDownloadDialog = false
             },
             onDownloadClicked = { startDate, endDate ->
                 changeGroupScreenViewModel.loadPosts(
@@ -196,14 +216,24 @@ val ChangeGroupScreen by navDestination<GroupEntity> {
                     startDate = startDate,
                     endDate = endDate
                 )
-                showDialog = false
+                showDownloadDialog = false
+            }
+        )
+        DeletePostsModalDialog(
+            showDialog = showDeleteDialog,
+            onDismiss = {
+                showDeleteDialog = false
+            },
+            onConfirmClicked = {
+                changeGroupScreenViewModel.deleteGroupWithPosts(group)
+                showDeleteDialog = false
             }
         )
     }
 }
 
 @Composable
-fun DownloadModalDialog(
+fun DownloadPostsModalDialog(
     showDialog: Boolean,
     onDismiss: () -> Unit,
     onDownloadClicked: (String, String) -> Unit,
@@ -286,6 +316,63 @@ fun DownloadModalDialog(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 10.dp),
+                        onClick = {
+                            onDismiss()
+                        }
+                    ) {
+                        Text(
+                            text = stringResource(R.string.cancel)
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun DeletePostsModalDialog(
+    showDialog: Boolean,
+    onDismiss: () -> Unit,
+    onConfirmClicked: () -> Unit,
+) {
+    if (showDialog) {
+        Dialog(
+            onDismissRequest = onDismiss
+        ) {
+            Surface(
+                shape = RoundedCornerShape(16.dp),
+                color = MaterialTheme.colorScheme.surface
+            ) {
+                Column(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxWidth()
+                        .height(200.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.delete_posts),
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    Text(
+                        modifier = Modifier
+                            .weight(1f),
+                        text = stringResource(R.string.do_you_want_to_delete_all_posts_for_this_group)
+                    )
+                    TextButton(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        onClick = {
+                            onConfirmClicked()
+                        }
+                    ) {
+                        Text(
+                            text = stringResource(R.string.confirm)
+                        )
+                    }
+                    TextButton(
+                        modifier = Modifier
+                            .fillMaxWidth(),
                         onClick = {
                             onDismiss()
                         }

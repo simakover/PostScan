@@ -1,9 +1,6 @@
 package ru.nyxsed.postscan.presentation.screens.postsscreen
 
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountBox
-import androidx.compose.material.icons.filled.Build
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -54,7 +51,7 @@ fun PostsScreenBar(
             ) {
                 Icon(
                     modifier = Modifier.size(24.dp),
-                    imageVector = Icons.Filled.AccountBox,
+                    painter = painterResource(R.drawable.ic_groups),
                     tint = MaterialTheme.colorScheme.onPrimary,
                     contentDescription = null,
                 )
@@ -64,7 +61,7 @@ fun PostsScreenBar(
             ) {
                 Icon(
                     modifier = Modifier.size(24.dp),
-                    imageVector = Icons.Filled.Build,
+                    painter = painterResource(R.drawable.ic_settings),
                     tint = MaterialTheme.colorScheme.onPrimary,
                     contentDescription = null,
                 )
