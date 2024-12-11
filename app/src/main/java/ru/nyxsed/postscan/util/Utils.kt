@@ -27,12 +27,6 @@ object Constants {
     const val PROGRESS_CHANNEL_NAME = "Progress Notifications"
     const val PROGRESS_NOTIFICATION_ID = 1
 
-    fun convertLongToTime(time: Long): String {
-        val date = Date(time)
-        val format = SimpleDateFormat("dd.MM.yyyy")
-        return format.format(date)
-    }
-
     fun mihonIntent(query: String): Intent {
         return Intent().apply {
             action = MANGA_SEARCH_ACTION
@@ -49,8 +43,14 @@ object Constants {
     fun <T> List<T>.findOrLast(predicate: (T) -> Boolean): T =
         find(predicate) ?: last()
 
-    fun String.dateToUnixDate() : Long {
+    fun String.toDateLong(): Long {
         val format = SimpleDateFormat("ddMMyyyy")
         return format.parse(this)?.time ?: System.currentTimeMillis()
+    }
+
+    fun Long.toStringDate(): String {
+        val date = Date(this)
+        val format = SimpleDateFormat("dd.MM.yyyy")
+        return format.format(date)
     }
 }

@@ -15,7 +15,7 @@ import ru.nyxsed.postscan.data.repository.DbRepository
 import ru.nyxsed.postscan.data.repository.VkRepository
 import ru.nyxsed.postscan.util.ConnectionChecker
 import ru.nyxsed.postscan.util.Constants.VK_URL
-import ru.nyxsed.postscan.util.Constants.dateToUnixDate
+import ru.nyxsed.postscan.util.Constants.toDateLong
 import ru.nyxsed.postscan.util.NotificationHelper.completeNotification
 import ru.nyxsed.postscan.util.NotificationHelper.errorNotification
 import ru.nyxsed.postscan.util.NotificationHelper.initNotification
@@ -38,7 +38,7 @@ class ChangeGroupScreenViewModel(
         lastFetchDate: String,
     ) {
         viewModelScope.launch {
-            val fetchDate = lastFetchDate.dateToUnixDate()
+            val fetchDate = lastFetchDate.toDateLong()
 
             val group = GroupEntity(
                 groupId = groupId,
@@ -64,8 +64,8 @@ class ChangeGroupScreenViewModel(
     }
 
     fun loadPosts(context: Context, group: GroupEntity, startDate: String, endDate: String) {
-        val startDateUnix = startDate.dateToUnixDate()
-        val endDateUnix = endDate.dateToUnixDate()
+        val startDateUnix = startDate.toDateLong()
+        val endDateUnix = endDate.toDateLong()
 
         viewModelScope.launch {
             initNotification(context)

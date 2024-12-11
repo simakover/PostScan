@@ -51,8 +51,8 @@ import ru.nyxsed.postscan.R
 import ru.nyxsed.postscan.data.models.entity.GroupEntity
 import ru.nyxsed.postscan.util.Constants.DATE_LENGTH
 import ru.nyxsed.postscan.util.Constants.DATE_MASK
-import ru.nyxsed.postscan.util.Constants.convertLongToTime
-import ru.nyxsed.postscan.util.Constants.dateToUnixDate
+import ru.nyxsed.postscan.util.Constants.toDateLong
+import ru.nyxsed.postscan.util.Constants.toStringDate
 import ru.nyxsed.postscan.util.MaskVisualTransformation
 import ru.nyxsed.postscan.util.UiEvent
 
@@ -79,7 +79,7 @@ val ChangeGroupScreen by navDestination<GroupEntity> {
             groupName = it.name
             screenName = it.screenName
             avatarUrl = it.avatarUrl
-            lastFetchDate = convertLongToTime(it.lastFetchDate).replace(".", "")
+            lastFetchDate = it.lastFetchDate.toStringDate().replace(".", "")
         }
         changeGroupScreenViewModel.uiEventFlow.collect { event ->
             when (event) {
@@ -208,7 +208,7 @@ fun DownloadModalDialog(
     onDismiss: () -> Unit,
     onDownloadClicked: (String, String) -> Unit,
 ) {
-    val currentTime = convertLongToTime(System.currentTimeMillis()).replace(".", "")
+    val currentTime = System.currentTimeMillis().toStringDate().replace(".", "")
     var startDate by remember { mutableStateOf(currentTime) }
     var endDate by remember { mutableStateOf(currentTime) }
     val regex = Regex("^([0-2][0-9]|3[01])(0[1-9]|1[0-2])[0-9]{4}$")
@@ -273,7 +273,7 @@ fun DownloadModalDialog(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 10.dp),
-                        enabled = regex.matches(startDate) && regex.matches(endDate) && startDate.dateToUnixDate() <= endDate.dateToUnixDate(),
+                        enabled = regex.matches(startDate) && regex.matches(endDate) && startDate.toDateLong() <= endDate.toDateLong(),
                         onClick = {
                             onDownloadClicked(startDate, endDate)
                         }
