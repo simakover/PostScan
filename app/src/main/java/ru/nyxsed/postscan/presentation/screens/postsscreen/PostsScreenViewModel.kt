@@ -1,6 +1,7 @@
 package ru.nyxsed.postscan.presentation.screens.postsscreen
 
 import android.content.Context
+import android.content.res.Resources
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
@@ -32,6 +33,7 @@ class PostsScreenViewModel(
     private val vkRepository: VkRepository,
     private val dataStoreInteraction: DataStoreInteraction,
     private val connectionChecker: ConnectionChecker,
+    private val resources: Resources,
 ) : ViewModel() {
     val posts = dbRepository.getAllPosts()
     val groups = dbRepository.getAllGroups()
@@ -90,7 +92,7 @@ class PostsScreenViewModel(
     ) {
         viewModelScope.launch {
             if (!connectionChecker.isInternetAvailable()) {
-                _uiEventFlow.emit(UiEvent.ShowToast(R.string.no_internet_connection))
+                _uiEventFlow.emit(UiEvent.ShowToast(resources.getString(R.string.no_internet_connection)))
                 return@launch
             }
 
@@ -98,11 +100,15 @@ class PostsScreenViewModel(
                 _uiEventFlow.emit(UiEvent.Navigate(LoginScreen))
                 return@launch
             }
-            changeLikeStatusVK(post)
-            if (settingDeleteAfterLike) {
-                deletePost(post, context, snackbarHostState)
-            } else {
-                changeLikeStatusDb(post)
+            try {
+                changeLikeStatusVK(post)
+                if (settingDeleteAfterLike) {
+                    deletePost(post, context, snackbarHostState)
+                } else {
+                    changeLikeStatusDb(post)
+                }
+            } catch (e: Exception) {
+                _uiEventFlow.emit(UiEvent.ShowToast(e.message!!))
             }
         }
     }
@@ -130,7 +136,7 @@ class PostsScreenViewModel(
     fun refreshPosts(context: Context) {
         viewModelScope.launch {
             if (!connectionChecker.isInternetAvailable()) {
-                _uiEventFlow.emit(UiEvent.ShowToast(R.string.no_internet_connection))
+                _uiEventFlow.emit(UiEvent.ShowToast(resources.getString(R.string.no_internet_connection)))
                 return@launch
             }
 
@@ -139,16 +145,19 @@ class PostsScreenViewModel(
                 return@launch
             }
 
-            loadPosts(context)
+            try {
+                loadPosts(context)
+            } catch (e: Exception) {
+                _uiEventFlow.emit(UiEvent.ShowToast(e.message!!))
+            }
             _uiEventFlow.emit(UiEvent.Scroll())
-
         }
     }
 
     fun toComments(post: PostEntity) {
         viewModelScope.launch {
             if (!connectionChecker.isInternetAvailable()) {
-                _uiEventFlow.emit(UiEvent.ShowToast(R.string.no_internet_connection))
+                _uiEventFlow.emit(UiEvent.ShowToast(resources.getString(R.string.no_internet_connection)))
                 return@launch
             }
 

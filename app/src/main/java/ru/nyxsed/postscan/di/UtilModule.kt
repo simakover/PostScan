@@ -3,7 +3,9 @@ package ru.nyxsed.postscan.di
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.content.res.Resources
 import androidx.core.app.NotificationCompat
+import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 import ru.nyxsed.postscan.R
 import ru.nyxsed.postscan.util.ConnectionChecker
@@ -36,5 +38,9 @@ val utilModule = module {
             context = get(),
             storage = get(),
         )
+    }
+
+    single<Resources> {
+        androidContext().resources
     }
 }

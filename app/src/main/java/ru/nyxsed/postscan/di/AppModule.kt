@@ -47,13 +47,15 @@ val appModule = module {
             vkRepository = get(),
             dataStoreInteraction = get(),
             connectionChecker = get(),
+            resources = get()
         )
     }
 
     viewModel<GroupsScreenViewModel> {
         GroupsScreenViewModel(
             dbRepository = get(),
-            connectionChecker = get()
+            connectionChecker = get(),
+            resources = get(),
         )
     }
 
@@ -61,21 +63,24 @@ val appModule = module {
         PickGroupScreenViewModel(
             dbRepository = get(),
             vkRepository = get(),
-            connectionChecker = get()
+            connectionChecker = get(),
+            resources = get(),
         )
     }
 
     viewModel<ChangeGroupScreenViewModel> {
         ChangeGroupScreenViewModel(
             dbRepository = get(),
-            connectionChecker = get()
+            connectionChecker = get(),
+            resources = get()
         )
     }
 
     viewModel<ImagePagerViewModel> {
         ImagePagerViewModel(
             vkRepository = get(),
-            connectionChecker = get()
+            connectionChecker = get(),
+            resources = get(),
         )
     }
 
@@ -95,7 +100,8 @@ val appModule = module {
 
     viewModel<LoginViewModel> {
         LoginViewModel(
-            connectionChecker = get()
+            connectionChecker = get(),
+            resources = get(),
         )
     }
 }

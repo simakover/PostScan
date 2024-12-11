@@ -1,5 +1,6 @@
 package ru.nyxsed.postscan.presentation.screens.groupsscreen
 
+import android.content.res.Resources
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -20,6 +21,7 @@ import ru.nyxsed.postscan.util.UiEvent
 class GroupsScreenViewModel(
     private val dbRepository: DbRepository,
     private val connectionChecker: ConnectionChecker,
+    private val resources: Resources,
 ) : ViewModel() {
     val dbGroups = dbRepository.getAllGroups()
     private val _uiEventFlow = MutableSharedFlow<UiEvent>()
@@ -44,7 +46,7 @@ class GroupsScreenViewModel(
     fun navigateToPickScreen(param: String) {
         viewModelScope.launch {
             if (!connectionChecker.isInternetAvailable()) {
-                _uiEventFlow.emit(UiEvent.ShowToast(R.string.no_internet_connection))
+                _uiEventFlow.emit(UiEvent.ShowToast(resources.getString(R.string.no_internet_connection)))
                 return@launch
             }
 

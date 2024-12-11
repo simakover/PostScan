@@ -53,7 +53,7 @@ val GroupsScreen by navDestination<Unit> {
         groupScreenViewModel.uiEventFlow.collect { event ->
             when (event) {
                 is UiEvent.ShowToast ->
-                    Toast.makeText(context, context.getString(event.messageResId), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
 
                 is UiEvent.Navigate ->
                     navController.navigate(event.destination)

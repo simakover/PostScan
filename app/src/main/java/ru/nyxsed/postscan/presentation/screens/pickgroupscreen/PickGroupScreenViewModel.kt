@@ -1,5 +1,6 @@
 package ru.nyxsed.postscan.presentation.screens.pickgroupscreen
 
+import android.content.res.Resources
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -26,9 +27,10 @@ class PickGroupScreenViewModel(
     private val dbRepository: DbRepository,
     private val vkRepository: VkRepository,
     private val connectionChecker: ConnectionChecker,
+    private val resources: Resources,
 ) : ViewModel() {
     private val _uiEventFlow = MutableSharedFlow<UiEvent>()
-    val uiEventFlow : SharedFlow<UiEvent> = _uiEventFlow.asSharedFlow()
+    val uiEventFlow: SharedFlow<UiEvent> = _uiEventFlow.asSharedFlow()
 
     private val _screenStateFlow = MutableStateFlow<PickGroupState>(PickGroupState.User())
     val screenStateFlow: StateFlow<PickGroupState> = _screenStateFlow.asStateFlow()
@@ -51,10 +53,11 @@ class PickGroupScreenViewModel(
         when (mode) {
             "USER_GROUPS" -> {
                 viewModelScope.launch {
-                    vkRepository.getGroupsStateFlow().collect {
-                        fetchedGroupsState.value = it
-                        _screenStateFlow.value = PickGroupState.User(filteredGroupsState.value)
-                    }
+                    vkRepository.getGroupsStateFlow()
+                        .collect {
+                            fetchedGroupsState.value = it
+                            _screenStateFlow.value = PickGroupState.User(filteredGroupsState.value)
+                        }
                 }
             }
 
@@ -67,7 +70,7 @@ class PickGroupScreenViewModel(
     fun fetchedGroups(searchQuery: String) {
         viewModelScope.launch {
             if (!connectionChecker.isInternetAvailable()) {
-                _uiEventFlow.emit(UiEvent.ShowToast(R.string.no_internet_connection))
+                _uiEventFlow.emit(UiEvent.ShowToast(resources.getString(R.string.no_internet_connection)))
                 return@launch
             }
 
@@ -77,8 +80,13 @@ class PickGroupScreenViewModel(
             }
 
             _screenStateFlow.value = PickGroupState.Loading
-            val groups = vkRepository.searchGroups(searchQuery)
-            fetchedGroupsState.value = groups
+            try {
+                val groups = vkRepository.searchGroups(searchQuery)
+                fetchedGroupsState.value = groups
+            } catch (e: Exception) {
+                _uiEventFlow.emit(UiEvent.ShowToast(e.message!!))
+            }
+
             _screenStateFlow.value = PickGroupState.Search(groups = filteredGroupsState.value)
         }
     }
@@ -90,7 +98,9 @@ class PickGroupScreenViewModel(
             fetchedGroupsState.value = fetchedGroupsState.value.filter { it.groupId != group.groupId }
 
             when (currentState) {
-                is PickGroupState.Search -> _screenStateFlow.value = PickGroupState.Search(groups = filteredGroupsState.value)
+                is PickGroupState.Search -> _screenStateFlow.value =
+                    PickGroupState.Search(groups = filteredGroupsState.value)
+
                 is PickGroupState.User -> _screenStateFlow.value = PickGroupState.User(groups = filteredGroupsState.value)
                 else -> {}
             }
