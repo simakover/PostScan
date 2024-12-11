@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import ru.nyxsed.postscan.R
 import ru.nyxsed.postscan.data.models.entity.GroupEntity
-import ru.nyxsed.postscan.util.Constants.convertLongToTime
+import ru.nyxsed.postscan.util.Constants.toStringDate
 
 @Composable
 fun GroupCard(
@@ -71,7 +71,7 @@ fun GroupCard(
                     )
                     if (deleteEnabled) {
                         Text(
-                            text = convertLongToTime(group.lastFetchDate),
+                            text = group.lastFetchDate.toStringDate(),
                             color = MaterialTheme.colorScheme.onSecondary,
                             style = MaterialTheme.typography.titleSmall
                         )

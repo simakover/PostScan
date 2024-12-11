@@ -28,7 +28,7 @@ import ru.nyxsed.postscan.data.models.entity.CommentEntity
 import ru.nyxsed.postscan.data.models.entity.ContentEntity
 import ru.nyxsed.postscan.presentation.elements.MultipleImages
 import ru.nyxsed.postscan.presentation.ui.theme.VkBlue
-import ru.nyxsed.postscan.util.Constants.convertLongToTime
+import ru.nyxsed.postscan.util.Constants.toStringDate
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -74,7 +74,7 @@ fun CommentCard(
                         overflow = TextOverflow.Ellipsis
                     )
                     Text(
-                        text = convertLongToTime(comment.publicationDate),
+                        text = comment.publicationDate.toStringDate(),
                         color = MaterialTheme.colorScheme.onSecondary,
                         style = MaterialTheme.typography.titleSmall
                     )

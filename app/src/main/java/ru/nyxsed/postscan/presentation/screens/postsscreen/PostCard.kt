@@ -37,7 +37,7 @@ import ru.nyxsed.postscan.data.models.entity.PostEntity
 import ru.nyxsed.postscan.presentation.elements.MultipleImages
 import ru.nyxsed.postscan.presentation.ui.theme.LikedHeart
 import ru.nyxsed.postscan.presentation.ui.theme.VkBlue
-import ru.nyxsed.postscan.util.Constants.convertLongToTime
+import ru.nyxsed.postscan.util.Constants.toStringDate
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -246,7 +246,7 @@ fun PostCard(
 @Composable
 fun PostHeader(
     post: PostEntity,
-    onGroupClicked: (PostEntity) -> Unit
+    onGroupClicked: (PostEntity) -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -290,7 +290,7 @@ fun PostHeader(
                 overflow = TextOverflow.Ellipsis
             )
             Text(
-                text = convertLongToTime(post.publicationDate),
+                text = post.publicationDate.toStringDate(),
                 color = MaterialTheme.colorScheme.onSecondary,
                 style = MaterialTheme.typography.titleSmall
             )
