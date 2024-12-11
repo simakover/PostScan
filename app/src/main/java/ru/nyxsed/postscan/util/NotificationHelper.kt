@@ -62,4 +62,23 @@ object NotificationHelper {
         )
         notificationManager.notify(PROGRESS_NOTIFICATION_ID, builder.build())
     }
+
+    fun errorNotification(context: Context, message: String) {
+        val notificationManager =
+            GlobalContext.get().get<NotificationManager> { parametersOf(context, PROGRESS_CHANNEL_ID, PROGRESS_CHANNEL_NAME) }
+        val builder: NotificationCompat.Builder = GlobalContext.get().get { parametersOf(context, PROGRESS_CHANNEL_ID) }
+
+        builder
+            .setContentText(message)
+            .setSmallIcon(R.drawable.ic_close)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setProgress(0, 0, false)
+            .setVibrate(longArrayOf(100))
+
+        ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.POST_NOTIFICATIONS
+        )
+        notificationManager.notify(PROGRESS_NOTIFICATION_ID, builder.build())
+    }
 }

@@ -24,6 +24,7 @@ import ru.nyxsed.postscan.util.Constants.VK_URL
 import ru.nyxsed.postscan.util.Constants.VK_WALL_URL
 import ru.nyxsed.postscan.util.DataStoreInteraction
 import ru.nyxsed.postscan.util.NotificationHelper.completeNotification
+import ru.nyxsed.postscan.util.NotificationHelper.errorNotification
 import ru.nyxsed.postscan.util.NotificationHelper.initNotification
 import ru.nyxsed.postscan.util.NotificationHelper.updateProgress
 import ru.nyxsed.postscan.util.UiEvent
@@ -44,21 +45,26 @@ class PostsScreenViewModel(
     fun loadPosts(context: Context) {
         viewModelScope.launch {
             initNotification(context)
-            groups.value.forEachIndexed { index, group ->
-                val postEntities = vkRepository.getPostsForGroup(group)
-                postEntities.forEach { post ->
-                    dbRepository.addPost(post)
+            try {
+                groups.value.forEachIndexed { index, group ->
+                    val postEntities = vkRepository.getPostsForGroup(group)
+                    postEntities.forEach { post ->
+                        dbRepository.addPost(post)
+                    }
+
+                    val updatedGroup = group.copy(
+                        lastFetchDate = (System.currentTimeMillis())
+                    )
+                    dbRepository.updateGroup(updatedGroup)
+
+                    val percentage = (index + 1) * 100 / groups.value.size
+                    updateProgress(context, percentage)
                 }
-
-                val updatedGroup = group.copy(
-                    lastFetchDate = (System.currentTimeMillis())
-                )
-                dbRepository.updateGroup(updatedGroup)
-
-                val percentage = (index + 1) * 100 / groups.value.size
-                updateProgress(context, percentage)
+                completeNotification(context)
+            } catch (e: Exception) {
+                _uiEventFlow.emit(UiEvent.ShowToast(e.message!!))
+                errorNotification(context, e.message!!)
             }
-            completeNotification(context)
         }
     }
 
@@ -145,11 +151,7 @@ class PostsScreenViewModel(
                 return@launch
             }
 
-            try {
-                loadPosts(context)
-            } catch (e: Exception) {
-                _uiEventFlow.emit(UiEvent.ShowToast(e.message!!))
-            }
+            loadPosts(context)
             _uiEventFlow.emit(UiEvent.Scroll())
         }
     }

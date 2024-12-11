@@ -70,6 +70,7 @@ val appModule = module {
 
     viewModel<ChangeGroupScreenViewModel> {
         ChangeGroupScreenViewModel(
+            vkRepository = get(),
             dbRepository = get(),
             connectionChecker = get(),
             resources = get()

@@ -31,4 +31,9 @@
     <string name="cancel">Отмена</string>
     <string name="vk_logout">Выйти из VK</string>
     <string name="no_data_found">Данные не найдены</string>
+    <string name="download_posts_for_a_group_in_this_range">"Загрузить посты для группы в заданном интервале? "</string>
+    <string name="download_posts">Загрузка постов</string>
+    <string name="start_date">Начало периода</string>
+    <string name="end_date">Конец периода</string>
+    <string name="download">Загрузить</string>
 </resources>

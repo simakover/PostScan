@@ -31,4 +31,9 @@
     <string name="delete_post_after_liking">Delete Post After Liking</string>
     <string name="vk_logout">VK Logout</string>
     <string name="no_data_found">No Data Found</string>
+    <string name="download_posts_for_a_group_in_this_range">Download posts for a group in this range?</string>
+    <string name="download_posts">Download Posts</string>
+    <string name="start_date">Start Date</string>
+    <string name="end_date">End Date</string>
+    <string name="download">Download</string>
 </resources>
