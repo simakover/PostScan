@@ -32,7 +32,7 @@ class VkRepository(
         return token?.accessToken ?: throw IllegalStateException("Token is null")
     }
 
-    // groups
+    // groups TODO обертку для состояния
     fun getGroupsStateFlow() =
         flow {
             val response = apiService.groupsGet(
@@ -50,16 +50,27 @@ class VkRepository(
     suspend fun searchGroups(searchQuery: String) : List<GroupEntity> {
         val result = mutableListOf<GroupEntity>()
 
+
         val responseById = apiService.groupsGetById(
             token = getAccessToken(),
             groupId = searchQuery
         )
+        val errorById = responseById.error?.errorMsg
+        if (errorById != null) {
+            throw Exception(errorById)
+        }
+
         result.addAll(mapper.mapGroupsGetResponseToGroups(responseById))
 
         val responseSearch = apiService.groupsSearch(
             token = getAccessToken(),
             searchQuery = searchQuery
         )
+        val errorSearch = responseSearch.error?.errorMsg
+        if (errorSearch != null) {
+            throw Exception(errorSearch)
+        }
+
         result.addAll(mapper.mapGroupsGetResponseToGroups(responseSearch))
 
         return result.distinct()
@@ -78,6 +89,10 @@ class VkRepository(
                 ownerId = (groupEntity.groupId.times(-1)).toString(),
                 offset = offset
             )
+            val error = response.error?.errorMsg
+            if (error != null) {
+                throw Exception(error)
+            }
 
             if (response.content == null || response.content.items.isNullOrEmpty()) break
 
@@ -106,7 +121,7 @@ class VkRepository(
     }
 
     suspend fun changeLikeStatus(post: PostEntity) {
-        if (!post.isLiked) {
+        val response = if (!post.isLiked) {
             apiService.addLike(
                 token = getAccessToken(),
                 ownerId = post.ownerId,
@@ -121,11 +136,15 @@ class VkRepository(
                 type = "post"
             )
         }
+        val error = response.error?.errorMsg
+        if (error != null) {
+            throw Exception(error)
+        }
     }
 
     // content
     suspend fun changeLikeStatus(contentEntity: ContentEntity) {
-        if (!contentEntity.isLiked) {
+        val response = if (!contentEntity.isLiked) {
             apiService.addLike(
                 token = getAccessToken(),
                 ownerId = contentEntity.ownerId,
@@ -139,6 +158,10 @@ class VkRepository(
                 itemId = contentEntity.contentId,
                 type = if (contentEntity.type == "album") "photo" else contentEntity.type
             )
+        }
+        val error = response.error?.errorMsg
+        if (error != null) {
+            throw Exception(error)
         }
     }
 
@@ -152,7 +175,7 @@ class VkRepository(
         return response.response?.liked == 1
     }
 
-    // comments
+    // comments TODO обертку для состояния
     fun getCommentsStateFlow(post: PostEntity) =
         flow {
             val response = apiService.wallGetComments(

@@ -1,5 +1,6 @@
 package ru.nyxsed.postscan.presentation.screens.imagepagerscreen
 
+import android.content.res.Resources
 import androidx.compose.ui.platform.UriHandler
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,14 +18,20 @@ import ru.nyxsed.postscan.util.UiEvent
 class ImagePagerViewModel(
     private val vkRepository: VkRepository,
     private val connectionChecker: ConnectionChecker,
+    private val resources: Resources,
 ) : ViewModel() {
     private val _uiEventFlow = MutableSharedFlow<UiEvent>()
     val uiEventFlow: SharedFlow<UiEvent> = _uiEventFlow.asSharedFlow()
 
     fun changeLikeStatus(contentEntity: ContentEntity) {
         viewModelScope.launch {
-            vkRepository.changeLikeStatus(contentEntity)
+            try {
+                vkRepository.changeLikeStatus(contentEntity)
+            } catch (e: Exception) {
+                _uiEventFlow.emit(UiEvent.ShowToast(e.message!!))
+            }
         }
+
     }
 
     suspend fun checkLikeStatus(contentEntity: ContentEntity): Boolean {
@@ -42,12 +49,12 @@ class ImagePagerViewModel(
 
     suspend fun checkConnect(): Boolean {
         if (!connectionChecker.isInternetAvailable()) {
-            _uiEventFlow.emit(UiEvent.ShowToast(R.string.no_internet_connection))
+            _uiEventFlow.emit(UiEvent.ShowToast(resources.getString(R.string.no_internet_connection)))
             return false
         }
 
         if (!connectionChecker.isTokenValid()) {
-            _uiEventFlow.emit(UiEvent.ShowToast(R.string.token_is_invalid))
+            _uiEventFlow.emit(UiEvent.ShowToast(resources.getString(R.string.token_is_invalid)))
             return false
         }
         return true

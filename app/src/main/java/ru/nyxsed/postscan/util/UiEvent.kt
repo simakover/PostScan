@@ -4,7 +4,7 @@ import com.composegears.tiamat.NavDestination
 import ru.nyxsed.postscan.data.models.entity.PostEntity
 
 sealed class UiEvent {
-    class ShowToast(val messageResId: Int) : UiEvent()
+    class ShowToast(val message: String) : UiEvent()
     class LaunchActivity() : UiEvent()
     class OpenUrl(val url: String) : UiEvent()
     class Navigate(val destination: NavDestination<Unit>) : UiEvent()

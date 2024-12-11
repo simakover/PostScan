@@ -1,5 +1,6 @@
 package ru.nyxsed.postscan.presentation.screens.changegroupscreen
 
+import android.content.res.Resources
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -17,6 +18,7 @@ import java.text.SimpleDateFormat
 class ChangeGroupScreenViewModel(
     private val dbRepository: DbRepository,
     private val connectionChecker: ConnectionChecker,
+    private val resources: Resources,
 ) : ViewModel() {
     private val _uiEventFlow = MutableSharedFlow<UiEvent>()
     val uiEventFlow: SharedFlow<UiEvent> = _uiEventFlow.asSharedFlow()
@@ -47,7 +49,7 @@ class ChangeGroupScreenViewModel(
     fun openGroupUri(group: GroupEntity) {
         viewModelScope.launch {
             if (!connectionChecker.isInternetAvailable()) {
-                _uiEventFlow.emit(UiEvent.ShowToast(R.string.no_internet_connection))
+                _uiEventFlow.emit(UiEvent.ShowToast(resources.getString(R.string.no_internet_connection)))
                 return@launch
             }
 
