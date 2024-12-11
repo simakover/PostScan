@@ -87,4 +87,10 @@ class ChangeGroupScreenViewModel(
             }
         }
     }
+
+    fun deleteGroupWithPosts(group: GroupEntity) {
+        viewModelScope.launch {
+            dbRepository.deleteAllPostsForGroup(group)
+        }
+    }
 }
