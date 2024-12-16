@@ -56,6 +56,7 @@ val appModule = module {
             dbRepository = get(),
             connectionChecker = get(),
             resources = get(),
+            vkRepository = get()
         )
     }
 

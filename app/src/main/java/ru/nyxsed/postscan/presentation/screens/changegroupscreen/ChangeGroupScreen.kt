@@ -1,6 +1,5 @@
 package ru.nyxsed.postscan.presentation.screens.changegroupscreen
 
-import android.app.DatePickerDialog
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -15,8 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -50,12 +47,10 @@ import com.composegears.tiamat.navDestination
 import org.koin.androidx.compose.koinViewModel
 import ru.nyxsed.postscan.R
 import ru.nyxsed.postscan.data.models.entity.GroupEntity
-import ru.nyxsed.postscan.util.Constants.DATE_MASK
+import ru.nyxsed.postscan.presentation.elements.DatePickerTextField
 import ru.nyxsed.postscan.util.Constants.toDateLong
 import ru.nyxsed.postscan.util.Constants.toStringDate
-import ru.nyxsed.postscan.util.MaskVisualTransformation
 import ru.nyxsed.postscan.util.UiEvent
-import java.util.Calendar
 
 
 val ChangeGroupScreen by navDestination<GroupEntity> {
@@ -359,70 +354,5 @@ fun DeletePostsModalDialog(
                 }
             }
         }
-    }
-}
-
-@Composable
-fun DatePickerTextField(
-    label: String,
-    selectedDate: String,
-    onDateSelected: (String) -> Unit,
-) {
-    val context = LocalContext.current
-    val calendar = Calendar.getInstance()
-
-    val year = calendar.get(Calendar.YEAR)
-    val month = calendar.get(Calendar.MONTH)
-    val day = calendar.get(Calendar.DAY_OF_MONTH)
-
-    var showDatePicker by remember { mutableStateOf(false) }
-
-    TextField(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 10.dp)
-            .clickable { showDatePicker = true },
-        value = selectedDate,
-        onValueChange = {},
-        label = { Text(label) },
-        readOnly = true,
-        trailingIcon = {
-            Icon(
-                modifier = Modifier
-                    .clickable { showDatePicker = true },
-                contentDescription = null,
-                imageVector = Icons.Filled.DateRange
-            )
-        },
-        visualTransformation = MaskVisualTransformation(DATE_MASK),
-    )
-
-
-    if (showDatePicker) {
-        DatePickerDialog(
-            context,
-            R.style.CustomDatePickerDialog,
-            { _, selectedYear, selectedMonth, selectedDay ->
-                val formattedDate = "${selectedDay.toString().padStart(2, '0')}${
-                    (selectedMonth + 1).toString().padStart(2, '0')
-                }$selectedYear"
-                onDateSelected(formattedDate)
-                showDatePicker = false
-            },
-            year,
-            month,
-            day
-        ).apply {
-            setOnDismissListener {
-                showDatePicker = false
-            }
-            datePicker.setOnDateChangedListener { _, newYear, newMonth, newDay ->
-                val formattedDate =
-                    "${newDay.toString().padStart(2, '0')}${(newMonth + 1).toString().padStart(2, '0')}$newYear"
-                onDateSelected(formattedDate)
-                showDatePicker = false
-                dismiss()
-            }
-        }.show()
     }
 }

@@ -26,19 +26,27 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import com.composegears.tiamat.navController
 import com.composegears.tiamat.navDestination
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import ru.nyxsed.postscan.R
+import ru.nyxsed.postscan.presentation.elements.DatePickerTextField
 import ru.nyxsed.postscan.presentation.screens.changegroupscreen.ChangeGroupScreen
+import ru.nyxsed.postscan.presentation.screens.changegroupscreen.DownloadPostsModalDialog
+import ru.nyxsed.postscan.util.Constants.toDateLong
+import ru.nyxsed.postscan.util.Constants.toStringDate
 import ru.nyxsed.postscan.util.UiEvent
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -55,6 +63,7 @@ val GroupsScreen by navDestination<Unit> {
     val showAddDialog by groupScreenViewModel.showAddDialog.collectAsState()
     val showDeleteDialog by groupScreenViewModel.showDeleteDialog.collectAsState()
     val showDeleteAllDialog by groupScreenViewModel.showDeleteAllDialog.collectAsState()
+    val showDownloadDialog by groupScreenViewModel.showDownloadDialog.collectAsState()
 
     LaunchedEffect(Unit) {
         groupScreenViewModel.uiEventFlow.collect { event ->
@@ -89,7 +98,7 @@ val GroupsScreen by navDestination<Unit> {
         topBar = {
             GroupsScreenBar(
                 onDownloadClicked = {
-
+                    groupScreenViewModel.toggleDownloadDialog()
                 },
                 onDeleteClicked = {
                     groupScreenViewModel.toggleDeleteAllDialog()
@@ -162,6 +171,19 @@ val GroupsScreen by navDestination<Unit> {
             },
             onConfirmClicked = {
                 groupScreenViewModel.deleteAllPosts()
+            }
+        )
+        DownloadPostsModalDialog(
+            showDialog = showDownloadDialog,
+            onDismiss = {
+                groupScreenViewModel.toggleDownloadDialog()
+            },
+            onDownloadClicked = { startDate, endDate ->
+                groupScreenViewModel.loadPosts(
+                    context = context,
+                    startDate = startDate,
+                    endDate = endDate
+                )
             }
         )
     }
@@ -276,6 +298,86 @@ fun AddModalDialog(
                     ) {
                         Text(
                             text = stringResource(R.string.pick_from)
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun DownloadPostsModalDialog(
+    showDialog: Boolean,
+    onDismiss: () -> Unit,
+    onDownloadClicked: (String, String) -> Unit,
+) {
+    val currentTime = System.currentTimeMillis().toStringDate().replace(".", "")
+    var startDate by remember { mutableStateOf(currentTime) }
+    var endDate by remember { mutableStateOf(currentTime) }
+    val regex = Regex("^([0-2][0-9]|3[01])(0[1-9]|1[0-2])[0-9]{4}$")
+
+    if (showDialog) {
+        Dialog(
+            onDismissRequest = onDismiss,
+            properties = DialogProperties()
+        ) {
+            Surface(
+                shape = RoundedCornerShape(16.dp),
+                color = MaterialTheme.colorScheme.surface
+            ) {
+                Column(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxWidth()
+                        .height(300.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.download_posts),
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    Text(
+                        modifier = Modifier
+                            .weight(1f),
+                        text = stringResource(R.string.download_posts_for_a_group_in_this_range)
+                    )
+                    DatePickerTextField(
+                        label = stringResource(R.string.start_date),
+                        selectedDate = startDate,
+                        onDateSelected = { newDate ->
+                            startDate = newDate
+                        }
+                    )
+                    DatePickerTextField(
+                        label = stringResource(R.string.end_date),
+                        selectedDate = endDate,
+                        onDateSelected = { newDate ->
+                            endDate = newDate
+                        }
+                    )
+                    TextButton(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 10.dp),
+                        enabled = regex.matches(startDate) && regex.matches(endDate) && startDate.toDateLong() <= endDate.toDateLong(),
+                        onClick = {
+                            onDownloadClicked(startDate, endDate)
+                        }
+                    ) {
+                        Text(
+                            text = stringResource(R.string.download)
+                        )
+                    }
+                    TextButton(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 10.dp),
+                        onClick = {
+                            onDismiss()
+                        }
+                    ) {
+                        Text(
+                            text = stringResource(R.string.cancel)
                         )
                     }
                 }
