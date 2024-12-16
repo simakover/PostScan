@@ -56,6 +56,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import coil3.compose.AsyncImage
 import coil3.compose.SubcomposeAsyncImage
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import com.composegears.tiamat.navArgs
 import com.composegears.tiamat.navController
 import com.composegears.tiamat.navDestination
@@ -316,9 +318,11 @@ val ImagePagerScreen by navDestination<ImagePagerArgs> {
                                             pagerState.scrollToPage(page = currentIndex)
                                         }
                                     }),
-                                model = item.urlSmall,
+                                model = ImageRequest.Builder(LocalContext.current)
+                                    .data(item.urlSmall)
+                                    .crossfade(true)
+                                    .build(),
                                 contentDescription = null,
-                                placeholder = painterResource(R.drawable.ic_placeholder),
                             )
                         }
                     }

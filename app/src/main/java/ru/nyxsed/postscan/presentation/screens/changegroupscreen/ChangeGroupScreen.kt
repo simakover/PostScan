@@ -41,6 +41,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import com.composegears.tiamat.navArgs
 import com.composegears.tiamat.navController
 import com.composegears.tiamat.navDestination
@@ -110,8 +112,10 @@ val ChangeGroupScreen by navDestination<GroupEntity> {
                             changeGroupScreenViewModel.openGroupUri(group)
                         }
                     ),
-                model = avatarUrl,
-                placeholder = painterResource(R.drawable.ic_placeholder),
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(avatarUrl)
+                    .crossfade(true)
+                    .build(),
                 contentDescription = null,
             )
             TextField(

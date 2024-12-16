@@ -19,14 +19,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
-import ru.nyxsed.postscan.R
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import ru.nyxsed.postscan.data.models.entity.GroupEntity
 import ru.nyxsed.postscan.presentation.ui.theme.VkBlue
 
@@ -67,8 +68,10 @@ fun GroupChip(
                         .clip(CircleShape)
                         .size(25.dp)
                         .alpha(0.4f),
-                    model = group.avatarUrl,
-                    placeholder = painterResource(R.drawable.ic_placeholder),
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(group.avatarUrl)
+                        .crossfade(true)
+                        .build(),
                     contentDescription = null,
                 )
                 Text(
