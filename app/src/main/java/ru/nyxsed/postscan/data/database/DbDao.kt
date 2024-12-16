@@ -28,6 +28,9 @@ interface DbDao {
     @Query("DELETE FROM posts where ABS(ownerId) = :groupId")
     suspend fun deleteAllPostsForGroup(groupId : Long)
 
+    @Query("DELETE FROM posts")
+    suspend fun deleteAllPosts()
+
     // groups
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertGroup(group: GroupEntity)

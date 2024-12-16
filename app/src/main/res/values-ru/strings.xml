@@ -39,4 +39,6 @@
     <string name="do_you_want_to_delete_all_posts_for_this_group">Вы хотите удалить все посты для данной группы?</string>
     <string name="delete_posts">Удалить Посты</string>
     <string name="log_out_message">Вы успешно вышли из VK</string>
+    <string name="delete_all_posts">Удалить Все Посты</string>
+    <string name="delete_all_posts_dialog_question">Вы хотите удалить все посты?</string>
 </resources>

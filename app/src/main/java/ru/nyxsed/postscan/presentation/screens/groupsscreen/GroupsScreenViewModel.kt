@@ -33,6 +33,9 @@ class GroupsScreenViewModel(
     private val _showDeleteDialog = MutableStateFlow(false)
     val showDeleteDialog: StateFlow<Boolean> = _showDeleteDialog.asStateFlow()
 
+    private val _showDeleteAllDialog = MutableStateFlow(false)
+    val showDeleteAllDialog: StateFlow<Boolean> = _showDeleteAllDialog.asStateFlow()
+
     private var groupToDelete: GroupEntity? = null
 
     fun deleteGroupWithPosts() {
@@ -67,5 +70,16 @@ class GroupsScreenViewModel(
     fun toggleDeleteDialog(group: GroupEntity? = null) {
         _showDeleteDialog.value = !_showDeleteDialog.value
         groupToDelete = group
+    }
+
+    fun toggleDeleteAllDialog() {
+        _showDeleteAllDialog.value = !_showDeleteAllDialog.value
+    }
+
+    fun deleteAllPosts() {
+        viewModelScope.launch {
+            dbRepository.deleteAllPosts()
+            toggleDeleteAllDialog()
+        }
     }
 }
