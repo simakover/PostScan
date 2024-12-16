@@ -41,4 +41,8 @@
     <string name="log_out_message">You successfully logout</string>
     <string name="delete_all_posts">Delete All Posts</string>
     <string name="delete_all_posts_dialog_question">Do you want to delete all posts?</string>
+    <string name="notification_permission">Notification Permission</string>
+    <string name="notification_permission_desc">For setup notifications turn it on in settings</string>
+    <string name="notification_permission_desc_settings">Open Settings</string>
+    <string name="notification_permission_desc_cancel">Cancel</string>
 </resources>
