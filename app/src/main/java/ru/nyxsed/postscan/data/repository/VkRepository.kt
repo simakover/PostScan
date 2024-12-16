@@ -1,6 +1,5 @@
 package ru.nyxsed.postscan.data.repository
 
-import android.util.Log
 import com.vk.api.sdk.VKKeyValueStorage
 import com.vk.api.sdk.auth.VKAccessToken
 import kotlinx.coroutines.CoroutineScope
@@ -48,7 +47,7 @@ class VkRepository(
                 initialValue = listOf()
             )
 
-    suspend fun searchGroups(searchQuery: String) : List<GroupEntity> {
+    suspend fun searchGroups(searchQuery: String): List<GroupEntity> {
         val result = mutableListOf<GroupEntity>()
 
 
@@ -144,7 +143,7 @@ class VkRepository(
 
             responsePosts
                 .filter {
-                     startDate <= it.publicationDate && it.publicationDate <= endDate
+                    startDate <= it.publicationDate && it.publicationDate <= endDate
                 }
                 .filter {
                     if (notLoadLikedPosts) {
@@ -154,7 +153,6 @@ class VkRepository(
                     }
                 }
                 .forEach {
-                    Log.d("loadPosts", "add post = ${it.postId}")
                     posts.add(it)
                 }
 

@@ -38,4 +38,5 @@
     <string name="download">Загрузить</string>
     <string name="do_you_want_to_delete_all_posts_for_this_group">Вы хотите удалить все посты для данной группы?</string>
     <string name="delete_posts">Удалить Посты</string>
+    <string name="log_out_message">Вы успешно вышли из VK</string>
 </resources>

@@ -6,4 +6,15 @@
         <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
         <item name="windowSplashScreenIconBackgroundColor">@null</item>
     </style>
+
+    <!-- Кастомная тема для DatePickerDialog -->
+    <style name="CustomDatePickerDialog" parent="android:Theme.Material.Dialog">
+        <item name="android:datePickerStyle">@style/CustomDatePickerStyle</item>
+    </style>
+
+    <style name="CustomDatePickerStyle" parent="android:Widget.Material.DatePicker">
+        <item name="android:headerBackground">@color/splash_purple_color</item>
+        <item name="android:textColorPrimary">#FFFFFF</item>
+        <item name="android:calendarTextColor">#000000</item>
+    </style>
 </resources>

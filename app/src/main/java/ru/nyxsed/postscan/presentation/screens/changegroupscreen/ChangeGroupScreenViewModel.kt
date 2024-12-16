@@ -2,7 +2,6 @@ package ru.nyxsed.postscan.presentation.screens.changegroupscreen
 
 import android.content.Context
 import android.content.res.Resources
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -70,13 +69,11 @@ class ChangeGroupScreenViewModel(
         viewModelScope.launch {
             initNotification(context)
             try {
-                Log.d("loadPosts", "start = $startDateUnix end = ${endDateUnix + 86399000}")
                 val postEntities = vkRepository.getPostsForGroupDateInterval(
                     groupEntity = group,
                     startDate = startDateUnix,
                     endDate = endDateUnix + 86399000
                 )
-                Log.d("loadPosts", "postEntities = ${postEntities.size}")
                 postEntities.forEach { post ->
                     dbRepository.addPost(post)
                 }

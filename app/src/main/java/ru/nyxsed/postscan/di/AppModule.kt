@@ -95,7 +95,8 @@ val appModule = module {
 
     viewModel<PreferencesScreenViewModel> {
         PreferencesScreenViewModel(
-            dataStoreInteraction = get()
+            dataStoreInteraction = get(),
+            resources = get()
         )
     }
 
