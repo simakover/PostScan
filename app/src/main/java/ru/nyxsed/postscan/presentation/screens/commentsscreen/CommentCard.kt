@@ -19,10 +19,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import ru.nyxsed.postscan.R
 import ru.nyxsed.postscan.data.models.entity.CommentEntity
 import ru.nyxsed.postscan.data.models.entity.ContentEntity
@@ -57,8 +60,10 @@ fun CommentCard(
                     modifier = Modifier
                         .clip(CircleShape)
                         .size(30.dp),
-                    model = comment.ownerImageUrl,
-                    placeholder = painterResource(R.drawable.ic_placeholder),
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(comment.ownerImageUrl)
+                        .crossfade(true)
+                        .build(),
                     contentDescription = null,
                 )
                 Column(
@@ -129,8 +134,10 @@ fun CommentCard(
                             .padding(4.dp)
                             .clip(CircleShape)
                             .size(25.dp),
-                        model = reply.ownerImageUrl,
-                        placeholder = painterResource(R.drawable.ic_placeholder),
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(reply.ownerImageUrl)
+                            .crossfade(true)
+                            .build(),
                         contentDescription = null,
                     )
                     MultipleImages(
