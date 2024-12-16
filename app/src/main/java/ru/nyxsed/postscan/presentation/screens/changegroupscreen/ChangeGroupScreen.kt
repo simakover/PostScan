@@ -1,5 +1,6 @@
 package ru.nyxsed.postscan.presentation.screens.changegroupscreen
 
+import android.app.DatePickerDialog
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -14,7 +15,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -38,7 +40,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -49,12 +50,13 @@ import com.composegears.tiamat.navDestination
 import org.koin.androidx.compose.koinViewModel
 import ru.nyxsed.postscan.R
 import ru.nyxsed.postscan.data.models.entity.GroupEntity
-import ru.nyxsed.postscan.util.Constants.DATE_LENGTH
 import ru.nyxsed.postscan.util.Constants.DATE_MASK
 import ru.nyxsed.postscan.util.Constants.toDateLong
 import ru.nyxsed.postscan.util.Constants.toStringDate
 import ru.nyxsed.postscan.util.MaskVisualTransformation
 import ru.nyxsed.postscan.util.UiEvent
+import java.util.Calendar
+
 
 val ChangeGroupScreen by navDestination<GroupEntity> {
     val group = navArgs()
@@ -129,20 +131,11 @@ val ChangeGroupScreen by navDestination<GroupEntity> {
                     Text(stringResource(R.string.group_name))
                 }
             )
-            TextField(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 10.dp),
-                value = lastFetchDate,
-                onValueChange = {
-                    if (it.length <= DATE_LENGTH) {
-                        lastFetchDate = it
-                    }
-                },
-                visualTransformation = MaskVisualTransformation(DATE_MASK),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                label = {
-                    Text(stringResource(R.string.last_fetch_date))
+            DatePickerTextField(
+                label = stringResource(R.string.last_fetch_date),
+                selectedDate = lastFetchDate,
+                onDateSelected = { newDate ->
+                    lastFetchDate = newDate
                 }
             )
             Row(
@@ -267,36 +260,18 @@ fun DownloadPostsModalDialog(
                             .weight(1f),
                         text = stringResource(R.string.download_posts_for_a_group_in_this_range)
                     )
-                    TextField(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 10.dp),
-                        value = startDate,
-                        onValueChange = {
-                            if (it.length <= DATE_LENGTH) {
-                                startDate = it
-                            }
-                        },
-                        visualTransformation = MaskVisualTransformation(DATE_MASK),
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        label = {
-                            Text(text = stringResource(R.string.start_date))
+                    DatePickerTextField(
+                        label = stringResource(R.string.start_date),
+                        selectedDate = startDate,
+                        onDateSelected = { newDate ->
+                            startDate = newDate
                         }
                     )
-                    TextField(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 10.dp),
-                        value = endDate,
-                        onValueChange = {
-                            if (it.length <= DATE_LENGTH) {
-                                endDate = it
-                            }
-                        },
-                        visualTransformation = MaskVisualTransformation(DATE_MASK),
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        label = {
-                            Text(text = stringResource(R.string.end_date))
+                    DatePickerTextField(
+                        label = stringResource(R.string.end_date),
+                        selectedDate = endDate,
+                        onDateSelected = { newDate ->
+                            endDate = newDate
                         }
                     )
                     TextButton(
@@ -384,5 +359,70 @@ fun DeletePostsModalDialog(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun DatePickerTextField(
+    label: String,
+    selectedDate: String,
+    onDateSelected: (String) -> Unit,
+) {
+    val context = LocalContext.current
+    val calendar = Calendar.getInstance()
+
+    val year = calendar.get(Calendar.YEAR)
+    val month = calendar.get(Calendar.MONTH)
+    val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+    var showDatePicker by remember { mutableStateOf(false) }
+
+    TextField(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 10.dp)
+            .clickable { showDatePicker = true },
+        value = selectedDate,
+        onValueChange = {},
+        label = { Text(label) },
+        readOnly = true,
+        trailingIcon = {
+            Icon(
+                modifier = Modifier
+                    .clickable { showDatePicker = true },
+                contentDescription = null,
+                imageVector = Icons.Filled.DateRange
+            )
+        },
+        visualTransformation = MaskVisualTransformation(DATE_MASK),
+    )
+
+
+    if (showDatePicker) {
+        DatePickerDialog(
+            context,
+            R.style.CustomDatePickerDialog,
+            { _, selectedYear, selectedMonth, selectedDay ->
+                val formattedDate = "${selectedDay.toString().padStart(2, '0')}${
+                    (selectedMonth + 1).toString().padStart(2, '0')
+                }$selectedYear"
+                onDateSelected(formattedDate)
+                showDatePicker = false
+            },
+            year,
+            month,
+            day
+        ).apply {
+            setOnDismissListener {
+                showDatePicker = false
+            }
+            datePicker.setOnDateChangedListener { _, newYear, newMonth, newDay ->
+                val formattedDate =
+                    "${newDay.toString().padStart(2, '0')}${(newMonth + 1).toString().padStart(2, '0')}$newYear"
+                onDateSelected(formattedDate)
+                showDatePicker = false
+                dismiss()
+            }
+        }.show()
     }
 }

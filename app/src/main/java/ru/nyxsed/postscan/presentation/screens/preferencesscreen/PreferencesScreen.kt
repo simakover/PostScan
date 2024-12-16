@@ -1,5 +1,6 @@
 package ru.nyxsed.postscan.presentation.screens.preferencesscreen
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,18 +18,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.navDestination
-import com.vk.api.sdk.VK
 import org.koin.androidx.compose.koinViewModel
 import ru.nyxsed.postscan.R
 import ru.nyxsed.postscan.util.DataStoreInteraction.Companion.DELETE_AFTER_LIKE
 import ru.nyxsed.postscan.util.DataStoreInteraction.Companion.NOT_LOAD_LIKED_POSTS
 import ru.nyxsed.postscan.util.DataStoreInteraction.Companion.USE_MIHON
+import ru.nyxsed.postscan.util.UiEvent
 
 val PreferencesScreen by navDestination<Unit> {
     val preferencesViewModel = koinViewModel<PreferencesScreenViewModel>()
+    val context = LocalContext.current
 
     var settingNotLoadLikedPosts by remember { mutableStateOf(false) }
     var settingUseMihon by remember { mutableStateOf(false) }
@@ -38,6 +41,14 @@ val PreferencesScreen by navDestination<Unit> {
         settingNotLoadLikedPosts = preferencesViewModel.getSettingBoolean(NOT_LOAD_LIKED_POSTS)
         settingUseMihon = preferencesViewModel.getSettingBoolean(USE_MIHON)
         settingDeleteAfterLike = preferencesViewModel.getSettingBoolean(DELETE_AFTER_LIKE)
+        preferencesViewModel.uiEventFlow.collect { event ->
+            when (event) {
+                is UiEvent.ShowToast ->
+                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+
+                else -> {}
+            }
+        }
     }
 
     Scaffold { paddings ->
@@ -74,7 +85,7 @@ val PreferencesScreen by navDestination<Unit> {
             SettingButton(
                 label = stringResource(R.string.vk_logout),
                 onClick = {
-                    VK.logout()
+                    preferencesViewModel.logOut()
                 }
             )
         }
