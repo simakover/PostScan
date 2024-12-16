@@ -61,7 +61,7 @@ class DbRepository(
         dbDao.updateGroup(group)
     }
 
-    suspend fun getGroupById(groupId: Long) : GroupEntity? {
-        return dbDao.getGroupById(groupId)
+    suspend fun deleteAllPosts() {
+        dbDao.deleteAllPosts()
     }
 }

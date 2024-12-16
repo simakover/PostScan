@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -20,12 +21,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -38,6 +41,7 @@ import ru.nyxsed.postscan.R
 import ru.nyxsed.postscan.presentation.screens.changegroupscreen.ChangeGroupScreen
 import ru.nyxsed.postscan.util.UiEvent
 
+@OptIn(ExperimentalMaterial3Api::class)
 val GroupsScreen by navDestination<Unit> {
     val navController = navController()
     val scope = rememberCoroutineScope()
@@ -45,9 +49,12 @@ val GroupsScreen by navDestination<Unit> {
 
     val groupScreenViewModel = koinViewModel<GroupsScreenViewModel>()
 
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+
     val groupsState = groupScreenViewModel.dbGroups.collectAsState()
     val showAddDialog by groupScreenViewModel.showAddDialog.collectAsState()
     val showDeleteDialog by groupScreenViewModel.showDeleteDialog.collectAsState()
+    val showDeleteAllDialog by groupScreenViewModel.showDeleteAllDialog.collectAsState()
 
     LaunchedEffect(Unit) {
         groupScreenViewModel.uiEventFlow.collect { event ->
@@ -78,11 +85,23 @@ val GroupsScreen by navDestination<Unit> {
                     contentDescription = null
                 )
             }
+        },
+        topBar = {
+            GroupsScreenBar(
+                onDownloadClicked = {
+
+                },
+                onDeleteClicked = {
+                    groupScreenViewModel.toggleDeleteAllDialog()
+                },
+                scrollBehavior = scrollBehavior
+            )
         }
     ) { paddings ->
         LazyColumn(
             modifier = Modifier
-                .padding(paddings),
+                .padding(paddings)
+                .nestedScroll(scrollBehavior.nestedScrollConnection),
             contentPadding = PaddingValues(4.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
@@ -124,6 +143,8 @@ val GroupsScreen by navDestination<Unit> {
             }
         )
         DeleteModalDialog(
+            title = stringResource(R.string.delete_group),
+            description = stringResource(R.string.group_delete_dialog_question),
             showDialog = showDeleteDialog,
             onDismiss = {
                 groupScreenViewModel.toggleDeleteDialog()
@@ -132,11 +153,24 @@ val GroupsScreen by navDestination<Unit> {
                 groupScreenViewModel.deleteGroupWithPosts()
             }
         )
+        DeleteModalDialog(
+            title = stringResource(R.string.delete_all_posts),
+            description = stringResource(R.string.delete_all_posts_dialog_question),
+            showDialog = showDeleteAllDialog,
+            onDismiss = {
+                groupScreenViewModel.toggleDeleteAllDialog()
+            },
+            onConfirmClicked = {
+                groupScreenViewModel.deleteAllPosts()
+            }
+        )
     }
 }
 
 @Composable
 fun DeleteModalDialog(
+    title: String,
+    description: String,
     showDialog: Boolean,
     onDismiss: () -> Unit,
     onConfirmClicked: () -> Unit,
@@ -156,13 +190,13 @@ fun DeleteModalDialog(
                         .height(200.dp)
                 ) {
                     Text(
-                        text = stringResource(R.string.delete_group),
+                        text = title,
                         style = MaterialTheme.typography.titleMedium
                     )
                     Text(
                         modifier = Modifier
                             .weight(1f),
-                        text = stringResource(R.string.group_delete_dialog_question)
+                        text = description
                     )
                     TextButton(
                         modifier = Modifier
