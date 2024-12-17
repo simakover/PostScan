@@ -56,10 +56,6 @@ class VkRepository(
             groupId = searchQuery
         )
         val errorById = responseById.error?.errorMsg
-        if (errorById != null) {
-            throw Exception(errorById)
-        }
-
         result.addAll(mapper.mapGroupsGetResponseToGroups(responseById))
 
         val responseSearch = apiService.groupsSearch(
@@ -67,8 +63,9 @@ class VkRepository(
             searchQuery = searchQuery
         )
         val errorSearch = responseSearch.error?.errorMsg
-        if (errorSearch != null) {
-            throw Exception(errorSearch)
+
+        if (errorById != null && errorSearch != null) {
+            throw Exception("$errorById || $errorSearch")
         }
 
         result.addAll(mapper.mapGroupsGetResponseToGroups(responseSearch))
