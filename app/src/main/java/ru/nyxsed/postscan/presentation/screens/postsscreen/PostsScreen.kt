@@ -21,7 +21,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -63,7 +62,7 @@ val PostsScreen by navDestination<Unit> {
     val snackbarHostState = SnackbarHostState()
     val scope = rememberCoroutineScope()
 
-    var groupSelected by rememberSaveable { mutableLongStateOf(0L) }
+    var groupSelected = postsScreenViewModel.groupSelected.collectAsState()
     val scrollState = rememberSaveable(saver = LazyListState.Saver) {
         LazyListState()
     }
@@ -134,13 +133,13 @@ val PostsScreen by navDestination<Unit> {
                         ) {
                             GroupChip(
                                 group = group,
-                                isSelected = group.groupId == groupSelected,
+                                isSelected = group.groupId == groupSelected.value,
                                 postCount = postCount,
                                 onChipClicked = {
-                                    groupSelected = if (groupSelected != group.groupId) {
-                                        group.groupId
+                                    if (groupSelected.value != group.groupId) {
+                                        postsScreenViewModel.selectGroup(group.groupId)
                                     } else {
-                                        0L
+                                        postsScreenViewModel.selectGroup(0L)
                                     }
                                     scope.launch {
                                         scrollState.scrollToItem(0)
@@ -167,7 +166,7 @@ val PostsScreen by navDestination<Unit> {
                 }
                 items(
                     items = postListState.value.filter {
-                        if (groupSelected == 0L) true else it.ownerId.absoluteValue == groupSelected
+                        if (groupSelected.value == 0L) true else it.ownerId.absoluteValue == groupSelected.value
                     },
                     key = { it.postId }
                 ) {

@@ -8,5 +8,5 @@ data class DocResponse(
     @SerializedName("owner_id")
     val ownerId: Long,
     @SerializedName("preview")
-    val preview: DocPreview,
+    val preview: DocPreview?,
 )

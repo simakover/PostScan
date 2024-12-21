@@ -214,9 +214,9 @@ class VkMapper {
                     contentId = doc.id
                     ownerId = doc.ownerId
                     type = attachment.type
-                    urlSmall = doc.preview.photo.sizes.findOrFirst { it.type == "s" }.src
-                    urlMedium =  doc.preview.photo.sizes.findOrLast { it.type == "x" }.src
-                    urlBig =  doc.preview.photo.sizes.findOrLast { it.type == "z" }.src
+                    urlSmall = doc.preview?.photo?.sizes?.findOrFirst { it.type == "s" }?.src ?: ""
+                    urlMedium =  doc.preview?.photo?.sizes?.findOrLast { it.type == "x" }?.src ?: ""
+                    urlBig =  doc.preview?.photo?.sizes?.findOrLast { it.type == "z" }?.src ?: ""
                 }
             }
         }
