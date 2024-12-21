@@ -9,8 +9,11 @@ import androidx.compose.ui.platform.UriHandler
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import ru.nyxsed.postscan.R
 import ru.nyxsed.postscan.data.models.entity.GroupEntity
@@ -41,6 +44,9 @@ class PostsScreenViewModel(
 
     private val _uiEventFlow = MutableSharedFlow<UiEvent>()
     val uiEventFlow: SharedFlow<UiEvent> = _uiEventFlow.asSharedFlow()
+
+    private val _groupSelected = MutableStateFlow<Long>(0L)
+    val groupSelected: StateFlow<Long> = _groupSelected.asStateFlow()
 
     fun loadPosts(context: Context) {
         viewModelScope.launch {
@@ -76,6 +82,9 @@ class PostsScreenViewModel(
 
     fun deletePost(post: PostEntity, context: Context, snackbarHostState: SnackbarHostState) {
         viewModelScope.launch {
+            if (posts.value.filter { it.ownerId == post.ownerId }.size == 1) {
+                selectGroup(0L)
+            }
             dbRepository.deletePost(post)
 
             snackbarHostState.currentSnackbarData?.dismiss()
@@ -170,5 +179,9 @@ class PostsScreenViewModel(
 
             _uiEventFlow.emit(UiEvent.NavigateToPost(CommentsScreen, post))
         }
+    }
+
+    fun selectGroup(groupId: Long) {
+        _groupSelected.value = groupId
     }
 }
