@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -25,7 +26,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImage
+import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import ru.nyxsed.postscan.data.models.entity.ContentEntity
@@ -453,7 +454,11 @@ fun MultipleImages(
         }
 
         else -> {
-            Row {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(300.dp),
+            ) {
                 ImageItem(modifier = Modifier.weight(1f), content = listContent[0], onImageClicked = { onImageClicked(0) })
             }
 
@@ -476,7 +481,7 @@ fun ImageItem(
             }),
         contentAlignment = Alignment.TopEnd
     ) {
-        AsyncImage(
+        SubcomposeAsyncImage(
             modifier = Modifier
                 .fillMaxSize(),
             model = ImageRequest.Builder(LocalContext.current)
@@ -484,9 +489,17 @@ fun ImageItem(
                 .crossfade(true)
                 .build(),
             contentDescription = null,
-            contentScale = ContentScale.Crop
+            loading = {
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .size(20.dp)
+                        .align(Alignment.Center),
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+            },
+            contentScale = ContentScale.Crop,
         )
-        if (content.type in listOf("video", "album")) {
+        if (content.type in listOf("video", "album", "doc")) {
             Box(
                 modifier = Modifier
                     .padding(4.dp)
@@ -499,7 +512,7 @@ fun ImageItem(
                     modifier = Modifier
                         .padding(4.dp)
                         .fillMaxSize(),
-                    imageVector = if (content.type == "video") Icons.Filled.PlayArrow else Icons.Filled.DateRange,
+                    imageVector = if (content.type == "album") Icons.Filled.DateRange else Icons.Filled.PlayArrow,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSecondary
                 )
