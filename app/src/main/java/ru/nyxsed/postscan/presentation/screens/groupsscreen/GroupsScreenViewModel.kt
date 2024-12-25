@@ -1,6 +1,5 @@
 package ru.nyxsed.postscan.presentation.screens.groupsscreen
 
-import android.content.Context
 import android.content.res.Resources
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -15,14 +14,11 @@ import ru.nyxsed.postscan.R
 import ru.nyxsed.postscan.data.models.entity.GroupEntity
 import ru.nyxsed.postscan.data.repository.DbRepository
 import ru.nyxsed.postscan.data.repository.VkRepository
+import ru.nyxsed.postscan.presentation.screens.changegroupscreen.ChangeGroupScreen
 import ru.nyxsed.postscan.presentation.screens.loginscreen.LoginScreen
 import ru.nyxsed.postscan.presentation.screens.pickgroupscreen.PickGroupScreen
 import ru.nyxsed.postscan.util.ConnectionChecker
 import ru.nyxsed.postscan.util.Constants.toDateLong
-import ru.nyxsed.postscan.util.NotificationHelper.completeNotification
-import ru.nyxsed.postscan.util.NotificationHelper.errorNotification
-import ru.nyxsed.postscan.util.NotificationHelper.initNotification
-import ru.nyxsed.postscan.util.NotificationHelper.updateProgress
 import ru.nyxsed.postscan.util.UiEvent
 
 class GroupsScreenViewModel(
@@ -74,6 +70,12 @@ class GroupsScreenViewModel(
         }
     }
 
+    fun navigateToChangeGroupScreen(param: GroupEntity) {
+        viewModelScope.launch {
+            _uiEventFlow.emit(UiEvent.NavigateToChangeGroup(ChangeGroupScreen, param))
+        }
+    }
+
     fun toggleAddDialog() {
         _showAddDialog.value = !_showAddDialog.value
     }
@@ -98,12 +100,12 @@ class GroupsScreenViewModel(
         _showDownloadDialog.value = !_showDownloadDialog.value
     }
 
-    fun loadPosts(context: Context, startDate: String, endDate: String) {
+    fun loadPosts(startDate: String, endDate: String) {
         val startDateUnix = startDate.toDateLong()
         val endDateUnix = endDate.toDateLong()
 
         viewModelScope.launch {
-            initNotification(context)
+            _uiEventFlow.emit(UiEvent.InitNotification())
             try {
                 dbGroups.value.forEachIndexed { index, group ->
                     val postEntities = vkRepository.getPostsForGroupDateInterval(
@@ -116,13 +118,13 @@ class GroupsScreenViewModel(
                     }
 
                     val percentage = (index + 1) * 100 / dbGroups.value.size
-                    updateProgress(context, percentage)
+                    _uiEventFlow.emit(UiEvent.UpdateNotification(percentage))
 
                 }
-                completeNotification(context)
+                _uiEventFlow.emit(UiEvent.CompleteNotification())
             } catch (e: Exception) {
                 _uiEventFlow.emit(UiEvent.ShowToast(e.message!!))
-                errorNotification(context, e.message!!)
+                _uiEventFlow.emit(UiEvent.ErrorNotification(e.message!!))
             }
         }
         toggleDownloadDialog()

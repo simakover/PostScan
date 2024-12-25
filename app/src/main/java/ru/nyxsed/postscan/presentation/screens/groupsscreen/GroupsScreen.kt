@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -22,37 +23,41 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.composegears.tiamat.navController
 import com.composegears.tiamat.navDestination
-import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import ru.nyxsed.postscan.R
+import ru.nyxsed.postscan.data.models.entity.GroupEntity
 import ru.nyxsed.postscan.presentation.elements.DatePickerTextField
-import ru.nyxsed.postscan.presentation.screens.changegroupscreen.ChangeGroupScreen
-import ru.nyxsed.postscan.presentation.screens.changegroupscreen.DownloadPostsModalDialog
 import ru.nyxsed.postscan.util.Constants.toDateLong
 import ru.nyxsed.postscan.util.Constants.toStringDate
+import ru.nyxsed.postscan.util.NotificationHelper.completeNotification
+import ru.nyxsed.postscan.util.NotificationHelper.errorNotification
+import ru.nyxsed.postscan.util.NotificationHelper.initNotification
+import ru.nyxsed.postscan.util.NotificationHelper.updateProgress
 import ru.nyxsed.postscan.util.UiEvent
 
 @OptIn(ExperimentalMaterial3Api::class)
 val GroupsScreen by navDestination<Unit> {
     val navController = navController()
-    val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
     val groupScreenViewModel = koinViewModel<GroupsScreenViewModel>()
@@ -60,10 +65,10 @@ val GroupsScreen by navDestination<Unit> {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     val groupsState = groupScreenViewModel.dbGroups.collectAsState()
-    val showAddDialog by groupScreenViewModel.showAddDialog.collectAsState()
-    val showDeleteDialog by groupScreenViewModel.showDeleteDialog.collectAsState()
-    val showDeleteAllDialog by groupScreenViewModel.showDeleteAllDialog.collectAsState()
-    val showDownloadDialog by groupScreenViewModel.showDownloadDialog.collectAsState()
+    val showAddDialog = groupScreenViewModel.showAddDialog.collectAsState()
+    val showDeleteDialog = groupScreenViewModel.showDeleteDialog.collectAsState()
+    val showDeleteAllDialog = groupScreenViewModel.showDeleteAllDialog.collectAsState()
+    val showDownloadDialog = groupScreenViewModel.showDownloadDialog.collectAsState()
 
     LaunchedEffect(Unit) {
         groupScreenViewModel.uiEventFlow.collect { event ->
@@ -77,11 +82,48 @@ val GroupsScreen by navDestination<Unit> {
                 is UiEvent.NavigateToPicker ->
                     navController.navigate(event.destination, event.navArgs)
 
+                is UiEvent.NavigateToChangeGroup ->
+                    navController.navigate(event.destination, event.navArgs)
+
+                is UiEvent.InitNotification ->
+                    initNotification(context)
+
+                is UiEvent.ErrorNotification ->
+                    errorNotification(context, event.message)
+
+                is UiEvent.UpdateNotification ->
+                    updateProgress(context, event.percent)
+
+                is UiEvent.CompleteNotification ->
+                    completeNotification(context)
+
                 else -> {}
             }
         }
     }
 
+    GroupScreenContent(
+        groupScreenViewModel = groupScreenViewModel,
+        scrollBehavior = scrollBehavior,
+        groupsState = groupsState,
+        showAddDialog = showAddDialog,
+        showDeleteDialog = showDeleteDialog,
+        showDeleteAllDialog = showDeleteAllDialog,
+        showDownloadDialog = showDownloadDialog,
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun GroupScreenContent(
+    groupScreenViewModel: GroupsScreenViewModel,
+    scrollBehavior: TopAppBarScrollBehavior,
+    groupsState: State<List<GroupEntity>>,
+    showAddDialog: State<Boolean>,
+    showDeleteDialog: State<Boolean>,
+    showDeleteAllDialog: State<Boolean>,
+    showDownloadDialog: State<Boolean>,
+) {
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
@@ -107,54 +149,63 @@ val GroupsScreen by navDestination<Unit> {
             )
         }
     ) { paddings ->
-        LazyColumn(
-            modifier = Modifier
-                .padding(paddings)
-                .nestedScroll(scrollBehavior.nestedScrollConnection),
-            contentPadding = PaddingValues(4.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
-            items(
-                items = groupsState.value,
-                key = { it.groupId }
+
+        if (groupsState.value.isEmpty()) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
             ) {
-                Box(
-                    modifier = Modifier
-                        .animateItem()
+                Text(
+                    text = stringResource(R.string.no_data_found),
+                    fontSize = 20.sp,
+                )
+            }
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .padding(paddings)
+                    .nestedScroll(scrollBehavior.nestedScrollConnection),
+                contentPadding = PaddingValues(4.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                items(
+                    items = groupsState.value,
+                    key = { it.groupId }
                 ) {
-                    GroupCard(
-                        group = it,
-                        onGroupDeleteClicked = {
-                            groupScreenViewModel.toggleDeleteDialog(it)
-                        },
-                        onGroupClicked = {
-                            navController.navigate(ChangeGroupScreen, it)
-                        },
-                        deleteEnabled = true
-                    )
+                    Box(
+                        modifier = Modifier
+                            .animateItem()
+                    ) {
+                        GroupCard(
+                            group = it,
+                            onGroupDeleteClicked = {
+                                groupScreenViewModel.toggleDeleteDialog(it)
+                            },
+                            onGroupClicked = {
+                                groupScreenViewModel.navigateToChangeGroupScreen(it)
+                            },
+                            deleteEnabled = true
+                        )
+                    }
                 }
             }
         }
         AddModalDialog(
-            showDialog = showAddDialog,
+            showDialog = showAddDialog.value,
             onDismiss = {
                 groupScreenViewModel.toggleAddDialog()
             },
             onSearchClicked = {
-                scope.launch {
-                    groupScreenViewModel.navigateToPickScreen("SEARCH")
-                }
+                groupScreenViewModel.navigateToPickScreen("SEARCH")
             },
             onPickClicked = {
-                scope.launch {
-                    groupScreenViewModel.navigateToPickScreen("USER_GROUPS")
-                }
+                groupScreenViewModel.navigateToPickScreen("USER_GROUPS")
             }
         )
         DeleteModalDialog(
             title = stringResource(R.string.delete_group),
             description = stringResource(R.string.group_delete_dialog_question),
-            showDialog = showDeleteDialog,
+            showDialog = showDeleteDialog.value,
             onDismiss = {
                 groupScreenViewModel.toggleDeleteDialog()
             },
@@ -165,7 +216,7 @@ val GroupsScreen by navDestination<Unit> {
         DeleteModalDialog(
             title = stringResource(R.string.delete_all_posts),
             description = stringResource(R.string.delete_all_posts_dialog_question),
-            showDialog = showDeleteAllDialog,
+            showDialog = showDeleteAllDialog.value,
             onDismiss = {
                 groupScreenViewModel.toggleDeleteAllDialog()
             },
@@ -174,13 +225,12 @@ val GroupsScreen by navDestination<Unit> {
             }
         )
         DownloadPostsModalDialog(
-            showDialog = showDownloadDialog,
+            showDialog = showDownloadDialog.value,
             onDismiss = {
                 groupScreenViewModel.toggleDownloadDialog()
             },
             onDownloadClicked = { startDate, endDate ->
                 groupScreenViewModel.loadPosts(
-                    context = context,
                     startDate = startDate,
                     endDate = endDate
                 )
@@ -188,6 +238,7 @@ val GroupsScreen by navDestination<Unit> {
         )
     }
 }
+
 
 @Composable
 fun DeleteModalDialog(
