@@ -9,27 +9,20 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,8 +31,6 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
@@ -50,8 +41,12 @@ import org.koin.androidx.compose.koinViewModel
 import ru.nyxsed.postscan.R
 import ru.nyxsed.postscan.data.models.entity.GroupEntity
 import ru.nyxsed.postscan.presentation.elements.DatePickerTextField
-import ru.nyxsed.postscan.util.Constants.toDateLong
+import ru.nyxsed.postscan.presentation.elements.DeleteModalDialog
+import ru.nyxsed.postscan.presentation.elements.DownloadModalDialog
 import ru.nyxsed.postscan.util.Constants.toStringDate
+import ru.nyxsed.postscan.util.NotificationHelper.completeNotification
+import ru.nyxsed.postscan.util.NotificationHelper.errorNotification
+import ru.nyxsed.postscan.util.NotificationHelper.initNotification
 import ru.nyxsed.postscan.util.UiEvent
 
 
@@ -62,24 +57,22 @@ val ChangeGroupScreen by navDestination<GroupEntity> {
     val uriHandler = LocalUriHandler.current
     val context = LocalContext.current
 
-    val regex = Regex("^([0-2][0-9]|3[01])(0[1-9]|1[0-2])[0-9]{4}$")
+    val groupId = changeGroupScreenViewModel.groupId.collectAsState()
+    var groupName = changeGroupScreenViewModel.groupName.collectAsState()
+    var screenName = changeGroupScreenViewModel.screenName.collectAsState()
+    var avatarUrl = changeGroupScreenViewModel.avatarUrl.collectAsState()
+    var lastFetchDate = changeGroupScreenViewModel.lastFetchDate.collectAsState()
 
-    var groupId by remember { mutableLongStateOf(0) }
-    var groupName by remember { mutableStateOf("") }
-    var screenName by remember { mutableStateOf("") }
-    var avatarUrl by remember { mutableStateOf("") }
-    var lastFetchDate by remember { mutableStateOf("") }
-
-    var showDownloadDialog by remember { mutableStateOf(false) }
-    var showDeleteDialog by remember { mutableStateOf(false) }
+    val showDeleteDialog = changeGroupScreenViewModel.showDeleteDialog.collectAsState()
+    val showDownloadDialog = changeGroupScreenViewModel.showDownloadDialog.collectAsState()
 
     LaunchedEffect(Unit) {
         group.let {
-            groupId = it.groupId
-            groupName = it.name
-            screenName = it.screenName
-            avatarUrl = it.avatarUrl
-            lastFetchDate = it.lastFetchDate.toStringDate().replace(".", "")
+            changeGroupScreenViewModel.changeGroupId(it.groupId)
+            changeGroupScreenViewModel.changeGroupName(it.name)
+            changeGroupScreenViewModel.changeScreenName(it.screenName)
+            changeGroupScreenViewModel.changeAvatarUrl(it.avatarUrl)
+            changeGroupScreenViewModel.changeLastFetchDate(it.lastFetchDate.toStringDate().replace(".", ""))
         }
         changeGroupScreenViewModel.uiEventFlow.collect { event ->
             when (event) {
@@ -89,11 +82,48 @@ val ChangeGroupScreen by navDestination<GroupEntity> {
                 is UiEvent.OpenUrl ->
                     uriHandler.openUri(event.url)
 
+                is UiEvent.InitNotification ->
+                    initNotification(context)
+
+                is UiEvent.ErrorNotification ->
+                    errorNotification(context, event.message)
+
+                is UiEvent.CompleteNotification ->
+                    completeNotification(context)
+
+                is UiEvent.NavigateBack ->
+                    navController.back()
+
                 else -> {}
             }
         }
     }
 
+    ChangeGroupScreenContent(
+        group = group,
+        changeGroupScreenViewModel = changeGroupScreenViewModel,
+        groupId = groupId,
+        groupName = groupName,
+        screenName = screenName,
+        avatarUrl = avatarUrl,
+        lastFetchDate = lastFetchDate,
+        showDownloadDialog = showDownloadDialog,
+        showDeleteDialog = showDeleteDialog,
+    )
+}
+
+@Composable
+fun ChangeGroupScreenContent(
+    group: GroupEntity,
+    changeGroupScreenViewModel: ChangeGroupScreenViewModel,
+    groupId: State<Long>,
+    groupName: State<String>,
+    screenName: State<String>,
+    avatarUrl: State<String>,
+    lastFetchDate: State<String>,
+    showDeleteDialog: State<Boolean>,
+    showDownloadDialog: State<Boolean>,
+) {
     Scaffold { paddings ->
         Column(
             modifier = Modifier
@@ -113,7 +143,7 @@ val ChangeGroupScreen by navDestination<GroupEntity> {
                         }
                     ),
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(avatarUrl)
+                    .data(avatarUrl.value)
                     .crossfade(true)
                     .build(),
                 contentDescription = null,
@@ -122,9 +152,9 @@ val ChangeGroupScreen by navDestination<GroupEntity> {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 30.dp),
-                value = groupName,
+                value = groupName.value,
                 onValueChange = {
-                    groupName = it
+                    changeGroupScreenViewModel.changeGroupName(it)
                 },
                 label = {
                     Text(stringResource(R.string.group_name))
@@ -132,9 +162,9 @@ val ChangeGroupScreen by navDestination<GroupEntity> {
             )
             DatePickerTextField(
                 label = stringResource(R.string.last_fetch_date),
-                selectedDate = lastFetchDate,
+                selectedDate = lastFetchDate.value,
                 onDateSelected = { newDate ->
-                    lastFetchDate = newDate
+                    changeGroupScreenViewModel.changeLastFetchDate(newDate)
                 }
             )
             Row(
@@ -149,10 +179,15 @@ val ChangeGroupScreen by navDestination<GroupEntity> {
                         .padding(4.dp)
                         .weight(1f),
                     onClick = {
-                        changeGroupScreenViewModel.updateGroup(groupId, groupName, screenName, avatarUrl, lastFetchDate)
-                        navController.back()
+                        changeGroupScreenViewModel.updateGroup(
+                            groupId.value,
+                            groupName.value,
+                            screenName.value,
+                            avatarUrl.value,
+                            lastFetchDate.value
+                        )
                     },
-                    enabled = regex.matches(lastFetchDate) && groupName.isNotEmpty()
+                    enabled = changeGroupScreenViewModel.regex.matches(lastFetchDate.value) && groupName.value.isNotEmpty()
                 ) {
                     Text(text = stringResource(R.string.update_group))
                 }
@@ -165,7 +200,7 @@ val ChangeGroupScreen by navDestination<GroupEntity> {
                 ) {
                     IconButton(
                         onClick = {
-                            showDownloadDialog = true
+                            changeGroupScreenViewModel.toggleDownloadDialog()
                         }
                     ) {
                         Icon(
@@ -184,7 +219,7 @@ val ChangeGroupScreen by navDestination<GroupEntity> {
                 ) {
                     IconButton(
                         onClick = {
-                            showDeleteDialog = true
+                            changeGroupScreenViewModel.toggleDeleteDialog()
                         }
                     ) {
                         Icon(
@@ -196,167 +231,29 @@ val ChangeGroupScreen by navDestination<GroupEntity> {
                 }
             }
         }
-        DownloadPostsModalDialog(
-            showDialog = showDownloadDialog,
+        DownloadModalDialog(
+            showDialog = showDownloadDialog.value,
             onDismiss = {
-                showDownloadDialog = false
+                changeGroupScreenViewModel.toggleDownloadDialog()
             },
             onDownloadClicked = { startDate, endDate ->
                 changeGroupScreenViewModel.loadPosts(
-                    context = context,
                     group = group,
                     startDate = startDate,
                     endDate = endDate
                 )
-                showDownloadDialog = false
             }
         )
-        DeletePostsModalDialog(
-            showDialog = showDeleteDialog,
-            onDismiss = {
-                showDeleteDialog = false
+        DeleteModalDialog(
+            title = stringResource(R.string.delete_posts),
+            description = stringResource(R.string.do_you_want_to_delete_all_posts_for_this_group),
+            showDialog = showDeleteDialog.value,
+            onDismiss ={
+                changeGroupScreenViewModel.toggleDeleteDialog()
             },
             onConfirmClicked = {
                 changeGroupScreenViewModel.deleteGroupWithPosts(group)
-                showDeleteDialog = false
             }
         )
-    }
-}
-
-@Composable
-fun DownloadPostsModalDialog(
-    showDialog: Boolean,
-    onDismiss: () -> Unit,
-    onDownloadClicked: (String, String) -> Unit,
-) {
-    val currentTime = System.currentTimeMillis().toStringDate().replace(".", "")
-    var startDate by remember { mutableStateOf(currentTime) }
-    var endDate by remember { mutableStateOf(currentTime) }
-    val regex = Regex("^([0-2][0-9]|3[01])(0[1-9]|1[0-2])[0-9]{4}$")
-
-    if (showDialog) {
-        Dialog(
-            onDismissRequest = onDismiss,
-            properties = DialogProperties()
-        ) {
-            Surface(
-                shape = RoundedCornerShape(16.dp),
-                color = MaterialTheme.colorScheme.surface
-            ) {
-                Column(
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxWidth()
-                        .height(300.dp)
-                ) {
-                    Text(
-                        text = stringResource(R.string.download_posts),
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    Text(
-                        modifier = Modifier
-                            .weight(1f),
-                        text = stringResource(R.string.download_posts_for_a_group_in_this_range)
-                    )
-                    DatePickerTextField(
-                        label = stringResource(R.string.start_date),
-                        selectedDate = startDate,
-                        onDateSelected = { newDate ->
-                            startDate = newDate
-                        }
-                    )
-                    DatePickerTextField(
-                        label = stringResource(R.string.end_date),
-                        selectedDate = endDate,
-                        onDateSelected = { newDate ->
-                            endDate = newDate
-                        }
-                    )
-                    TextButton(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 10.dp),
-                        enabled = regex.matches(startDate) && regex.matches(endDate) && startDate.toDateLong() <= endDate.toDateLong(),
-                        onClick = {
-                            onDownloadClicked(startDate, endDate)
-                        }
-                    ) {
-                        Text(
-                            text = stringResource(R.string.download)
-                        )
-                    }
-                    TextButton(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 10.dp),
-                        onClick = {
-                            onDismiss()
-                        }
-                    ) {
-                        Text(
-                            text = stringResource(R.string.cancel)
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun DeletePostsModalDialog(
-    showDialog: Boolean,
-    onDismiss: () -> Unit,
-    onConfirmClicked: () -> Unit,
-) {
-    if (showDialog) {
-        Dialog(
-            onDismissRequest = onDismiss
-        ) {
-            Surface(
-                shape = RoundedCornerShape(16.dp),
-                color = MaterialTheme.colorScheme.surface
-            ) {
-                Column(
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxWidth()
-                        .height(200.dp)
-                ) {
-                    Text(
-                        text = stringResource(R.string.delete_posts),
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    Text(
-                        modifier = Modifier
-                            .weight(1f),
-                        text = stringResource(R.string.do_you_want_to_delete_all_posts_for_this_group)
-                    )
-                    TextButton(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        onClick = {
-                            onConfirmClicked()
-                        }
-                    ) {
-                        Text(
-                            text = stringResource(R.string.confirm)
-                        )
-                    }
-                    TextButton(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        onClick = {
-                            onDismiss()
-                        }
-                    ) {
-                        Text(
-                            text = stringResource(R.string.cancel)
-                        )
-                    }
-                }
-            }
-        }
     }
 }
