@@ -9,6 +9,7 @@ sealed class UiEvent {
     class LaunchActivity() : UiEvent()
     class OpenUrl(val url: String) : UiEvent()
     class Navigate(val destination: NavDestination<Unit>) : UiEvent()
+    class NavigateBack() : UiEvent()
     class NavigateToPost(val destination: NavDestination<PostEntity>, val navArgs: PostEntity) : UiEvent()
     class NavigateToPicker(val destination: NavDestination<String>, val navArgs: String) : UiEvent()
     class NavigateToChangeGroup(val destination: NavDestination<GroupEntity>, val navArgs: GroupEntity) : UiEvent()
