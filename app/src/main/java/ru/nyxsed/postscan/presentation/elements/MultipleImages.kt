@@ -490,12 +490,16 @@ fun ImageItem(
                 .build(),
             contentDescription = null,
             loading = {
-                CircularProgressIndicator(
+                Box(
                     modifier = Modifier
-                        .size(20.dp)
-                        .align(Alignment.Center),
-                    color = MaterialTheme.colorScheme.onPrimary
-                )
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(70.dp),
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
             },
             contentScale = ContentScale.Crop,
         )

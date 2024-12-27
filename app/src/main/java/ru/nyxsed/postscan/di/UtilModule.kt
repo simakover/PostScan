@@ -15,7 +15,7 @@ val utilModule = module {
         val channel = NotificationChannel(
             channelId,
             channelName,
-            NotificationManager.IMPORTANCE_HIGH,
+            NotificationManager.IMPORTANCE_LOW,
         ).apply {
             enableVibration(true)
         }
@@ -27,7 +27,7 @@ val utilModule = module {
     factory { (context: Context, channelId: String) ->
         NotificationCompat.Builder(context, channelId)
             .setSmallIcon(R.drawable.ic_download)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setPriority(NotificationCompat.PRIORITY_LOW)
             .setContentTitle(context.getString(R.string.loading_posts))
             .setContentText(context.getString(R.string.loading_progress))
             .setProgress(100, 0, false)
