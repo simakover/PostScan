@@ -48,7 +48,7 @@ val LoginScreen by navDestination<Unit> {
                     Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
 
                 is UiEvent.LaunchActivity ->
-                    launcher.launch(listOf(VKScope.WALL, VKScope.FRIENDS))
+                    launcher.launch(listOf(VKScope.WALL, VKScope.FRIENDS, VKScope.OFFLINE))
 
                 else -> {}
             }
