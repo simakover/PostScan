@@ -12,10 +12,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -33,14 +31,12 @@ val PreferencesScreen by navDestination<Unit> {
     val preferencesViewModel = koinViewModel<PreferencesScreenViewModel>()
     val context = LocalContext.current
 
-    var settingNotLoadLikedPosts by remember { mutableStateOf(false) }
-    var settingUseMihon by remember { mutableStateOf(false) }
-    var settingDeleteAfterLike by remember { mutableStateOf(false) }
+    var settingNotLoadLikedPosts = preferencesViewModel.settingNotLoadLikedPosts.collectAsState()
+    var settingUseMihon = preferencesViewModel.settingUseMihon.collectAsState()
+    var settingDeleteAfterLike = preferencesViewModel.settingDeleteAfterLike.collectAsState()
 
     LaunchedEffect(Unit) {
-        settingNotLoadLikedPosts = preferencesViewModel.getSettingBoolean(NOT_LOAD_LIKED_POSTS)
-        settingUseMihon = preferencesViewModel.getSettingBoolean(USE_MIHON)
-        settingDeleteAfterLike = preferencesViewModel.getSettingBoolean(DELETE_AFTER_LIKE)
+        preferencesViewModel.loadSettings()
         preferencesViewModel.uiEventFlow.collect { event ->
             when (event) {
                 is UiEvent.ShowToast ->
@@ -51,6 +47,21 @@ val PreferencesScreen by navDestination<Unit> {
         }
     }
 
+    PreferencesScreenContent(
+        preferencesViewModel = preferencesViewModel,
+        settingNotLoadLikedPosts = settingNotLoadLikedPosts,
+        settingUseMihon = settingUseMihon,
+        settingDeleteAfterLike = settingDeleteAfterLike
+    )
+}
+
+@Composable
+fun PreferencesScreenContent(
+    preferencesViewModel : PreferencesScreenViewModel,
+    settingNotLoadLikedPosts: State<Boolean>,
+    settingUseMihon: State<Boolean>,
+    settingDeleteAfterLike: State<Boolean>,
+) {
     Scaffold { paddings ->
         Column(
             modifier = Modifier
@@ -60,26 +71,23 @@ val PreferencesScreen by navDestination<Unit> {
         ) {
             SettingRow(
                 label = stringResource(R.string.not_load_liked_posts),
-                checked = settingNotLoadLikedPosts,
+                checked = settingNotLoadLikedPosts.value,
                 onCheckChange = {
                     preferencesViewModel.saveSettingBoolean(NOT_LOAD_LIKED_POSTS, it)
-                    settingNotLoadLikedPosts = it
                 }
             )
             SettingRow(
                 label = stringResource(R.string.use_mihon_for_manga_search),
-                checked = settingUseMihon,
+                checked = settingUseMihon.value,
                 onCheckChange = {
                     preferencesViewModel.saveSettingBoolean(USE_MIHON, it)
-                    settingUseMihon = it
                 }
             )
             SettingRow(
                 label = stringResource(R.string.delete_post_after_liking),
-                checked = settingDeleteAfterLike,
+                checked = settingDeleteAfterLike.value,
                 onCheckChange = {
                     preferencesViewModel.saveSettingBoolean(DELETE_AFTER_LIKE, it)
-                    settingDeleteAfterLike = it
                 }
             )
             SettingButton(
