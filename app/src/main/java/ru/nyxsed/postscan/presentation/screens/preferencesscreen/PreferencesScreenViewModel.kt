@@ -1,6 +1,8 @@
 package ru.nyxsed.postscan.presentation.screens.preferencesscreen
 
+import android.content.Context
 import android.content.res.Resources
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vk.api.sdk.VK
@@ -12,6 +14,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import ru.nyxsed.postscan.R
+import ru.nyxsed.postscan.data.repository.DbRepository
 import ru.nyxsed.postscan.util.DataStoreInteraction
 import ru.nyxsed.postscan.util.DataStoreInteraction.Companion.DELETE_AFTER_LIKE
 import ru.nyxsed.postscan.util.DataStoreInteraction.Companion.NOT_LOAD_LIKED_POSTS
@@ -21,6 +24,7 @@ import ru.nyxsed.postscan.util.UiEvent
 class PreferencesScreenViewModel(
     private val dataStoreInteraction: DataStoreInteraction,
     private val resources: Resources,
+    private val dbRepository: DbRepository,
 ) : ViewModel() {
     private val _uiEventFlow = MutableSharedFlow<UiEvent>()
     val uiEventFlow: SharedFlow<UiEvent> = _uiEventFlow.asSharedFlow()
@@ -57,6 +61,24 @@ class PreferencesScreenViewModel(
             _settingNotLoadLikedPosts.value = dataStoreInteraction.getSettingBooleanFromDataStore(NOT_LOAD_LIKED_POSTS)
             _settingUseMihon.value = dataStoreInteraction.getSettingBooleanFromDataStore(USE_MIHON)
             _settingDeleteAfterLike.value = dataStoreInteraction.getSettingBooleanFromDataStore(DELETE_AFTER_LIKE)
+        }
+    }
+
+    fun exportDb(context: Context, uri: Uri) {
+        viewModelScope.launch {
+            val result = dbRepository.exportDatabase(context, uri)
+            if (result) {
+                _uiEventFlow.emit(UiEvent.ShowToast(resources.getString(R.string.export_db_message)))
+            }
+        }
+    }
+
+    fun importDb(context: Context, uri: Uri) {
+        viewModelScope.launch {
+            val result = dbRepository.importDatabase(context, uri)
+            if (result) {
+                _uiEventFlow.emit(UiEvent.ShowToast(resources.getString(R.string.import_db_message)))
+            }
         }
     }
 }

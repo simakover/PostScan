@@ -45,4 +45,8 @@
     <string name="notification_permission_desc">For setup notifications turn it on in settings</string>
     <string name="notification_permission_desc_settings">Open Settings</string>
     <string name="notification_permission_desc_cancel">Cancel</string>
+    <string name="import_db">Import DB</string>
+    <string name="export_db">Export DB</string>
+    <string name="import_db_message">DB successfully imported</string>
+    <string name="export_db_message">DB successfully exported</string>
 </resources>
