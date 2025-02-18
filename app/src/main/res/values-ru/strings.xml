@@ -45,4 +45,8 @@
     <string name="notification_permission_desc">Для получения уведомлений включите их в настройках приложения.</string>
     <string name="notification_permission_desc_settings">Открыть настройки</string>
     <string name="notification_permission_desc_cancel">Отменить</string>
+    <string name="import_db">Импортировать БД</string>
+    <string name="export_db">Экспортировать БД</string>
+    <string name="import_db_message">БД успешно импортирована</string>
+    <string name="export_db_message">БД успешно экспортирована</string>
 </resources>

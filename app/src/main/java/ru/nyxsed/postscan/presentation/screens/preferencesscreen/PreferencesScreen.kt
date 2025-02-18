@@ -1,6 +1,9 @@
 package ru.nyxsed.postscan.presentation.screens.preferencesscreen
 
+import android.content.Context
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -51,16 +54,18 @@ val PreferencesScreen by navDestination<Unit> {
         preferencesViewModel = preferencesViewModel,
         settingNotLoadLikedPosts = settingNotLoadLikedPosts,
         settingUseMihon = settingUseMihon,
-        settingDeleteAfterLike = settingDeleteAfterLike
+        settingDeleteAfterLike = settingDeleteAfterLike,
+        context = context,
     )
 }
 
 @Composable
 fun PreferencesScreenContent(
-    preferencesViewModel : PreferencesScreenViewModel,
+    preferencesViewModel: PreferencesScreenViewModel,
     settingNotLoadLikedPosts: State<Boolean>,
     settingUseMihon: State<Boolean>,
     settingDeleteAfterLike: State<Boolean>,
+    context: Context,
 ) {
     Scaffold { paddings ->
         Column(
@@ -69,6 +74,18 @@ fun PreferencesScreenContent(
                 .padding(paddings)
                 .padding(4.dp)
         ) {
+            val launcherImport = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+                uri?.let { selectedUri ->
+                    preferencesViewModel.importDb(context, selectedUri)
+                }
+            }
+
+            val launcherExport = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/octet-stream")) { uri ->
+                uri?.let { selectedUri ->
+                    preferencesViewModel.exportDb(context, selectedUri)
+                }
+            }
+
             SettingRow(
                 label = stringResource(R.string.not_load_liked_posts),
                 checked = settingNotLoadLikedPosts.value,
@@ -94,6 +111,18 @@ fun PreferencesScreenContent(
                 label = stringResource(R.string.vk_logout),
                 onClick = {
                     preferencesViewModel.logOut()
+                }
+            )
+            SettingButton(
+                label = stringResource(R.string.import_db),
+                onClick = {
+                    launcherImport.launch(arrayOf("application/octet-stream", "application/x-sqlite3"))
+                }
+            )
+            SettingButton(
+                label = stringResource(R.string.export_db),
+                onClick = {
+                    launcherExport.launch("app_database")
                 }
             )
         }
