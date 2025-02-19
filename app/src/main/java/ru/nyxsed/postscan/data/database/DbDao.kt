@@ -22,7 +22,7 @@ interface DbDao {
     @Update
     suspend fun updatePost(post: PostEntity)
 
-    @Query("SELECT * FROM posts order by publicationDate desc")
+    @Query("SELECT * FROM posts")
     fun getAllPosts(): Flow<List<PostEntity>>
 
     @Query("DELETE FROM posts where ABS(ownerId) = :groupId")
